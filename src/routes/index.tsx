@@ -108,7 +108,7 @@ function Welcome() {
       <div className="space-y-3">
         <Link
           to="/onboarding"
-          className="flex min-h-12 w-full items-center justify-center rounded-btn bg-blue-btn text-sm font-bold text-white"
+          className="ring-on-solid flex min-h-12 w-full items-center justify-center rounded-btn bg-blue-btn text-sm font-bold text-white"
         >
           Get started
         </Link>
