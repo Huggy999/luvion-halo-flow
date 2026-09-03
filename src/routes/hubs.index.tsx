@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { Sheet } from "@/components/Sheet";
 import { BoundaryCard } from "@/components/BoundaryCard";
-import { HUB_COLORS, hubColor, useHubMutations, useHubs, useTasks } from "@/lib/app";
+import { HUB_COLORS, hubColor, useDocs, useHubMutations, useHubs, useTasks } from "@/lib/app";
 import { LIMITS, TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
 import { createHubGuarded } from "@/lib/billing.functions";
 
@@ -31,6 +31,8 @@ export const Route = createFileRoute("/hubs/")({
 function HubsScreen() {
   const { data: hubs = [] } = useHubs();
   const { data: tasks = [] } = useTasks();
+  const { data: docs = [] } = useDocs();
+
   const { createHub } = useHubMutations();
   const { billing } = useBilling();
   const guarded = useServerFn(createHubGuarded);
@@ -129,6 +131,11 @@ function HubsScreen() {
                   </span>
                   <span className="block truncate text-[13px] text-ink-2">
                     {hub.description || "No description"}
+                  </span>
+                  <span className="mt-0.5 block truncate text-[12px] text-ink-3">
+                    {list.length} {list.length === 1 ? "task" : "tasks"} · 1 board ·{" "}
+                    {docs.filter((d) => d.hub_id === hub.id).length} docs
+
                   </span>
                 </span>
                 <span className="num shrink-0 text-[13px] text-ink-3">
