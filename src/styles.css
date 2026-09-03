@@ -207,10 +207,29 @@
   transform: translate(-50%, -50%);
 }
 
+@utility surface-sunk {
+  background: var(--sunk);
+  border-radius: var(--radius-tile);
+}
+
+@utility surface-card {
+  background: var(--paper);
+  border: 1px solid var(--line-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+@utility surface-float {
+  background: var(--paper);
+  border: 1px solid var(--line-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+}
+
 @utility card {
-  background-color: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line-card);
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-soft);
 }
 
