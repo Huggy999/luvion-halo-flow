@@ -431,7 +431,14 @@ function DayScreen() {
         <button
           type="button"
           onClick={() => {
-            if (menuTask) patchTask.mutate({ id: menuTask.id, patch: { is_today: false } });
+            if (menuTask) {
+              const t = menuTask;
+              patchTask.mutate({ id: t.id, patch: { is_today: false } });
+              offerUndo({
+                message: `${t.title} removed from today`,
+                onUndo: () => patchTask.mutate({ id: t.id, patch: { is_today: true } }),
+              });
+            }
             setMenuTask(null);
           }}
           className="mt-2 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
