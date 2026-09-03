@@ -90,7 +90,11 @@ export const canUseBoard = createServerFn({ method: "POST" })
 
 export const createCheckout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data) => z.object({ tier: z.enum(["pro", "team"]) }).parse(data))
+  .inputValidator((data) =>
+    z
+      .object({ tier: z.enum(["pro", "team"]), currency: z.enum(["usd", "eur"]).default("usd") })
+      .parse(data),
+  )
   .handler(async ({ data, context }) => {
     const { stripeKey, stripeCall, findOrCreateCustomer, PRICE, setTier } = await import(
       "@/lib/billing.server"
@@ -110,8 +114,8 @@ export const createCheckout = createServerFn({ method: "POST" })
         customer,
         mode: "subscription",
         "line_items[0][quantity]": "1",
-        "line_items[0][price_data][currency]": "rub",
-        "line_items[0][price_data][unit_amount]": String(plan.amount),
+        "line_items[0][price_data][currency]": data.currency,
+        "line_items[0][price_data][unit_amount]": String(plan.amount[data.currency]),
         "line_items[0][price_data][recurring][interval]": "month",
         "line_items[0][price_data][product_data][name]": plan.name,
         "subscription_data[metadata][tier]": data.tier,
