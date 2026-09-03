@@ -243,18 +243,18 @@ function PulseScreen() {
               </p>
             </div>
             <div className="min-w-0">
-              <p className="text-[13px] font-bold" style={{ color: "var(--halo-tx)" }}>
+              <p className="t-aux font-bold" style={{ color: "var(--halo-tx)" }}>
                 {streak > 0
                   ? `${level.name} · day ${streak} of your streak`
                   : `${level.name} · your streak has not started`}
               </p>
-              <p className="num mt-1 overflow-hidden text-[42px] font-bold leading-none text-ink">
+              <p className="t-hero mt-1 overflow-hidden text-ink">
                 <span className={flash ? "roll inline-block" : "inline-block"}>{streak}</span>
-                <span className="ml-2 text-base font-medium text-ink-2">
+                <span className="ml-2 t-body text-ink-2">
                   {streak === 1 ? "day in a row" : "days in a row"}
                 </span>
               </p>
-              <p className="mt-1.5 text-[13px] text-ink-2">
+              <p className="mt-1.5 t-aux text-ink-2">
                 {!state?.streaks_enabled
                   ? "Streaks are turned off in Profile"
                   : streak === 0
@@ -263,7 +263,7 @@ function PulseScreen() {
                       ? `${level.next - streak} more days to ${nextName}`
                       : "Highest halo level"}
               </p>
-              <p className="mt-1.5 text-[13px] text-ink-3">Tap to see all five levels</p>
+              <p className="mt-1.5 t-aux text-ink-3">Tap to see all five levels</p>
             </div>
           </div>
         </button>
