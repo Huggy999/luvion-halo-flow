@@ -247,6 +247,7 @@ function AppFrame() {
         <>
           <CreateMenu />
           <InstallHint />
+          <UndoToast />
           <TabBar />
         </>
       ) : null}
