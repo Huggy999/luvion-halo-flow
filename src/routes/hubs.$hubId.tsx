@@ -217,7 +217,7 @@ function HubScreen() {
               <Plus size={18} aria-hidden="true" />
             </button>
           </div>
-          <div className="mt-1 divide-y divide-line">
+          <div className="surface-sunk mt-1 divide-y divide-line px-3">
             {hubTasks.length === 0 ? (
               <div className="py-4">
                 <p className="text-sm text-ink-2">No tasks yet in this hub.</p>
@@ -270,13 +270,13 @@ function HubScreen() {
                       )}
                     </div>
                     {col.key === "doing" && items.length >= WIP_LIMIT ? (
-                      <p className="mt-1 text-[13px] text-ink-2">
+                      <p className="mt-1 t-aux text-ink-2">
                         Three at a time. A fourth card takes the place of one of these.
                       </p>
                     ) : null}
                     <ul className="mt-3 space-y-2">
                       {items.length === 0 ? (
-                        <li className="text-[13px] text-ink-3">Empty</li>
+                        <li className="t-aux text-ink-3">Empty</li>
                       ) : null}
                       {items.map((t) => (
                         <li
@@ -363,7 +363,7 @@ function HubScreen() {
                   >
                     <FileText size={18} className="shrink-0 text-ink-3" aria-hidden="true" />
                     <span className="min-w-0">
-                      <span className="block truncate text-[15px] font-medium text-ink">
+                      <span className="block truncate t-body text-ink">
                         {d.title}
                       </span>
                       <span className="num block text-[11px] text-ink-3">
@@ -526,7 +526,7 @@ function HubScreen() {
                 setError(`Couldn't create the task — ${(e as Error).message}. Try again.`);
               }
             }}
-            className="min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+            className="ring-on-solid min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
             Add task
           </button>
