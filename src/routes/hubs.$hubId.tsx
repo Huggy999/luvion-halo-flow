@@ -146,7 +146,7 @@ function HubScreen() {
         </Link>
         <div className="min-w-0">
           <p className="label-xs text-ink-3">Hub</p>
-          <h1 className="screen-title truncate text-[24px] leading-tight text-ink">{hub.name}</h1>
+          <h1 className="t-screen truncate text-ink">{hub.name}</h1>
         </div>
         <span
           className="h-9 w-9 shrink-0 rounded-tile"
@@ -178,7 +178,7 @@ function HubScreen() {
               }
               setSegment(key);
             }}
-            className="min-h-11 rounded-[12px] text-[13px] font-bold"
+            className="min-h-11 rounded-[12px] t-aux font-bold"
             style={{
               background:
                 segment === key
@@ -207,12 +207,12 @@ function HubScreen() {
       {segment === "tasks" ? (
         <section className="card p-4" aria-label="Hub tasks">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-            <h2 className="truncate text-base font-extrabold text-ink">Tasks</h2>
+            <h2 className="truncate t-title text-ink">Tasks</h2>
             <button
               type="button"
               aria-label="Add task"
               onClick={() => setOpenTask(true)}
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
+              className="ring-on-solid grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
             >
               <Plus size={18} aria-hidden="true" />
             </button>
@@ -224,7 +224,7 @@ function HubScreen() {
                 <button
                   type="button"
                   onClick={() => setOpenTask(true)}
-                  className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+                  className="ring-on-solid mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
                 >
                   New task
                 </button>
@@ -254,10 +254,10 @@ function HubScreen() {
                 <div key={col.key} className="snap-col w-[80%] shrink-0">
                   <div className="card h-full p-3">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-[15px] font-extrabold text-ink">{col.label}</h2>
+                      <h2 className="t-title text-ink">{col.label}</h2>
                       {col.key === "doing" ? (
                         <span
-                          className="num text-[12px]"
+                          className="num t-aux"
                           style={{
                             color:
                               items.length >= WIP_LIMIT ? "var(--halo-tx)" : "var(--ink-3)",
@@ -266,7 +266,7 @@ function HubScreen() {
                           {items.length} / {WIP_LIMIT}
                         </span>
                       ) : (
-                        <span className="num text-[12px] text-ink-3">{items.length}</span>
+                        <span className="num t-aux text-ink-3">{items.length}</span>
                       )}
                     </div>
                     {col.key === "doing" && items.length >= WIP_LIMIT ? (
@@ -283,7 +283,7 @@ function HubScreen() {
                           key={t.id}
                           className="rounded-tile border border-line bg-bg p-3"
                         >
-                          <p className="text-[14px] font-medium text-ink">{t.title}</p>
+                          <p className="t-body text-ink">{t.title}</p>
                           <div className="mt-2 flex items-center justify-between">
                             <span className="label-xs text-ink-3">{PRIORITY_LABEL[t.priority]}</span>
                             <span className="flex gap-1">
@@ -330,24 +330,24 @@ function HubScreen() {
         ) : (
           <section className="card p-4" aria-label="Hub docs">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-              <h2 className="truncate text-base font-extrabold text-ink">Docs</h2>
+              <h2 className="truncate t-title text-ink">Docs</h2>
               <button
                 type="button"
                 aria-label="Create doc"
                 onClick={() => setOpenDocPicker(true)}
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
+                className="ring-on-solid grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
               >
                 <Plus size={18} aria-hidden="true" />
               </button>
             </div>
-            <ul className="mt-2 divide-y divide-line">
+            <ul className="surface-sunk mt-2 divide-y divide-line px-3">
               {hubDocs.length === 0 ? (
                 <li className="py-4">
                   <p className="text-sm text-ink-2">No docs yet in this hub.</p>
                   <button
                     type="button"
                     onClick={() => setOpenDocPicker(true)}
-                    className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+                    className="ring-on-solid mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
                   >
                     New doc
                   </button>
@@ -366,7 +366,7 @@ function HubScreen() {
                       <span className="block truncate t-body text-ink">
                         {d.title}
                       </span>
-                      <span className="num block text-[11px] text-ink-3">
+                      <span className="num block label-xs text-ink-3">
                         {d.blocks?.length ?? 0} blocks
                       </span>
                     </span>
@@ -375,7 +375,7 @@ function HubScreen() {
                     type="button"
                     aria-label={`Delete doc ${d.title}`}
                     onClick={() => removeDoc.mutate(d.id)}
-                    className="min-h-11 px-2 text-[13px] font-bold"
+                    className="min-h-11 px-2 t-aux font-bold"
                     style={{ color: "var(--coral-tx)" }}
                   >
                     Delete
@@ -402,7 +402,7 @@ function HubScreen() {
                 <button
                   type="button"
                   onClick={() => swapIntoDoing(t)}
-                  className="min-h-12 w-full rounded-btn border border-line-2 px-3 text-left text-[15px] text-ink"
+                  className="min-h-12 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
                 >
                   Move {t.title} back
                 </button>
@@ -441,8 +441,8 @@ function HubScreen() {
                 }}
                 className="min-h-16 w-full rounded-btn border border-line-2 px-3 py-2 text-left"
               >
-                <span className="block text-[15px] font-bold text-ink">{tpl.name}</span>
-                <span className="block text-[12px] text-ink-2">{tpl.description}</span>
+                <span className="block t-body font-bold text-ink">{tpl.name}</span>
+                <span className="block t-aux text-ink-2">{tpl.description}</span>
               </button>
             </li>
           ))}
@@ -483,7 +483,7 @@ function HubScreen() {
             </div>
           </fieldset>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-[15px] font-bold text-ink">Add to today</span>
+            <span className="t-body font-bold text-ink">Add to today</span>
             <button
               type="button"
               role="switch"
@@ -500,7 +500,7 @@ function HubScreen() {
             </button>
           </div>
           {error ? (
-            <p className="text-[13px]" style={{ color: "var(--coral-tx)" }}>
+            <p className="t-aux" style={{ color: "var(--coral-tx)" }}>
               {error}
             </p>
           ) : null}
