@@ -110,7 +110,9 @@ export async function stripeCall(
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: method === "POST" && body ? new URLSearchParams(body).toString() : undefined,
+    ...(method === "POST" && body
+      ? { body: new URLSearchParams(body).toString() }
+      : {}),
   });
   const json = (await res.json()) as Record<string, unknown>;
   if (!res.ok) {
