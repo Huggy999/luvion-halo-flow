@@ -235,7 +235,7 @@ function PulseScreen() {
                 {!state?.streaks_enabled
                   ? "Streaks are turned off in Profile"
                   : streak === 0
-                    ? "The halo starts with the first closed task"
+                    ? "Close one task a day and the halo grows"
                     : level.next
                       ? `${level.next - streak} more days to ${nextName}`
                       : "Highest halo level"}
@@ -246,7 +246,13 @@ function PulseScreen() {
         </button>
       </section>
 
-      <HaloSheet open={haloOpen} onClose={() => setHaloOpen(false)} streak={streak} />
+      <HaloSheet
+        open={haloOpen}
+        onClose={() => setHaloOpen(false)}
+        streak={streak}
+        log={state?.halo_log ?? []}
+      />
+
 
       <section className="card p-4" aria-label="Today at a glance">
         <div className="flex items-center justify-between gap-3">
