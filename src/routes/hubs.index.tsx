@@ -53,9 +53,10 @@ function HubsScreen() {
     <div className="cascade space-y-4">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">Areas</p>
+          <p className="label-xs text-ink-3">Areas · {tasks.length} tasks in all</p>
           <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Hubs</h1>
         </div>
+
         {atLimit ? (
           <button
             type="button"
