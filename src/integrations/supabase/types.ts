@@ -130,6 +130,45 @@ export type Database = {
         }
         Relationships: []
       }
+      subscribers: {
+        Row: {
+          ai_calls_reset_at: string
+          ai_calls_used: number
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscription_end: string | null
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_calls_reset_at?: string
+          ai_calls_used?: number
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscription_end?: string | null
+          tier?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_calls_reset_at?: string
+          ai_calls_used?: number
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscription_end?: string | null
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           board_column: string
