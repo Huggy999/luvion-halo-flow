@@ -197,6 +197,20 @@ function ThemeSync() {
   return null;
 }
 
+function StreakHaptics() {
+  const { data } = useAppState();
+  const enabled = data?.streaks_enabled ?? true;
+  useEffect(() => {
+    const onUp = () => {
+      if (enabled) haptic([12, 40, 18]);
+    };
+    window.addEventListener(STREAK_EVENT, onUp);
+    return () => window.removeEventListener(STREAK_EVENT, onUp);
+  }, [enabled]);
+  return null;
+}
+
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
