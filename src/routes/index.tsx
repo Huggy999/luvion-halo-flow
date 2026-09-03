@@ -16,6 +16,9 @@ import {
   useUpdateState,
 } from "@/lib/app";
 import { BoundaryCard } from "@/components/BoundaryCard";
+import { DataError } from "@/components/DataError";
+import { PulseSkeleton } from "@/components/skeletons";
+import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { isBoundaryHidden, useBilling } from "@/lib/billing";
 
 
@@ -118,9 +121,15 @@ function Welcome() {
 }
 
 function PulseScreen() {
-  const { data: state, isLoading } = useAppState();
-  const { data: tasks = [] } = useTasks();
-  const { data: hubs = [] } = useHubs();
+  const stateQ = useAppState();
+  const tasksQ = useTasks();
+  const hubsQ = useHubs();
+  const state = stateQ.data;
+  const tasks = tasksQ.data ?? [];
+  const hubs = hubsQ.data ?? [];
+  const loading = stateQ.isLoading || tasksQ.isLoading || hubsQ.isLoading;
+  const failed = stateQ.isError || tasksQ.isError || hubsQ.isError;
+  const showSkeleton = useDelayedFlag(loading);
   const { billing } = useBilling();
   const updateState = useUpdateState();
   useHaloGuard();
@@ -163,7 +172,19 @@ function PulseScreen() {
     month: "long",
   });
 
-  if (isLoading) return <p className="text-sm text-ink-2">Loading your day</p>;
+  if (loading) return showSkeleton ? <PulseSkeleton /> : null;
+  if (failed)
+    return (
+      <DataError
+        error={stateQ.error ?? tasksQ.error ?? hubsQ.error}
+        onRetry={() => {
+          stateQ.refetch();
+          tasksQ.refetch();
+          hubsQ.refetch();
+        }}
+        what="your day"
+      />
+    );
   if (state && !state.onboarded) return <Welcome />;
 
   return (

@@ -4,6 +4,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { Lumi } from "@/components/Lumi";
+import { DataError } from "@/components/DataError";
+import { LumiSkeleton } from "@/components/skeletons";
+import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { supabase } from "@/integrations/supabase/client";
 import { PRIORITY_LABEL, announce, hubColor, useChat, useHubs, useTasks } from "@/lib/app";
 import { askLumi } from "@/lib/lumi.functions";
@@ -37,9 +40,15 @@ const CHIPS = [
 ];
 
 function LumiScreen() {
-  const { data: messages = [] } = useChat();
-  const { data: tasks = [] } = useTasks();
-  const { data: hubs = [] } = useHubs();
+  const chatQ = useChat();
+  const tasksQ = useTasks();
+  const hubsQ = useHubs();
+  const messages = chatQ.data ?? [];
+  const tasks = tasksQ.data ?? [];
+  const hubs = hubsQ.data ?? [];
+  const loading = chatQ.isLoading || tasksQ.isLoading || hubsQ.isLoading;
+  const failed = chatQ.isError || tasksQ.isError || hubsQ.isError;
+  const showSkeleton = useDelayedFlag(loading);
   const qc = useQueryClient();
   const ask = useServerFn(askLumi);
   const [text, setText] = useState("");
@@ -90,6 +99,20 @@ function LumiScreen() {
 
   const matched = (content: string) =>
     tasks.filter((t) => content.toLowerCase().includes(t.title.toLowerCase())).slice(0, 3);
+
+  if (loading) return showSkeleton ? <LumiSkeleton /> : null;
+  if (failed)
+    return (
+      <DataError
+        error={chatQ.error ?? tasksQ.error ?? hubsQ.error}
+        onRetry={() => {
+          chatQ.refetch();
+          tasksQ.refetch();
+          hubsQ.refetch();
+        }}
+        what="the conversation"
+      />
+    );
 
   return (
     <div className="cascade space-y-4">

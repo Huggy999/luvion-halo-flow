@@ -2,6 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Lumi } from "@/components/Lumi";
+import { DataError } from "@/components/DataError";
+import { ProfileSkeleton } from "@/components/skeletons";
+import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { Sheet } from "@/components/Sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { TIER_LABEL, useBilling } from "@/lib/billing";
@@ -75,10 +78,17 @@ function Toggle({
 }
 
 function ProfileScreen() {
-  const { data: state } = useAppState();
-  const { data: tasks = [] } = useTasks();
-  const { data: hubs = [] } = useHubs();
-  const { data: docs = [] } = useDocs();
+  const stateQ = useAppState();
+  const tasksQ = useTasks();
+  const hubsQ = useHubs();
+  const docsQ = useDocs();
+  const state = stateQ.data;
+  const tasks = tasksQ.data ?? [];
+  const hubs = hubsQ.data ?? [];
+  const docs = docsQ.data ?? [];
+  const loading = stateQ.isLoading || tasksQ.isLoading || hubsQ.isLoading || docsQ.isLoading;
+  const failed = stateQ.isError || tasksQ.isError || hubsQ.isError || docsQ.isError;
+  const showSkeleton = useDelayedFlag(loading);
   const { billing } = useBilling();
   const navigate = useNavigate();
   const update = useUpdateState();
@@ -92,6 +102,21 @@ function ProfileScreen() {
   const streak = state?.streak ?? 0;
   const level = haloLevel(Math.max(streak, 1));
   const closed = tasks.filter((t) => t.is_done).length;
+
+  if (loading) return showSkeleton ? <ProfileSkeleton /> : null;
+  if (failed)
+    return (
+      <DataError
+        error={stateQ.error ?? tasksQ.error ?? hubsQ.error ?? docsQ.error}
+        onRetry={() => {
+          stateQ.refetch();
+          tasksQ.refetch();
+          hubsQ.refetch();
+          docsQ.refetch();
+        }}
+        what="your profile"
+      />
+    );
 
   return (
     <div className="cascade space-y-4">
