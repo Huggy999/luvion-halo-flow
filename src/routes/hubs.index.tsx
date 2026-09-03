@@ -1,8 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { Sheet } from "@/components/Sheet";
+import { BoundaryCard } from "@/components/BoundaryCard";
 import { HUB_COLORS, hubColor, useHubMutations, useHubs, useTasks } from "@/lib/app";
+import { LIMITS, TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
+import { createHubGuarded } from "@/lib/billing.functions";
 
 export const Route = createFileRoute("/hubs/")({
   head: () => ({
@@ -27,11 +32,22 @@ function HubsScreen() {
   const { data: hubs = [] } = useHubs();
   const { data: tasks = [] } = useTasks();
   const { createHub } = useHubMutations();
+  const { billing } = useBilling();
+  const guarded = useServerFn(createHubGuarded);
+  const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState("blue");
   const [error, setError] = useState("");
+  const [showBoundary, setShowBoundary] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  const limit = LIMITS[billing.tier].hubs;
+  const atLimit = limit !== null && hubs.length >= limit;
+  const nearLimit = limit !== null && hubs.length === limit - 1;
+  const boundaryVisible =
+    showBoundary && !dismissed && !isBoundaryHidden("hubs-limit");
 
   return (
     <div className="cascade space-y-4">
@@ -40,15 +56,46 @@ function HubsScreen() {
           <p className="label-xs text-ink-3">Направления</p>
           <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Хабы</h1>
         </div>
-        <button
-          type="button"
-          aria-label="Создать хаб"
-          onClick={() => setOpen(true)}
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
-        >
-          <Plus size={20} aria-hidden="true" />
-        </button>
+        {atLimit ? (
+          <button
+            type="button"
+            onClick={() => {
+              setDismissed(false);
+              setShowBoundary(true);
+            }}
+            className="min-h-11 shrink-0 rounded-btn border border-line-2 px-3 text-[13px] font-bold"
+            style={{ color: "var(--ink-2)" }}
+          >
+            {hubs.length} из {limit} на тарифе {TIER_LABEL[billing.tier]}
+          </button>
+        ) : (
+          <button
+            type="button"
+            aria-label="Создать хаб"
+            onClick={() => setOpen(true)}
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
+          >
+            <Plus size={20} aria-hidden="true" />
+          </button>
+        )}
       </header>
+
+      {nearLimit ? (
+        <p className="px-1 text-[13px] text-ink-2">
+          Остался один хаб из {limit} на тарифе {TIER_LABEL[billing.tier]}. Задачи, документы
+          и доска существующих хабов не меняются.
+        </p>
+      ) : null}
+
+      {boundaryVisible ? (
+        <BoundaryCard
+          id="hubs-limit"
+          left={`Хабов ${hubs.length} из ${limit} на тарифе ${TIER_LABEL[billing.tier]}. Новый пока не создать.`}
+          stops="создание новых хабов сверх лимита"
+          continues="все существующие хабы, задачи, документы, серия и фокус-таймер"
+          onDismiss={() => setDismissed(true)}
+        />
+      ) : null}
 
       <div className="space-y-3">
         {hubs.length === 0 ? (
@@ -150,7 +197,19 @@ function HubsScreen() {
                 return;
               }
               try {
-                await createHub.mutateAsync({ name: name.trim(), description, color });
+                if (billing.signedIn) {
+                  // Лимит проверяется на сервере, клиентская проверка — только удобство.
+                  const res = await guarded({
+                    data: { name: name.trim(), description, color },
+                  });
+                  if (!res.ok) {
+                    setError(res.reason);
+                    return;
+                  }
+                  await qc.invalidateQueries({ queryKey: ["hubs"] });
+                } else {
+                  await createHub.mutateAsync({ name: name.trim(), description, color });
+                }
                 setName("");
                 setDescription("");
                 setColor("blue");
