@@ -98,7 +98,10 @@ function LumiScreen() {
           variant={thinking ? "think" : glow ? "glow" : "idle"}
           size={52}
           className={glow ? "halo-flash shrink-0" : "shrink-0"}
+          draw
+          interactive
         />
+
         <div className="min-w-0">
           <p className="label-xs text-ink-3">
             {thinking ? "Thinking" : "Ready to help"}
