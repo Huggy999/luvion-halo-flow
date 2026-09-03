@@ -46,17 +46,26 @@ export function regionCurrency(): "usd" | "eur" {
   ]);
   const locale =
     typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US";
-  const region = new Intl.Locale(locale).maximize().region ?? "US";
+  let region = "US";
+  try {
+    region = new Intl.Locale(locale).maximize().region ?? "US";
+  } catch {
+    region = "US";
+  }
   return EU.has(region) ? "eur" : "usd";
 }
 
 export function formatPrice(amountMinor: number, currency: "usd" | "eur") {
   const locale = typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US";
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: currency.toUpperCase(),
-    maximumFractionDigits: 0,
-  }).format(amountMinor / 100);
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency.toUpperCase(),
+      maximumFractionDigits: 0,
+    }).format(amountMinor / 100);
+  } catch {
+    return `${currency === "eur" ? "\u20ac" : "$"}${Math.round(amountMinor / 100)}`;
+  }
 }
 
 export const PLAN_AMOUNT: Record<Tier, Record<"usd" | "eur", number>> = {
@@ -93,7 +102,6 @@ export const PLANS: {
       "Unlimited boards",
       "A thousand Lumi requests a month",
       "Export to JSON, Markdown and CSV",
-      "Dark theme with the gold glow",
       "The halo, the streak and the focus timer in full",
     ],
   },

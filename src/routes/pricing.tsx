@@ -78,10 +78,11 @@ function PricingScreen() {
 
       {!billing.stripeConfigured ? (
         <p className="card p-4 text-[14px] leading-relaxed text-ink-2">
-          Payments are not connected yet — the app owner has not added the Stripe key. This screen
-          works, and the payment button says so plainly instead of failing.
+          Payments aren't connected yet. This screen still works, and the plan you have keeps
+          working as it is.
         </p>
       ) : null}
+
 
       {message ? (
         <p className="card p-4 text-[14px] leading-relaxed" style={{ color: "var(--ink-2)" }}>
@@ -90,7 +91,7 @@ function PricingScreen() {
       ) : null}
 
       <div className="space-y-3">
-        {PLANS.map((plan) => {
+        {PLANS.filter((p) => p.key !== "team").map((plan) => {
           const current = billing.tier === plan.key;
           return (
             <section

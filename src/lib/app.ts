@@ -82,7 +82,21 @@ export const PRIORITY_LABEL: Record<Priority, string> = {
   p3: "Later",
 };
 
+/** One phrasing for the streak everywhere: "1 day in a row", "4 days in a row". */
+export function streakLabel(days: number) {
+  return `${days} ${days === 1 ? "day" : "days"} in a row`;
+}
+
+export const HALO_LEVELS: { name: string; min: number; max: number | null; what: string }[] = [
+  { name: "Spark", min: 1, max: 6, what: "The halo lights up on the first closed task of a day" },
+  { name: "Ray", min: 7, max: 20, what: "A full week of days that counted" },
+  { name: "Glow", min: 21, max: 49, what: "Three weeks — the habit holds on its own" },
+  { name: "Beacon", min: 50, max: 99, what: "Fifty days of steady work" },
+  { name: "Constellation", min: 100, max: null, what: "A hundred days and beyond, the highest level" },
+];
+
 export function haloLevel(streak: number) {
+
   if (streak >= 100) return { name: "Constellation", min: 100, next: null as number | null };
   if (streak >= 50) return { name: "Beacon", min: 50, next: 100 };
   if (streak >= 21) return { name: "Glow", min: 21, next: 50 };

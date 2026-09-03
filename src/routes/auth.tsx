@@ -30,7 +30,9 @@ function AuthScreen() {
   const [mode, setMode] = useState<"in" | "up">("in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
+
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
 
@@ -103,15 +105,31 @@ function AuthScreen() {
           </label>
           <label className="block">
             <span className="label-xs text-ink-3">Password</span>
-            <input
-              type="password"
-              autoComplete={mode === "in" ? "current-password" : "new-password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="At least six characters"
-            />
+            <span className="relative mt-1 block">
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete={mode === "in" ? "current-password" : "new-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-describedby="password-rule"
+                className="min-h-11 w-full rounded-btn border border-line-2 bg-bg pl-3 pr-20 text-ink"
+                placeholder="At least six characters"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-pressed={showPassword}
+                className="absolute right-1 top-0 min-h-11 rounded-btn px-3 text-[13px] font-bold"
+                style={{ color: "var(--blue-ink)" }}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </span>
+            <span id="password-rule" className="mt-1 block text-[13px] text-ink-2">
+              At least six characters. Nothing else is required.
+            </span>
           </label>
+
         </div>
 
         {error ? (
