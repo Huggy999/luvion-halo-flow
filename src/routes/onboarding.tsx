@@ -4,7 +4,6 @@ import { Lumi } from "@/components/Lumi";
 import {
   HUB_TEMPLATES,
   announce,
-  useAppState,
   useHubMutations,
   useTaskMutations,
   useUpdateState,
@@ -33,7 +32,6 @@ const STEPS = 4;
 
 function OnboardingScreen() {
   const navigate = useNavigate();
-  const { data: state } = useAppState();
   const { createHub } = useHubMutations();
   const { createTask } = useTaskMutations();
   const updateState = useUpdateState();
@@ -125,10 +123,6 @@ function OnboardingScreen() {
     setError("");
     setStep((s) => Math.min(STEPS, s + 1));
   };
-
-  if (state?.onboarded) {
-    navigate({ to: "/" });
-  }
 
   return (
     <div className="cascade space-y-5">
