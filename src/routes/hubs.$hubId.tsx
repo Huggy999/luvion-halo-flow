@@ -100,7 +100,7 @@ function HubScreen() {
         {(
           [
             ["tasks", "Задачи"],
-            ["board", "Доска"],
+            ["board", boardAllowed ? "Доска" : `Доска · 1 из 1`],
             ["docs", "Документы"],
           ] as const
         ).map(([key, label]) => (
@@ -108,7 +108,13 @@ function HubScreen() {
             key={key}
             role="tab"
             aria-selected={segment === key}
-            onClick={() => setSegment(key)}
+            onClick={() => {
+              if (key === "board" && !boardAllowed) {
+                setBoardBoundary(true);
+                return;
+              }
+              setSegment(key);
+            }}
             className="min-h-11 rounded-[12px] text-[13px] font-bold"
             style={{
               background:
@@ -122,6 +128,18 @@ function HubScreen() {
           </button>
         ))}
       </div>
+
+      {boardBoundary && !isBoundaryHidden("board-limit") ? (
+        <BoundaryCard
+          id="board-limit"
+          left={`Доска на тарифе ${TIER_LABEL[billing.tier]} одна и уже занята первым хабом.`}
+          stops="доска по колонкам в этом хабе"
+          continues="задачи и документы этого хаба, доска первого хаба, серия и фокус-таймер"
+          onDismiss={() => setBoardBoundary(false)}
+        />
+      ) : null}
+
+
 
       {segment === "tasks" ? (
         <section className="card p-4" aria-label="Задачи хаба">
