@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 type Common = {
   id: string;
   label: string;
-  hint?: string;
-  error?: string;
-  className?: string;
-  fieldClassName?: string;
+  hint?: string | undefined;
+  error?: string | undefined;
+  className?: string | undefined;
+  fieldClassName?: string | undefined;
 };
 
 export type FieldProps = Common &
