@@ -79,7 +79,7 @@ function HubsScreen() {
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="min-w-0">
           <p className="label-xs text-ink-3">Areas · {tasks.length} tasks in all</p>
-          <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Hubs</h1>
+          <h1 className="t-screen mt-1 text-ink">Hubs</h1>
         </div>
 
         {atLimit ? (
@@ -89,7 +89,7 @@ function HubsScreen() {
               setDismissed(false);
               setShowBoundary(true);
             }}
-            className="min-h-11 shrink-0 rounded-btn border border-line-2 px-3 text-[13px] font-bold"
+            className="min-h-11 shrink-0 rounded-btn border border-line-2 px-3 t-aux font-bold"
             style={{ color: "var(--ink-2)" }}
           >
             {hubs.length} of {limit} on {TIER_LABEL[billing.tier]}
@@ -99,7 +99,7 @@ function HubsScreen() {
             type="button"
             aria-label="Create hub"
             onClick={() => setOpen(true)}
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
+            className="ring-on-solid grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
           >
             <Plus size={20} aria-hidden="true" />
           </button>
@@ -107,7 +107,7 @@ function HubsScreen() {
       </header>
 
       {nearLimit ? (
-        <p className="px-1 text-[13px] text-ink-2">
+        <p className="px-1 t-aux text-ink-2">
           One hub left of {limit} on {TIER_LABEL[billing.tier]}. Tasks, docs and the board of
           existing hubs stay exactly as they are.
         </p>
@@ -132,7 +132,7 @@ function HubsScreen() {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+              className="ring-on-solid mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
             >
               New hub
             </button>
@@ -159,19 +159,19 @@ function HubsScreen() {
                   {hub.name.slice(0, 1)}
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-[16px] font-extrabold text-ink">
+                  <span className="block truncate t-title text-ink">
                     {hub.name}
                   </span>
-                  <span className="block truncate text-[13px] text-ink-2">
+                  <span className="block truncate t-aux text-ink-2">
                     {hub.description || "No description"}
                   </span>
-                  <span className="mt-0.5 block truncate text-[12px] text-ink-3">
+                  <span className="mt-0.5 block truncate t-aux text-ink-3">
                     {list.length} {list.length === 1 ? "task" : "tasks"} · 1 board ·{" "}
                     {docs.filter((d) => d.hub_id === hub.id).length} docs
 
                   </span>
                 </span>
-                <span className="num shrink-0 text-[13px] text-ink-3">
+                <span className="num shrink-0 t-aux text-ink-3">
                   {done}/{list.length}
                 </span>
               </div>
@@ -226,7 +226,7 @@ function HubsScreen() {
             </div>
           </fieldset>
           {error ? (
-            <p className="text-[13px]" style={{ color: "var(--coral-tx)" }}>
+            <p className="t-aux" style={{ color: "var(--coral-tx)" }}>
               {error}
             </p>
           ) : null}
@@ -260,7 +260,7 @@ function HubsScreen() {
                 setError(`Couldn't create the hub — ${(e as Error).message}. Try again.`);
               }
             }}
-            className="min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+            className="ring-on-solid min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
             Create hub
           </button>
