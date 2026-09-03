@@ -38,58 +38,81 @@ export const TIER_LABEL: Record<Tier, string> = {
   team: "Team",
 };
 
+/** Currency follows the user region: euro inside the EU, dollar elsewhere. */
+export function regionCurrency(): "usd" | "eur" {
+  const EU = new Set([
+    "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT",
+    "LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO",
+  ]);
+  const locale =
+    typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US";
+  const region = new Intl.Locale(locale).maximize().region ?? "US";
+  return EU.has(region) ? "eur" : "usd";
+}
+
+export function formatPrice(amountMinor: number, currency: "usd" | "eur") {
+  const locale = typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US";
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currency.toUpperCase(),
+    maximumFractionDigits: 0,
+  }).format(amountMinor / 100);
+}
+
+export const PLAN_AMOUNT: Record<Tier, Record<"usd" | "eur", number>> = {
+  free: { usd: 0, eur: 0 },
+  pro: { usd: 900, eur: 900 },
+  team: { usd: 1900, eur: 1900 },
+};
+
 export const PLANS: {
   key: Tier;
   name: string;
-  price: string;
   summary: string;
   includes: string[];
 }[] = [
   {
     key: "free",
     name: "Free",
-    price: "0 ₽",
-    summary: "Личный порядок без оплаты",
+    summary: "Personal structure at no cost",
     includes: [
-      "Три хаба",
-      "Одна доска",
-      "Двадцать запросов к Луми в месяц",
-      "Документы без ограничений",
-      "Серия, нимб и фокус-таймер целиком",
-      "Экспорт в Markdown и CSV",
+      "Three hubs",
+      "One board",
+      "Twenty Lumi requests a month",
+      "Unlimited docs",
+      "The halo, the streak and the focus timer in full",
+      "Export to JSON, Markdown and CSV",
     ],
   },
   {
     key: "pro",
     name: "Pro",
-    price: "690 ₽ в месяц",
-    summary: "Когда направлений становится больше",
+    summary: "When the number of directions grows",
     includes: [
-      "Хабы без ограничений",
-      "Доски без ограничений",
-      "Тысяча запросов к Луми в месяц",
-      "Экспорт в Markdown и CSV",
-      "Тёмная тема с золотым свечением",
-      "Серия, нимб и фокус-таймер целиком",
+      "Unlimited hubs",
+      "Unlimited boards",
+      "A thousand Lumi requests a month",
+      "Export to JSON, Markdown and CSV",
+      "Dark theme with the gold glow",
+      "The halo, the streak and the focus timer in full",
     ],
   },
   {
     key: "team",
     name: "Team",
-    price: "1490 ₽ в месяц",
-    summary: "Общая работа над одними направлениями",
+    summary: "Shared work on the same directions",
     includes: [
-      "Всё из Pro",
-      "Совместные хабы",
-      "Роли участников",
-      "Общий нимб команды",
-      "Тысяча запросов к Луми в месяц",
-      "Серия, нимб и фокус-таймер целиком",
+      "Everything in Pro",
+      "Shared hubs",
+      "Member roles",
+      "A shared team halo",
+      "A thousand Lumi requests a month",
+      "The halo, the streak and the focus timer in full",
     ],
   },
 ];
 
-/* ---------- сессия ---------- */
+/* ---------- session ---------- */
 
 export type SessionUser = { id: string; email: string } | null;
 
@@ -133,7 +156,7 @@ export function useBilling() {
   return { billing: query.data ?? ANON_BILLING, ready: ready && !query.isLoading, refetch: query.refetch };
 }
 
-/* ---------- отложенные карточки границ ---------- */
+/* ---------- deferred boundary cards ---------- */
 
 const KEY = "luvion:boundary-dismissed";
 
@@ -146,7 +169,7 @@ function readMap(): Record<string, string> {
   }
 }
 
-/** Карточка границы возвращается не раньше следующего дня после отклонения. */
+/** A dismissed boundary card comes back no earlier than the next day. */
 export function isBoundaryHidden(id: string) {
   return readMap()[id] === todayISO();
 }
