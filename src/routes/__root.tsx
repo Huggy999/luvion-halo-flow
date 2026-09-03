@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Activity, Boxes, CalendarCheck, Sparkles, User } from "lucide-react";
+import { Button } from "../components/Button";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -31,7 +32,7 @@ function NotFoundComponent() {
         </p>
         <Link
           to="/"
-          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn ring-on-solid bg-blue-btn px-5 text-sm font-bold text-white"
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn bg-[var(--blue-btn)] px-5 text-sm font-bold text-white hover:bg-[color-mix(in_srgb,var(--blue-btn)_86%,black)]"
         >
           Go to Pulse
         </Link>
@@ -53,15 +54,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <p className="mt-2 t-body font-normal text-ink-2">
           Cause: {error.message || "no response from the server"}. Try again.
         </p>
-        <button
-          onClick={() => {
-            router.invalidate();
-            reset();
-          }}
-          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn ring-on-solid bg-blue-btn px-5 text-sm font-bold text-white"
-        >
+        <Button variant="primary" className="mt-6" onClick={() => {
+          router.invalidate();
+          reset();
+        }}>
           Try again
-        </button>
+        </Button>
       </div>
     </div>
   );

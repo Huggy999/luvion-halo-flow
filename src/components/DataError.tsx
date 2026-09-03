@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Button } from "@/components/Button";
 import { announce } from "@/lib/app";
 
 type Props = {
@@ -26,13 +27,9 @@ export function DataError({ error, onRetry, what }: Props) {
       <p className="mt-1 t-aux text-ink-3">
         Nothing was lost. The data is on the server and will show once the request goes through.
       </p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mt-3 min-h-11 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
-      >
+      <Button variant="primary" size="md" block className="mt-3" onClick={onRetry}>
         Try again
-      </button>
+      </Button>
     </section>
   );
 }

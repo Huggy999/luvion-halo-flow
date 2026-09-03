@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/Button";
 import { Lumi } from "@/components/Lumi";
 import { hideBoundaryForToday } from "@/lib/billing";
 
@@ -72,19 +73,14 @@ export function BoundaryCard({
       <div className="mt-4 grid grid-cols-2 gap-2">
         <Link
           to="/pricing"
-          className="grid min-h-11 place-items-center rounded-btn border border-line-2 text-sm font-bold"
+          className="grid min-h-11 place-items-center rounded-btn border border-[var(--line-ctl)] text-sm font-bold"
           style={{ color: "var(--blue-ink)" }}
         >
           See plans
         </Link>
-        <button
-          type="button"
-          onClick={dismiss}
-          className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
-          style={{ color: "var(--blue-ink)" }}
-        >
+        <Button variant="secondary" size="md" onClick={dismiss}>
           Remind me later
-        </button>
+        </Button>
       </div>
     </section>
   );

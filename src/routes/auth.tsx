@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lumi } from "@/components/Lumi";
+import { Field } from "@/components/Field";
+import { Button } from "@/components/Button";
 import { supabase } from "@/integrations/supabase/client";
 import { announce } from "@/lib/app";
 import { useSessionUser } from "@/lib/billing";
@@ -92,74 +94,61 @@ function AuthScreen() {
         </p>
 
         <div className="mt-4 space-y-3">
-          <label className="block">
-            <span className="label-xs text-ink-3">Email</span>
-            <input
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="name@example.com"
-            />
-          </label>
-          <label className="block">
-            <span className="label-xs text-ink-3">Password</span>
-            <span className="relative mt-1 block">
-              <input
+          <Field
+            id="auth-email"
+            label="Email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="name@example.com"
+          />
+          <div>
+            <span className="relative block">
+              <Field
+                id="auth-password"
+                label="Password"
                 type={showPassword ? "text" : "password"}
                 autoComplete={mode === "in" ? "current-password" : "new-password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                aria-describedby="password-rule"
-                className="min-h-11 w-full rounded-btn border border-line-2 bg-bg pl-3 pr-20 text-ink"
                 placeholder="At least six characters"
+                hint="At least six characters. Nothing else is required."
+                error={error || undefined}
+                fieldClassName="pr-20"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-pressed={showPassword}
-                className="absolute right-1 top-0 min-h-11 rounded-btn px-3 t-aux font-bold"
+                className="absolute right-1 top-[26px] min-h-11 rounded-btn px-3 t-aux font-bold"
                 style={{ color: "var(--blue-ink)" }}
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
             </span>
-            <span id="password-rule" className="mt-1 block t-aux text-ink-2">
-              At least six characters. Nothing else is required.
-            </span>
-          </label>
+          </div>
 
         </div>
 
-        {error ? (
-          <p className="mt-3 t-aux" style={{ color: "var(--coral-tx)" }}>
-            {error}
-          </p>
-        ) : null}
         {note ? <p className="mt-3 t-aux text-ink-2">{note}</p> : null}
 
-        <button
-          type="button"
-          disabled={busy}
-          onClick={submit}
-          className="mt-4 min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
-        >
-          {busy ? "Sending" : mode === "in" ? "Sign in" : "Create account"}
-        </button>
+        <Button variant="primary" size="lg" block loading={busy} onClick={submit} className="mt-4">
+          {mode === "in" ? "Sign in" : "Create account"}
+        </Button>
 
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          block
           onClick={() => {
             setMode(mode === "in" ? "up" : "in");
             setError("");
             setNote("");
           }}
-          className="mt-2 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
-          style={{ color: "var(--blue-ink)" }}
+          className="mt-2"
         >
           {mode === "in" ? "I don\u2019t have an account yet" : "I already have an account"}
-        </button>
+        </Button>
       </section>
 
       <p className="px-1 t-aux text-ink-2">
