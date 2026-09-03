@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { Lumi } from "@/components/Lumi";
+import { Button } from "@/components/Button";
 import {
   PLANS,
   PLAN_AMOUNT,
