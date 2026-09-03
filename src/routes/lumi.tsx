@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { Lumi } from "@/components/Lumi";
 import { supabase } from "@/integrations/supabase/client";
-import { announce, hubColor, useChat, useHubs, useTasks } from "@/lib/app";
+import { PRIORITY_LABEL, announce, hubColor, useChat, useHubs, useTasks } from "@/lib/app";
 import { askLumi } from "@/lib/lumi.functions";
 import { BoundaryCard } from "@/components/BoundaryCard";
 import { TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
@@ -13,16 +13,16 @@ import { TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
 export const Route = createFileRoute("/lumi")({
   head: () => ({
     meta: [
-      { title: "Луми — помощник Luvion" },
+      { title: "Lumi — the Luvion assistant" },
       {
         name: "description",
         content:
-          "Луми отвечает по вашим реальным хабам и задачам: сводки, приоритеты и подсказки по плану дня.",
+          "Lumi answers from your real hubs and tasks: summaries, priorities and hints for the day.",
       },
-      { property: "og:title", content: "Луми — помощник Luvion" },
+      { property: "og:title", content: "Lumi — the Luvion assistant" },
       {
         property: "og:description",
-        content: "Помощник, который читает ваши задачи и отвечает по делу.",
+        content: "An assistant that reads your tasks and answers to the point.",
       },
     ],
   }),
@@ -30,10 +30,10 @@ export const Route = createFileRoute("/lumi")({
 });
 
 const CHIPS = [
-  "Что у меня на сегодня",
-  "Какие задачи в работе",
-  "Что важнее всего закрыть",
-  "Сводка по хабам",
+  "What is on my plate today",
+  "Which tasks are in progress",
+  "What matters most to close",
+  "Summary across hubs",
 ];
 
 function LumiScreen() {
@@ -58,7 +58,7 @@ function LumiScreen() {
     const q = question.trim();
     if (!q || thinking) return;
     if (!billing.signedIn) {
-      setError("Войдите, чтобы Луми считал ваши запросы: счётчик привязан к аккаунту.");
+      setError("Sign in so Lumi can count your requests — the counter belongs to the account.");
       return;
     }
     setText("");
@@ -73,9 +73,9 @@ function LumiScreen() {
       await qc.invalidateQueries({ queryKey: ["chat"] });
       setGlow(true);
       window.setTimeout(() => setGlow(false), 900);
-      announce("Ответ Луми готов");
+      announce("Lumi answered");
     } catch (e) {
-      setError(`Ответ не получен: ${(e as Error).message}. Повторите вопрос.`);
+      setError(`No answer came back — ${(e as Error).message}. Ask again.`);
     } finally {
       setThinking(false);
     }
@@ -101,23 +101,23 @@ function LumiScreen() {
         />
         <div className="min-w-0">
           <p className="label-xs text-ink-3">
-            {thinking ? "Думает" : "Готов помочь"}
+            {thinking ? "Thinking" : "Ready to help"}
           </p>
-          <h1 className="screen-title text-[26px] leading-tight text-ink">Луми</h1>
+          <h1 className="screen-title text-[26px] leading-tight text-ink">Lumi</h1>
         </div>
       </header>
 
       {billing.signedIn ? (
         <p className="px-1 text-[13px] text-ink-2">
-          Запросы к Луми: {billing.aiUsed} из {billing.aiLimit} в месяц на тарифе{" "}
+          Lumi requests: {billing.aiUsed} of {billing.aiLimit} this month on{" "}
           {TIER_LABEL[billing.tier]}
         </p>
       ) : (
         <p className="card p-4 text-[14px] leading-relaxed text-ink-2">
-          Чтобы Луми отвечал, нужен аккаунт: запросы считаются на сервере и привязаны к вам.
-          Задачи, доска, документы, серия и фокус-таймер работают и без входа.{" "}
+          Lumi needs an account: requests are counted on the server and belong to you. Tasks, the
+          board, docs, the halo and the focus timer work without signing in.{" "}
           <Link to="/auth" style={{ color: "var(--blue-ink)" }}>
-            Войти
+            Sign in
           </Link>
         </p>
       )}
@@ -125,31 +125,31 @@ function LumiScreen() {
       {softWarning ? (
         <BoundaryCard
           id="lumi-soft"
-          left={`Осталось ${billing.aiLimit - billing.aiUsed} запросов к Луми из ${billing.aiLimit} в этом месяце.`}
-          stops="ответы и черновики от Луми"
-          continues="поиск по вашим документам и задачам, серия, нимб и фокус-таймер"
+          left={`${billing.aiLimit - billing.aiUsed} of ${billing.aiLimit} Lumi requests left this month.`}
+          stops="Lumi answers and drafts"
+          continues="search across your docs and tasks, the halo, the streak and the focus timer"
           onDismiss={() => setSoftDismissed(true)}
         />
       ) : null}
 
-      <section className="space-y-5" aria-label="Лента ответов">
+      <section className="space-y-5" aria-label="Conversation">
         {messages.length === 0 ? (
           <p className="card p-4 text-sm text-ink-2">
-            Луми читает ваши хабы и задачи и отвечает только по ним. Задайте вопрос или
-            выберите подсказку ниже.
+            Lumi reads your hubs and tasks and answers only from them. Ask a question or pick a
+            prompt below.
           </p>
         ) : null}
 
         {messages.map((m) =>
           m.role === "user" ? (
             <div key={m.id} className="text-right">
-              <p className="label-xs text-ink-3">Вы</p>
+              <p className="label-xs text-ink-3">You</p>
               <p className="mt-1 text-[15px] font-bold text-ink">{m.content}</p>
             </div>
           ) : (
             <div key={m.id}>
               <p className="label-xs" style={{ color: "var(--ink-2)" }}>
-                Луми
+                Lumi
               </p>
               <p className="mt-1 whitespace-pre-wrap text-[15px] leading-relaxed text-ink">
                 {m.content}
@@ -170,8 +170,8 @@ function LumiScreen() {
                             style={{ background: hubColor(hub?.color ?? "blue") }}
                             aria-hidden="true"
                           />
-                          {hub?.name ?? "Без хаба"} · {t.priority.toUpperCase()} ·{" "}
-                          {t.is_done ? "закрыта" : "в работе"}
+                          {hub?.name ?? "No hub"} · {PRIORITY_LABEL[t.priority]} ·{" "}
+                          {t.is_done ? "done" : "in progress"}
                         </p>
                       </li>
                     );
@@ -183,7 +183,7 @@ function LumiScreen() {
         )}
 
         {thinking ? (
-          <p className="text-[15px] text-ink-2">Луми смотрит ваши задачи</p>
+          <p className="text-[15px] text-ink-2">Lumi is looking through your tasks</p>
         ) : null}
         {error ? (
           <p className="text-[13px]" style={{ color: "var(--coral-tx)" }}>
@@ -217,13 +217,13 @@ function LumiScreen() {
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          aria-label="Вопрос для Луми"
-          placeholder="Спросите о задачах"
+          aria-label="Question for Lumi"
+          placeholder="Ask about your work"
           className="min-h-12 w-full rounded-btn border border-line-2 bg-paper px-4 text-ink"
         />
         <button
           type="submit"
-          aria-label="Отправить вопрос"
+          aria-label="Send question"
           disabled={thinking}
           className="grid h-12 w-12 place-items-center rounded-btn bg-blue-btn text-white disabled:opacity-60"
         >
