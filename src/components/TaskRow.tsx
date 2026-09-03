@@ -49,11 +49,13 @@ export function TaskRow({
   task,
   hub,
   onToggle,
+  onOpen,
   right,
 }: {
   task: Task;
   hub?: Hub | undefined;
   onToggle: () => void;
+  onOpen?: (() => void) | undefined;
   right?: React.ReactNode | undefined;
 }) {
   return (
@@ -65,14 +67,28 @@ export function TaskRow({
       />
       <div className="min-w-0 flex-1">
         <div className="relative inline-block max-w-full">
-          <span
-            className={`block truncate text-[15px] font-medium ${
-              task.is_done ? "strike text-ink-3" : "text-ink"
-            }`}
-          >
-            {task.title}
-          </span>
+          {onOpen ? (
+            <button
+              type="button"
+              onClick={onOpen}
+              aria-label={`Open ${task.title}`}
+              className={`block max-w-full truncate py-1 text-left text-[15px] font-medium ${
+                task.is_done ? "strike text-ink-3" : "text-ink"
+              }`}
+            >
+              {task.title}
+            </button>
+          ) : (
+            <span
+              className={`block truncate text-[15px] font-medium ${
+                task.is_done ? "strike text-ink-3" : "text-ink"
+              }`}
+            >
+              {task.title}
+            </span>
+          )}
         </div>
+
         <div className="mt-0.5 flex items-center gap-2">
           {hub ? (
             <span className="flex items-center gap-1.5 text-[11px] text-ink-2">
