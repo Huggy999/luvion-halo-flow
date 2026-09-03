@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { haptic } from "@/lib/haptics";
 
 
 export type Hub = {
@@ -318,7 +319,23 @@ export function onAnnounce(l: Listener) {
   return () => listeners.delete(l);
 }
 
+/* ---------- undo offers ---------- */
+
+export type UndoOffer = { message: string; onUndo: () => void };
+type UndoListener = (o: UndoOffer) => void;
+const undoListeners = new Set<UndoListener>();
+
+export function offerUndo(o: UndoOffer) {
+  undoListeners.forEach((l) => l(o));
+}
+
+export function onUndoOffer(l: UndoListener) {
+  undoListeners.add(l);
+  return () => undoListeners.delete(l);
+}
+
 export const STREAK_EVENT = "luvion:streak-up";
+
 
 /* ---------- queries ---------- */
 
@@ -403,6 +420,11 @@ export function useChat() {
 
 /* ---------- mutations ---------- */
 
+function reason(e: unknown) {
+  const m = (e as { message?: string })?.message;
+  return m && m.trim() ? m : "no response from the server";
+}
+
 export function useUpdateState() {
   const qc = useQueryClient();
   return useMutation({
@@ -413,9 +435,20 @@ export function useUpdateState() {
         .eq("id", "main");
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["app_state"] }),
+    onMutate: async (patch) => {
+      await qc.cancelQueries({ queryKey: ["app_state"] });
+      const snapshot = qc.getQueryData<AppState>(["app_state"]);
+      if (snapshot) qc.setQueryData<AppState>(["app_state"], { ...snapshot, ...patch });
+      return { snapshot };
+    },
+    onError: (error, _patch, ctx) => {
+      if (ctx?.snapshot) qc.setQueryData(["app_state"], ctx.snapshot);
+      announce(`Couldn't save the setting — ${reason(error)}. The change was undone.`);
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: ["app_state"] }),
   });
 }
+
 
 /** Counts one halo day for the first task closed on a calendar day. */
 async function registerStreakDay(): Promise<boolean> {
@@ -511,12 +544,30 @@ export function useTaskMutations() {
   });
 
 
+  /** Local cache edit shared by every optimistic task mutation. */
+  const optimistic = async (edit: (tasks: Task[]) => Task[]) => {
+    await qc.cancelQueries({ queryKey: ["tasks"] });
+    const snapshot = qc.getQueryData<Task[]>(["tasks"]);
+    if (snapshot) qc.setQueryData<Task[]>(["tasks"], edit(snapshot));
+    return { snapshot };
+  };
+
+  const rollback = (ctx: { snapshot: Task[] | undefined } | undefined) => {
+    if (ctx?.snapshot) qc.setQueryData(["tasks"], ctx.snapshot);
+  };
+
   const patchTask = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<Task> }) => {
       const { error } = await supabase.from("tasks").update(patch).eq("id", id);
       if (error) throw error;
     },
-    onSuccess: refresh,
+    onMutate: ({ id, patch }) =>
+      optimistic((tasks) => tasks.map((t) => (t.id === id ? { ...t, ...patch } : t))),
+    onError: (error, _vars, ctx) => {
+      rollback(ctx);
+      announce(`Couldn't save the task — ${reason(error)}. The change was undone.`);
+    },
+    onSettled: refresh,
   });
 
   const completeTask = useMutation({
@@ -534,15 +585,34 @@ export function useTaskMutations() {
       if (done) return await registerStreakDay();
       return false;
     },
-    onSuccess: (grew, task) => {
-      refresh();
-      announce(
-        task.is_done
-          ? `Task ${task.title} reopened`
-          : `Task ${task.title} completed`,
+    onMutate: async (task) => {
+      const done = !task.is_done;
+      const ctx = await optimistic((tasks) =>
+        tasks.map((t) =>
+          t.id === task.id
+            ? {
+                ...t,
+                is_done: done,
+                done_at: done ? new Date().toISOString() : null,
+                board_column: done ? ("done" as BoardColumn) : ("doing" as BoardColumn),
+              }
+            : t,
+        ),
       );
+      haptic(10);
+      announce(done ? `Task ${task.title} completed` : `Task ${task.title} reopened`);
+      return ctx;
+    },
+    onError: (error, task, ctx) => {
+      rollback(ctx);
+      announce(
+        `Couldn't ${task.is_done ? "reopen" : "close"} ${task.title} — ${reason(error)}. The change was undone.`,
+      );
+    },
+    onSuccess: (grew) => {
       if (grew) window.dispatchEvent(new CustomEvent(STREAK_EVENT));
     },
+    onSettled: refresh,
   });
 
   const moveTask = useMutation({
@@ -560,13 +630,33 @@ export function useTaskMutations() {
       if (done && !task.is_done) return await registerStreakDay();
       return false;
     },
-    onSuccess: (grew, { task, column }) => {
-      refresh();
+    onMutate: async ({ task, column }) => {
+      const done = column === "done";
+      const ctx = await optimistic((tasks) =>
+        tasks.map((t) =>
+          t.id === task.id
+            ? {
+                ...t,
+                board_column: column,
+                is_done: done,
+                done_at: done ? new Date().toISOString() : null,
+              }
+            : t,
+        ),
+      );
       announce(
         `Task ${task.title} moved to ${COLUMNS.find((c) => c.key === column)?.label}`,
       );
+      return ctx;
+    },
+    onError: (error, { task }, ctx) => {
+      rollback(ctx);
+      announce(`Couldn't move ${task.title} — ${reason(error)}. The change was undone.`);
+    },
+    onSuccess: (grew) => {
       if (grew) window.dispatchEvent(new CustomEvent(STREAK_EVENT));
     },
+    onSettled: refresh,
   });
 
   const removeTask = useMutation({
@@ -574,11 +664,36 @@ export function useTaskMutations() {
       const { error } = await supabase.from("tasks").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: refresh,
+    onMutate: (id) => optimistic((tasks) => tasks.filter((t) => t.id !== id)),
+    onError: (error, _id, ctx) => {
+      rollback(ctx);
+      announce(`Couldn't delete the task — ${reason(error)}. The change was undone.`);
+    },
+    onSettled: refresh,
   });
 
-  return { createTask, patchTask, completeTask, moveTask, removeTask };
+  /** Puts a deleted task back exactly as it was, id and created_at included. */
+  const restoreTask = useMutation({
+    mutationFn: async (task: Task) => {
+      const { error } = await supabase.from("tasks").insert(task as never);
+      if (error) throw error;
+    },
+    onMutate: (task) =>
+      optimistic((tasks) =>
+        tasks.some((t) => t.id === task.id)
+          ? tasks
+          : [...tasks, task].sort((a, b) => a.created_at.localeCompare(b.created_at)),
+      ),
+    onError: (error, task, ctx) => {
+      rollback(ctx);
+      announce(`Couldn't bring ${task.title} back — ${reason(error)}. The change was undone.`);
+    },
+    onSettled: refresh,
+  });
+
+  return { createTask, patchTask, completeTask, moveTask, removeTask, restoreTask };
 }
+
 
 export function useHubMutations() {
   const qc = useQueryClient();

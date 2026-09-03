@@ -3,6 +3,7 @@ import { Sheet } from "@/components/Sheet";
 import {
   PRIORITY_LABEL,
   announce,
+  offerUndo,
   hubColor,
   useHubs,
   useTaskMutations,
@@ -16,13 +17,11 @@ import {
  */
 export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () => void }) {
   const { data: hubs = [] } = useHubs();
-  const { patchTask, removeTask } = useTaskMutations();
+  const { patchTask, removeTask, restoreTask } = useTaskMutations();
   const [title, setTitle] = useState("");
-  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     setTitle(task?.title ?? "");
-    setConfirmDelete(false);
   }, [task]);
 
   if (!task) return null;
@@ -138,41 +137,22 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
           </div>
         </fieldset>
 
-        {confirmDelete ? (
-          <div className="space-y-2">
-            <p className="text-[14px] text-ink-2">
-              Delete {task.title}. The task is gone from every screen and cannot be restored.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                removeTask.mutate(task.id);
-                announce("Task deleted");
-                onClose();
-              }}
-              className="min-h-11 w-full rounded-btn border text-sm font-bold"
-              style={{ borderColor: "var(--coral)", color: "var(--coral-tx)" }}
-            >
-              Delete the task
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirmDelete(false)}
-              className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold text-ink"
-            >
-              Keep the task
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setConfirmDelete(true)}
-            className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
-            style={{ color: "var(--coral-tx)" }}
-          >
-            Delete task
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            const snapshot = task;
+            removeTask.mutate(snapshot.id);
+            offerUndo({
+              message: `${snapshot.title} deleted`,
+              onUndo: () => restoreTask.mutate(snapshot),
+            });
+            onClose();
+          }}
+          className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
+          style={{ color: "var(--coral-tx)" }}
+        >
+          Delete task
+        </button>
       </div>
     </Sheet>
   );

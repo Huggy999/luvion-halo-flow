@@ -16,7 +16,9 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LiveRegion } from "../components/LiveRegion";
 import { CreateMenu } from "../components/CreateMenu";
 import { InstallHint } from "../components/InstallHint";
-import { useAppState } from "../lib/app";
+import { UndoToast } from "../components/UndoToast";
+import { STREAK_EVENT, useAppState } from "../lib/app";
+import { haptic } from "../lib/haptics";
 
 
 function NotFoundComponent() {
@@ -195,12 +197,27 @@ function ThemeSync() {
   return null;
 }
 
+function StreakHaptics() {
+  const { data } = useAppState();
+  const enabled = data?.streaks_enabled ?? true;
+  useEffect(() => {
+    const onUp = () => {
+      if (enabled) haptic([12, 40, 18]);
+    };
+    window.addEventListener(STREAK_EVENT, onUp);
+    return () => window.removeEventListener(STREAK_EVENT, onUp);
+  }, [enabled]);
+  return null;
+}
+
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeSync />
+      <StreakHaptics />
       <LiveRegion />
       <AppFrame />
     </QueryClientProvider>
@@ -230,6 +247,7 @@ function AppFrame() {
         <>
           <CreateMenu />
           <InstallHint />
+          <UndoToast />
           <TabBar />
         </>
       ) : null}
