@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText } from "lucide-react";
 import { Sheet } from "@/components/Sheet";
 import { DataError } from "@/components/DataError";
-import { HubDetailSkeleton } from "@/components/skeletons";
+import { BoardSkeleton, HubDetailSkeleton } from "@/components/skeletons";
 import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { TaskRow } from "@/components/TaskRow";
 import { TaskSheet } from "@/components/TaskSheet";
@@ -104,7 +104,10 @@ function HubScreen() {
     boardLimit === null || hubs.slice(0, boardLimit).some((h) => h.id === hubId);
 
 
-  if (loading) return showSkeleton ? <HubDetailSkeleton /> : null;
+  if (loading)
+    return showSkeleton ? (
+      segment === "board" ? <BoardSkeleton /> : <HubDetailSkeleton />
+    ) : null;
   if (failed)
     return (
       <DataError
