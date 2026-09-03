@@ -2,6 +2,9 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText } from "lucide-react";
 import { Sheet } from "@/components/Sheet";
+import { DataError } from "@/components/DataError";
+import { HubDetailSkeleton } from "@/components/skeletons";
+import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { TaskRow } from "@/components/TaskRow";
 import { TaskSheet } from "@/components/TaskSheet";
 import { DocEditor } from "@/components/DocEditor";
@@ -49,9 +52,15 @@ type Segment = "tasks" | "board" | "docs";
 
 function HubScreen() {
   const { hubId } = useParams({ from: "/hubs/$hubId" });
-  const { data: hubs = [] } = useHubs();
-  const { data: tasks = [] } = useTasks();
-  const { data: docs = [] } = useDocs();
+  const hubsQ = useHubs();
+  const tasksQ = useTasks();
+  const docsQ = useDocs();
+  const hubs = hubsQ.data ?? [];
+  const tasks = tasksQ.data ?? [];
+  const docs = docsQ.data ?? [];
+  const loading = hubsQ.isLoading || tasksQ.isLoading || docsQ.isLoading;
+  const failed = hubsQ.isError || tasksQ.isError || docsQ.isError;
+  const showSkeleton = useDelayedFlag(loading);
   const { createTask, completeTask, moveTask } = useTaskMutations();
   const { createDoc, removeDoc } = useDocMutations();
 
@@ -94,6 +103,20 @@ function HubScreen() {
   const boardAllowed =
     boardLimit === null || hubs.slice(0, boardLimit).some((h) => h.id === hubId);
 
+
+  if (loading) return showSkeleton ? <HubDetailSkeleton /> : null;
+  if (failed)
+    return (
+      <DataError
+        error={hubsQ.error ?? tasksQ.error ?? docsQ.error}
+        onRetry={() => {
+          hubsQ.refetch();
+          tasksQ.refetch();
+          docsQ.refetch();
+        }}
+        what="this hub"
+      />
+    );
 
   if (!hub) {
     return (

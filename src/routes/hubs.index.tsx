@@ -5,6 +5,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { Sheet } from "@/components/Sheet";
 import { BoundaryCard } from "@/components/BoundaryCard";
+import { DataError } from "@/components/DataError";
+import { HubsSkeleton } from "@/components/skeletons";
+import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { HUB_COLORS, hubColor, useDocs, useHubMutations, useHubs, useTasks } from "@/lib/app";
 import { LIMITS, TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
 import { createHubGuarded } from "@/lib/billing.functions";
@@ -29,9 +32,15 @@ export const Route = createFileRoute("/hubs/")({
 });
 
 function HubsScreen() {
-  const { data: hubs = [] } = useHubs();
-  const { data: tasks = [] } = useTasks();
-  const { data: docs = [] } = useDocs();
+  const hubsQ = useHubs();
+  const tasksQ = useTasks();
+  const docsQ = useDocs();
+  const hubs = hubsQ.data ?? [];
+  const tasks = tasksQ.data ?? [];
+  const docs = docsQ.data ?? [];
+  const loading = hubsQ.isLoading || tasksQ.isLoading || docsQ.isLoading;
+  const failed = hubsQ.isError || tasksQ.isError || docsQ.isError;
+  const showSkeleton = useDelayedFlag(loading);
 
   const { createHub } = useHubMutations();
   const { billing } = useBilling();
@@ -50,6 +59,20 @@ function HubsScreen() {
   const nearLimit = limit !== null && hubs.length === limit - 1;
   const boundaryVisible =
     showBoundary && !dismissed && !isBoundaryHidden("hubs-limit");
+
+  if (loading) return showSkeleton ? <HubsSkeleton /> : null;
+  if (failed)
+    return (
+      <DataError
+        error={hubsQ.error ?? tasksQ.error ?? docsQ.error}
+        onRetry={() => {
+          hubsQ.refetch();
+          tasksQ.refetch();
+          docsQ.refetch();
+        }}
+        what="your hubs"
+      />
+    );
 
   return (
     <div className="cascade space-y-4">

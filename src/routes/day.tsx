@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { Pause, Play, MoreHorizontal, SkipForward, Check } from "lucide-react";
 import { Lumi } from "@/components/Lumi";
 import { HaloRing } from "@/components/HaloRing";
+import { DataError } from "@/components/DataError";
+import { DaySkeleton } from "@/components/skeletons";
+import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { Sheet } from "@/components/Sheet";
 import { TaskCheck } from "@/components/TaskRow";
 import { TaskSheet } from "@/components/TaskSheet";
@@ -42,9 +45,15 @@ export const Route = createFileRoute("/day")({
 const FOCUS_SECONDS = 25 * 60;
 
 function DayScreen() {
-  const { data: tasks = [] } = useTasks();
-  const { data: hubs = [] } = useHubs();
-  const { data: state } = useAppState();
+  const tasksQ = useTasks();
+  const hubsQ = useHubs();
+  const stateQ = useAppState();
+  const tasks = tasksQ.data ?? [];
+  const hubs = hubsQ.data ?? [];
+  const state = stateQ.data;
+  const loading = tasksQ.isLoading || hubsQ.isLoading || stateQ.isLoading;
+  const failed = tasksQ.isError || hubsQ.isError || stateQ.isError;
+  const showSkeleton = useDelayedFlag(loading);
   const { completeTask, patchTask } = useTaskMutations();
 
   const [left, setLeft] = useState(FOCUS_SECONDS);
@@ -129,6 +138,20 @@ function DayScreen() {
   const mm = String(Math.floor(left / 60)).padStart(2, "0");
   const ss = String(left % 60).padStart(2, "0");
   const streak = state?.streak ?? 0;
+
+  if (loading) return showSkeleton ? <DaySkeleton /> : null;
+  if (failed)
+    return (
+      <DataError
+        error={tasksQ.error ?? hubsQ.error ?? stateQ.error}
+        onRetry={() => {
+          tasksQ.refetch();
+          hubsQ.refetch();
+          stateQ.refetch();
+        }}
+        what="today"
+      />
+    );
 
   return (
     <div className="cascade space-y-4">
