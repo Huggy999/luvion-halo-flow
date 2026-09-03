@@ -93,7 +93,6 @@ export const PLANS: {
       "Unlimited boards",
       "A thousand Lumi requests a month",
       "Export to JSON, Markdown and CSV",
-      "Dark theme with the gold glow",
       "The halo, the streak and the focus timer in full",
     ],
   },
