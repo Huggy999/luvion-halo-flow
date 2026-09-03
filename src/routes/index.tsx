@@ -11,6 +11,8 @@ import {
   useTaskMutations,
   useTasks,
 } from "@/lib/app";
+import { BoundaryCard } from "@/components/BoundaryCard";
+import { isBoundaryHidden, useBilling } from "@/lib/billing";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -93,7 +95,16 @@ function PulseScreen() {
   const { data: tasks = [] } = useTasks();
   const { data: hubs = [] } = useHubs();
   const { completeTask } = useTaskMutations();
+  const { billing } = useBilling();
+  const [softDismissed, setSoftDismissed] = useState(false);
+  const softWarning =
+    billing.signedIn &&
+    billing.aiLimit > 0 &&
+    billing.aiUsed / billing.aiLimit >= 0.8 &&
+    !softDismissed &&
+    !isBoundaryHidden("lumi-soft-pulse");
   const [flash, setFlash] = useState(false);
+
 
   useEffect(() => {
     const onUp = () => {
@@ -269,6 +280,16 @@ function PulseScreen() {
           )}
         </div>
       </section>
+
+      {softWarning ? (
+        <BoundaryCard
+          id="lumi-soft-pulse"
+          left={`Осталось ${billing.aiLimit - billing.aiUsed} запросов к Луми из ${billing.aiLimit} в этом месяце.`}
+          stops="ответы и черновики от Луми"
+          continues="поиск по вашим документам и задачам, серия, нимб и фокус-таймер"
+          onDismiss={() => setSoftDismissed(true)}
+        />
+      ) : null}
 
       <Link
         to="/lumi"

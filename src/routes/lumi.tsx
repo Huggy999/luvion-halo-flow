@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +7,8 @@ import { Lumi } from "@/components/Lumi";
 import { supabase } from "@/integrations/supabase/client";
 import { announce, hubColor, useChat, useHubs, useTasks } from "@/lib/app";
 import { askLumi } from "@/lib/lumi.functions";
+import { BoundaryCard } from "@/components/BoundaryCard";
+import { TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
 
 export const Route = createFileRoute("/lumi")({
   head: () => ({
@@ -44,6 +46,8 @@ function LumiScreen() {
   const [thinking, setThinking] = useState(false);
   const [glow, setGlow] = useState(false);
   const [error, setError] = useState("");
+  const [softDismissed, setSoftDismissed] = useState(false);
+  const { billing, refetch } = useBilling();
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,6 +57,10 @@ function LumiScreen() {
   const send = async (question: string) => {
     const q = question.trim();
     if (!q || thinking) return;
+    if (!billing.signedIn) {
+      setError("Войдите, чтобы Луми считал ваши запросы: счётчик привязан к аккаунту.");
+      return;
+    }
     setText("");
     setError("");
     setThinking(true);
@@ -61,6 +69,7 @@ function LumiScreen() {
       await qc.invalidateQueries({ queryKey: ["chat"] });
       const res = await ask({ data: { question: q } });
       await supabase.from("chat_messages").insert({ role: "lumi", content: res.text });
+      await refetch();
       await qc.invalidateQueries({ queryKey: ["chat"] });
       setGlow(true);
       window.setTimeout(() => setGlow(false), 900);
@@ -71,6 +80,13 @@ function LumiScreen() {
       setThinking(false);
     }
   };
+
+  const ratio = billing.aiLimit ? billing.aiUsed / billing.aiLimit : 0;
+  const softWarning =
+    billing.signedIn &&
+    ratio >= 0.8 &&
+    !softDismissed &&
+    !isBoundaryHidden("lumi-soft");
 
   const matched = (content: string) =>
     tasks.filter((t) => content.toLowerCase().includes(t.title.toLowerCase())).slice(0, 3);
@@ -90,6 +106,31 @@ function LumiScreen() {
           <h1 className="screen-title text-[26px] leading-tight text-ink">Луми</h1>
         </div>
       </header>
+
+      {billing.signedIn ? (
+        <p className="px-1 text-[13px] text-ink-2">
+          Запросы к Луми: {billing.aiUsed} из {billing.aiLimit} в месяц на тарифе{" "}
+          {TIER_LABEL[billing.tier]}
+        </p>
+      ) : (
+        <p className="card p-4 text-[14px] leading-relaxed text-ink-2">
+          Чтобы Луми отвечал, нужен аккаунт: запросы считаются на сервере и привязаны к вам.
+          Задачи, доска, документы, серия и фокус-таймер работают и без входа.{" "}
+          <Link to="/auth" style={{ color: "var(--blue-ink)" }}>
+            Войти
+          </Link>
+        </p>
+      )}
+
+      {softWarning ? (
+        <BoundaryCard
+          id="lumi-soft"
+          left={`Осталось ${billing.aiLimit - billing.aiUsed} запросов к Луми из ${billing.aiLimit} в этом месяце.`}
+          stops="ответы и черновики от Луми"
+          continues="поиск по вашим документам и задачам, серия, нимб и фокус-таймер"
+          onDismiss={() => setSoftDismissed(true)}
+        />
+      ) : null}
 
       <section className="space-y-5" aria-label="Лента ответов">
         {messages.length === 0 ? (

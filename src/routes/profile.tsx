@@ -1,8 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Lumi } from "@/components/Lumi";
 import { Sheet } from "@/components/Sheet";
+import { supabase } from "@/integrations/supabase/client";
+import { TIER_LABEL, useBilling } from "@/lib/billing";
+import { exportCsv, exportMarkdown } from "@/lib/export";
+import { useDocs, useHubs } from "@/lib/app";
 import {
   announce,
   haloLevel,
@@ -69,6 +73,10 @@ function Toggle({
 function ProfileScreen() {
   const { data: state } = useAppState();
   const { data: tasks = [] } = useTasks();
+  const { data: hubs = [] } = useHubs();
+  const { data: docs = [] } = useDocs();
+  const { billing } = useBilling();
+  const navigate = useNavigate();
   const update = useUpdateState();
   const qc = useQueryClient();
   const [confirm, setConfirm] = useState(false);
@@ -98,6 +106,81 @@ function ProfileScreen() {
               Рекорд {state?.best_streak ?? 0} · закрыто задач {closed}
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="card p-4" aria-label="Тариф и аккаунт">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+          <div className="min-w-0">
+            <h2 className="text-base font-extrabold text-ink">
+              Тариф {TIER_LABEL[billing.tier]}
+            </h2>
+            <p className="mt-1 text-[13px] text-ink-2">
+              {billing.signedIn
+                ? `Запросы к Луми: ${billing.aiUsed} из ${billing.aiLimit} в месяц`
+                : "Войдите, чтобы привязать тариф и счётчик запросов к аккаунту"}
+            </p>
+          </div>
+          <Link
+            to="/pricing"
+            className="grid min-h-11 shrink-0 place-items-center rounded-btn border border-line-2 px-3 text-[13px] font-bold"
+            style={{ color: "var(--blue-ink)" }}
+          >
+            Тарифы
+          </Link>
+        </div>
+        <p className="mt-3 text-[13px] text-ink-2">
+          Серия, нимб и фокус-таймер бесплатны всегда и не зависят от тарифа.
+        </p>
+        <div className="mt-3">
+          {billing.signedIn ? (
+            <button
+              type="button"
+              onClick={async () => {
+                await qc.cancelQueries();
+                qc.clear();
+                await supabase.auth.signOut();
+                announce("Выход выполнен");
+                navigate({ to: "/auth", replace: true });
+              }}
+              className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
+              style={{ color: "var(--blue-ink)" }}
+            >
+              Выйти из аккаунта
+            </button>
+          ) : (
+            <Link
+              to="/auth"
+              className="grid min-h-11 w-full place-items-center rounded-btn bg-blue-btn text-sm font-bold text-white"
+            >
+              Войти или создать аккаунт
+            </Link>
+          )}
+        </div>
+      </section>
+
+      <section className="card p-4" aria-label="Экспорт">
+        <h2 className="text-base font-extrabold text-ink">Экспорт</h2>
+        <p className="mt-1 text-[13px] text-ink-2">
+          Работает на любом тарифе, включая просроченную подписку. Данные остаются вашими.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => exportMarkdown(hubs, tasks, docs)}
+            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
+            style={{ color: "var(--blue-ink)" }}
+          >
+            Markdown
+          </button>
+          <button
+            type="button"
+            onClick={() => exportCsv(hubs, tasks)}
+            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
+            style={{ color: "var(--blue-ink)" }}
+          >
+            CSV
+          </button>
         </div>
       </section>
 

@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DayRouteImport } from './routes/day'
 import { Route as HubsRouteImport } from './routes/hubs'
 import { Route as LumiRouteImport } from './routes/lumi'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as HubsIndexRouteImport } from './routes/hubs.index'
 import { Route as HubsHubIdRouteImport } from './routes/hubs.$hubId'
@@ -20,6 +22,11 @@ import { Route as HubsHubIdRouteImport } from './routes/hubs.$hubId'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DayRoute = DayRouteImport.update({
@@ -35,6 +42,11 @@ const HubsRoute = HubsRouteImport.update({
 const LumiRoute = LumiRouteImport.update({
   id: '/lumi',
   path: '/lumi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -55,17 +67,21 @@ const HubsHubIdRoute = HubsHubIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/day': typeof DayRoute
   '/hubs': typeof HubsRouteWithChildren
   '/lumi': typeof LumiRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs/': typeof HubsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/day': typeof DayRoute
   '/lumi': typeof LumiRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs': typeof HubsIndexRoute
@@ -73,9 +89,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/day': typeof DayRoute
   '/hubs': typeof HubsRouteWithChildren
   '/lumi': typeof LumiRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs/': typeof HubsIndexRoute
@@ -83,15 +101,33 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/day' | '/hubs' | '/lumi' | '/profile' | '/hubs/$hubId' | '/hubs/'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/day' | '/lumi' | '/profile' | '/hubs/$hubId' | '/hubs'
-  id:
-    | '__root__'
     | '/'
+    | '/auth'
     | '/day'
     | '/hubs'
     | '/lumi'
+    | '/pricing'
+    | '/profile'
+    | '/hubs/$hubId'
+    | '/hubs/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/auth'
+    | '/day'
+    | '/lumi'
+    | '/pricing'
+    | '/profile'
+    | '/hubs/$hubId'
+    | '/hubs'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/day'
+    | '/hubs'
+    | '/lumi'
+    | '/pricing'
     | '/profile'
     | '/hubs/$hubId'
     | '/hubs/'
@@ -99,9 +135,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   DayRoute: typeof DayRoute
   HubsRoute: typeof HubsRouteWithChildren
   LumiRoute: typeof LumiRoute
+  PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
 }
 
@@ -112,6 +150,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/day': {
@@ -133,6 +178,13 @@ declare module '@tanstack/react-router' {
       path: '/lumi'
       fullPath: '/lumi'
       preLoaderRoute: typeof LumiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -173,9 +225,11 @@ const HubsRouteWithChildren = HubsRoute._addFileChildren(HubsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   DayRoute: DayRoute,
   HubsRoute: HubsRouteWithChildren,
   LumiRoute: LumiRoute,
+  PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
 }
 export const routeTree = rootRouteImport

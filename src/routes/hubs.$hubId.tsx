@@ -4,6 +4,8 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText } from "lucide-rea
 import { Sheet } from "@/components/Sheet";
 import { TaskRow } from "@/components/TaskRow";
 import { DocEditor } from "@/components/DocEditor";
+import { BoundaryCard } from "@/components/BoundaryCard";
+import { LIMITS, TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
 import {
   COLUMNS,
   hubColor,
@@ -15,6 +17,7 @@ import {
   useTaskMutations,
   useTasks,
 } from "@/lib/app";
+
 
 export const Route = createFileRoute("/hubs/$hubId")({
   head: () => ({
@@ -52,11 +55,17 @@ function HubScreen() {
   const [isToday, setIsToday] = useState(false);
   const [error, setError] = useState("");
   const [openDocId, setOpenDocId] = useState<string | null>(null);
+  const [boardBoundary, setBoardBoundary] = useState(false);
+  const { billing } = useBilling();
 
   const hub = hubs.find((h) => h.id === hubId);
   const hubTasks = tasks.filter((t) => t.hub_id === hubId);
   const hubDocs = docs.filter((d) => d.hub_id === hubId);
   const openDoc = hubDocs.find((d) => d.id === openDocId);
+  const boardLimit = LIMITS[billing.tier].boards;
+  const boardAllowed =
+    boardLimit === null || hubs.slice(0, boardLimit).some((h) => h.id === hubId);
+
 
   if (!hub) {
     return (
@@ -100,7 +109,7 @@ function HubScreen() {
         {(
           [
             ["tasks", "Задачи"],
-            ["board", "Доска"],
+            ["board", boardAllowed ? "Доска" : `Доска · 1 из 1`],
             ["docs", "Документы"],
           ] as const
         ).map(([key, label]) => (
@@ -108,7 +117,13 @@ function HubScreen() {
             key={key}
             role="tab"
             aria-selected={segment === key}
-            onClick={() => setSegment(key)}
+            onClick={() => {
+              if (key === "board" && !boardAllowed) {
+                setBoardBoundary(true);
+                return;
+              }
+              setSegment(key);
+            }}
             className="min-h-11 rounded-[12px] text-[13px] font-bold"
             style={{
               background:
@@ -122,6 +137,18 @@ function HubScreen() {
           </button>
         ))}
       </div>
+
+      {boardBoundary && !isBoundaryHidden("board-limit") ? (
+        <BoundaryCard
+          id="board-limit"
+          left={`Доска на тарифе ${TIER_LABEL[billing.tier]} одна и уже занята первым хабом.`}
+          stops="доска по колонкам в этом хабе"
+          continues="задачи и документы этого хаба, доска первого хаба, серия и фокус-таймер"
+          onDismiss={() => setBoardBoundary(false)}
+        />
+      ) : null}
+
+
 
       {segment === "tasks" ? (
         <section className="card p-4" aria-label="Задачи хаба">
