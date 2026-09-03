@@ -255,7 +255,7 @@ function ProfileScreen() {
         </div>
       </section>
 
-      <section className="card px-4 py-1" aria-label="Settings">
+      <section className="surface-sunk px-4 py-1" aria-label="Settings">
         <Toggle
           checked={state?.lumi_enabled ?? true}
           onChange={(v) => update.mutate({ lumi_enabled: v })}

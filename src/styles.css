@@ -226,6 +226,10 @@
   box-shadow: var(--shadow-float);
 }
 
+@utility shadow-float {
+  box-shadow: var(--shadow-float);
+}
+
 @utility card {
   background: var(--paper);
   border: 1px solid var(--line-card);

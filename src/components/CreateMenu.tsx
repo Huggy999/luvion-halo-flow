@@ -51,7 +51,7 @@ export function CreateMenu() {
             type="button"
             aria-label="Create something new"
             onClick={() => setMode("menu")}
-            className="pointer-events-auto absolute bottom-0 right-0 grid h-14 w-14 place-items-center rounded-btn ring-on-solid bg-blue-btn text-white"
+            className="shadow-float pointer-events-auto absolute bottom-0 right-0 grid h-14 w-14 place-items-center rounded-btn ring-on-solid bg-blue-btn text-white"
             style={{ boxShadow: "var(--shadow-float)" }}
           >
             <Plus size={24} aria-hidden="true" />

@@ -140,7 +140,7 @@ function TabBar() {
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center"
     >
       <div
-        className="pointer-events-auto mx-3 mb-3 w-full max-w-[406px] rounded-[22px] border border-line bg-paper/95 px-1.5 py-1.5 backdrop-blur"
+        className="shadow-float pointer-events-auto mx-3 mb-3 w-full max-w-[406px] rounded-[22px] border border-line bg-paper/95 px-1.5 py-1.5 backdrop-blur"
         style={{
           boxShadow: "var(--shadow-float)",
           marginBottom: "calc(12px + env(safe-area-inset-bottom))",

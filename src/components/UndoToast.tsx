@@ -45,7 +45,7 @@ export function UndoToast() {
       style={{ bottom: "calc(76px + env(safe-area-inset-bottom))" }}
     >
       <div
-        className="card pointer-events-auto mx-3 flex w-full max-w-[406px] items-center justify-between gap-3 px-4 py-3"
+        className="surface-float pointer-events-auto mx-3 flex w-full max-w-[406px] items-center justify-between gap-3 px-4 py-3"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onFocus={() => setPaused(true)}

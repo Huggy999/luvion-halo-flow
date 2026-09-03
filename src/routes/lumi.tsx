@@ -197,7 +197,7 @@ function LumiScreen() {
                     return (
                       <li
                         key={t.id}
-                        className="rounded-tile border border-line bg-paper p-3"
+                        className="surface-sunk p-3"
                       >
                         <p className="t-body font-bold text-ink">{t.title}</p>
                         <p className="mt-1 flex items-center gap-1.5 t-aux text-ink-2">

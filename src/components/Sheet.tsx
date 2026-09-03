@@ -78,7 +78,7 @@ export function Sheet({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="sheet-in relative w-full max-w-[430px] rounded-t-[26px] border border-line bg-paper px-5 pt-4 outline-none"
+        className="sheet-in shadow-float relative w-full max-w-[430px] rounded-t-[26px] border border-line bg-paper px-5 pt-4 outline-none"
         style={{ paddingBottom: "calc(20px + env(safe-area-inset-bottom))" }}
       >
         <div className="mx-auto mb-3 h-1 w-10 rounded-chip bg-line-2" />
