@@ -55,11 +55,17 @@ function HubScreen() {
   const [isToday, setIsToday] = useState(false);
   const [error, setError] = useState("");
   const [openDocId, setOpenDocId] = useState<string | null>(null);
+  const [boardBoundary, setBoardBoundary] = useState(false);
+  const { billing } = useBilling();
 
   const hub = hubs.find((h) => h.id === hubId);
   const hubTasks = tasks.filter((t) => t.hub_id === hubId);
   const hubDocs = docs.filter((d) => d.hub_id === hubId);
   const openDoc = hubDocs.find((d) => d.id === openDocId);
+  const boardLimit = LIMITS[billing.tier].boards;
+  const boardAllowed =
+    boardLimit === null || hubs.slice(0, boardLimit).some((h) => h.id === hubId);
+
 
   if (!hub) {
     return (
