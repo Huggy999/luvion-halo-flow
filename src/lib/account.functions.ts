@@ -11,11 +11,7 @@ export const deleteAccount = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
 
-    await supabaseAdmin.from("chat_messages").delete().eq("user_id", userId);
-    await supabaseAdmin.from("documents").delete().eq("user_id", userId);
-    await supabaseAdmin.from("tasks").delete().eq("user_id", userId);
-    await supabaseAdmin.from("hubs").delete().eq("user_id", userId);
-    await supabaseAdmin.from("app_state").delete().eq("user_id", userId);
+    // The subscriber row holds the plan, the Stripe ids and the Lumi counter.
     await supabaseAdmin.from("subscribers").delete().eq("user_id", userId);
 
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
