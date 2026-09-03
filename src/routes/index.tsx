@@ -191,18 +191,18 @@ function PulseScreen() {
     <div className="cascade space-y-4">
       <header>
         <p className="label-xs text-ink-3">{dateLabel}</p>
-        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">
+        <h1 className="t-screen mt-1 text-ink">
           {state?.display_name ? `Pulse · ${state.display_name}` : "Pulse"}
         </h1>
       </header>
 
       {state?.freeze_notice ? (
         <section className="card p-4" aria-live="polite">
-          <p className="text-[14px] text-ink">Your halo held. One pause left this month.</p>
+          <p className="t-body text-ink">Your halo held. One pause left this month.</p>
           <button
             type="button"
             onClick={() => updateState.mutate({ freeze_notice: false })}
-            className="mt-2 min-h-11 rounded-btn border border-line-2 px-4 text-[13px] font-bold text-ink"
+            className="mt-2 min-h-11 rounded-btn border border-line-2 px-4 t-aux font-bold text-ink"
           >
             Got it
           </button>
