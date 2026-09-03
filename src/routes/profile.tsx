@@ -12,6 +12,8 @@ import { deleteAccount } from "@/lib/account.functions";
 import {
   announce,
   haloLevel,
+  streakLabel,
+
   resetAllData,
   useAppState,
   useTasks,
@@ -103,9 +105,12 @@ function ProfileScreen() {
           <Lumi variant="glow" size={68} className="shrink-0" breathe />
           <div className="min-w-0">
             <p className="label-xs" style={{ color: "var(--halo-tx)" }}>
-              Halo · {level.name}
+              {streak > 0
+                ? `${level.name} · day ${streak} of your streak`
+                : `${level.name} · your streak has not started`}
             </p>
-            <p className="num mt-1 text-2xl font-bold text-ink">{streak} days in a row</p>
+            <p className="num mt-1 text-2xl font-bold text-ink">{streakLabel(streak)}</p>
+
             <p className="mt-1 text-[13px] text-ink-2">
               Best {state?.best_streak ?? 0} · {closed} tasks closed
             </p>
