@@ -58,18 +58,18 @@ export type ChatMessage = {
 };
 
 export const COLUMNS: { key: BoardColumn; label: string }[] = [
-  { key: "backlog", label: "Бэклог" },
-  { key: "doing", label: "В работе" },
-  { key: "review", label: "Ревью" },
-  { key: "done", label: "Готово" },
+  { key: "backlog", label: "Backlog" },
+  { key: "doing", label: "In progress" },
+  { key: "review", label: "Review" },
+  { key: "done", label: "Done" },
 ];
 
 export const HUB_COLORS = [
-  { key: "blue", label: "Синий", value: "var(--blue)" },
-  { key: "mint", label: "Мятный", value: "var(--mint)" },
-  { key: "coral", label: "Коралловый", value: "var(--coral)" },
-  { key: "lilac", label: "Сиреневый", value: "var(--lilac)" },
-  { key: "halo", label: "Золотой", value: "var(--halo)" },
+  { key: "blue", label: "Blue", value: "var(--blue)" },
+  { key: "mint", label: "Mint", value: "var(--mint)" },
+  { key: "coral", label: "Coral", value: "var(--coral)" },
+  { key: "lilac", label: "Lilac", value: "var(--lilac)" },
+  { key: "halo", label: "Gold", value: "var(--halo)" },
 ];
 
 export function hubColor(key: string) {
@@ -77,17 +77,17 @@ export function hubColor(key: string) {
 }
 
 export const PRIORITY_LABEL: Record<Priority, string> = {
-  p1: "P1",
-  p2: "P2",
-  p3: "P3",
+  p1: "Important",
+  p2: "Normal",
+  p3: "Later",
 };
 
 export function haloLevel(streak: number) {
-  if (streak >= 100) return { name: "Созвездие", min: 100, next: null as number | null };
-  if (streak >= 50) return { name: "Маяк", min: 50, next: 100 };
-  if (streak >= 21) return { name: "Свет", min: 21, next: 50 };
-  if (streak >= 7) return { name: "Луч", min: 7, next: 21 };
-  return { name: "Искра", min: 1, next: 7 };
+  if (streak >= 100) return { name: "Constellation", min: 100, next: null as number | null };
+  if (streak >= 50) return { name: "Beacon", min: 50, next: 100 };
+  if (streak >= 21) return { name: "Glow", min: 21, next: 50 };
+  if (streak >= 7) return { name: "Ray", min: 7, next: 21 };
+  return { name: "Spark", min: 1, next: 7 };
 }
 
 export function todayISO() {
@@ -102,7 +102,7 @@ function shiftISO(iso: string, days: number) {
   return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
 }
 
-/* ---------- объявления для aria-live ---------- */
+/* ---------- aria-live announcements ---------- */
 
 type Listener = (msg: string) => void;
 const listeners = new Set<Listener>();
@@ -118,7 +118,7 @@ export function onAnnounce(l: Listener) {
 
 export const STREAK_EVENT = "luvion:streak-up";
 
-/* ---------- запросы ---------- */
+/* ---------- queries ---------- */
 
 export function useHubs() {
   return useQuery({
@@ -198,7 +198,7 @@ export function useChat() {
   });
 }
 
-/* ---------- мутации ---------- */
+/* ---------- mutations ---------- */
 
 export function useUpdateState() {
   const qc = useQueryClient();
@@ -214,7 +214,7 @@ export function useUpdateState() {
   });
 }
 
-/** Засчитывает день серии за первую закрытую задачу календарного дня. */
+/** Counts one halo day for the first task closed on a calendar day. */
 async function registerStreakDay(): Promise<boolean> {
   const { data, error } = await supabase
     .from("app_state")
@@ -292,8 +292,8 @@ export function useTaskMutations() {
       refresh();
       announce(
         task.is_done
-          ? `Задача ${task.title} снова открыта`
-          : `Задача ${task.title} закрыта`,
+          ? `Task ${task.title} reopened`
+          : `Task ${task.title} completed`,
       );
       if (grew) window.dispatchEvent(new CustomEvent(STREAK_EVENT));
     },
@@ -317,7 +317,7 @@ export function useTaskMutations() {
     onSuccess: (grew, { task, column }) => {
       refresh();
       announce(
-        `Задача ${task.title} перенесена в колонку ${COLUMNS.find((c) => c.key === column)?.label}`,
+        `Task ${task.title} moved to ${COLUMNS.find((c) => c.key === column)?.label}`,
       );
       if (grew) window.dispatchEvent(new CustomEvent(STREAK_EVENT));
     },
@@ -370,7 +370,7 @@ export function useDocMutations() {
         .from("documents")
         .insert({
           hub_id,
-          title: "Новый документ",
+          title: "Untitled doc",
           blocks: [{ id: crypto.randomUUID(), type: "paragraph", text: "" }],
         })
         .select()
