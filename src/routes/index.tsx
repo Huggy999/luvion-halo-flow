@@ -8,7 +8,6 @@ import {
   haloSkin,
   hubColor,
   STREAK_EVENT,
-  streakLabel,
   todayISO,
   useAppState,
   useHaloGuard,
@@ -257,7 +256,6 @@ function PulseScreen() {
       <section className="card p-4" aria-label="Today at a glance">
         <div className="flex items-center justify-between gap-3">
           <p className="num text-xl font-bold text-ink">{focusDone} of 3 today</p>
-          <span className="num text-[13px] text-ink-3">{streakLabel(streak)}</span>
         </div>
         <p className="mt-1 text-[13px] text-ink-2">
           {countedToday ? "Today counted" : "Today not counted yet"}

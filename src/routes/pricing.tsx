@@ -21,12 +21,12 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Luvion plans: Free, Pro and Team. The halo, the streak and the focus timer are always free, and export works on every plan.",
+          "Luvion plans: Free and Pro. The halo, the streak and the focus timer are always free, and export works on every plan.",
       },
       { property: "og:title", content: "Plans — Luvion" },
       {
         property: "og:description",
-        content: "What Free, Pro and Team include, and what happens when you cancel.",
+        content: "What Free and Pro include, and what happens when you cancel.",
       },
     ],
   }),
