@@ -266,7 +266,7 @@ export function CreateMenu() {
                   type="button"
                   onClick={async () => {
                     try {
-                      await createDoc.mutateAsync(h.id);
+                      await createDoc.mutateAsync({ hub_id: h.id });
                       await qc.invalidateQueries({ queryKey: ["docs"] });
                       announce("Doc created");
                       close();
