@@ -11,7 +11,7 @@ function origin() {
   }
 }
 
-/** Текущий тариф, расход запросов к Луми и готовность оплаты. */
+/** Current plan, Lumi request usage and whether payment is configured. */
 export const getBilling = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -29,7 +29,7 @@ export const getBilling = createServerFn({ method: "GET" })
     };
   });
 
-/** Серверная проверка лимита хабов: клиентская проверка — удобство, эта — защита. */
+/** Server-side hub limit check: the client check is convenience, this one is protection. */
 export const createHubGuarded = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data) =>
@@ -54,7 +54,7 @@ export const createHubGuarded = createServerFn({ method: "POST" })
     if (limit !== null && (count ?? 0) >= limit) {
       return {
         ok: false as const,
-        reason: `Хабов ${count ?? 0} из ${limit} на тарифе ${row.tier}. Существующие хабы продолжают работать.`,
+        reason: `${count ?? 0} of ${limit} hubs on the ${row.tier} plan. Existing hubs keep working.`,
       };
     }
 
@@ -68,7 +68,7 @@ export const createHubGuarded = createServerFn({ method: "POST" })
     return { ok: true as const, reason: "" };
   });
 
-/** Серверная проверка доступа к доске конкретного хаба. */
+/** Server-side board access check for a specific hub. */
 export const canUseBoard = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data) => z.object({ hubId: z.string().uuid() }).parse(data))
@@ -98,7 +98,7 @@ export const createCheckout = createServerFn({ method: "POST" })
     if (!stripeKey()) {
       return {
         url: null,
-        message: "Оплата ещё не подключена. Владелец приложения добавит ключ Stripe в настройках.",
+        message: "Payments are not connected yet. The app owner adds the Stripe key in the settings.",
       };
     }
     const email = (context.claims["email"] as string | undefined) ?? "";
@@ -121,7 +121,7 @@ export const createCheckout = createServerFn({ method: "POST" })
       })) as { url?: string };
       return { url: session.url ?? null, message: "" };
     } catch (e) {
-      return { url: null, message: `Оплата не открылась: ${(e as Error).message}` };
+      return { url: null, message: `Checkout did not open: ${(e as Error).message}` };
     }
   });
 
@@ -134,7 +134,7 @@ export const checkSubscription = createServerFn({ method: "POST" })
     const email = (context.claims["email"] as string | undefined) ?? "";
     const row = await loadSubscriber(context.userId, email);
     if (!stripeKey()) {
-      return { tier: row.tier, message: "Оплата ещё не подключена." };
+      return { tier: row.tier, message: "Payments are not connected yet." };
     }
     try {
       const customer = row.stripe_customer_id ?? (await findOrCreateCustomer(email, context.userId));
@@ -148,7 +148,7 @@ export const checkSubscription = createServerFn({ method: "POST" })
       const sub = subs.data?.[0];
       if (!sub) {
         await setTier(context.userId, { tier: "free", stripe_customer_id: customer, subscription_end: null });
-        return { tier: "free" as const, message: "Активной подписки нет. Тариф Free." };
+        return { tier: "free" as const, message: "No active subscription. You are on Free." };
       }
       const tier = sub.metadata?.tier === "team" ? "team" : "pro";
       await setTier(context.userId, {
@@ -158,7 +158,7 @@ export const checkSubscription = createServerFn({ method: "POST" })
       });
       return { tier, message: "" };
     } catch (e) {
-      return { tier: row.tier, message: `Проверка не удалась: ${(e as Error).message}` };
+      return { tier: row.tier, message: `The check failed: ${(e as Error).message}` };
     }
   });
 
@@ -169,7 +169,7 @@ export const customerPortal = createServerFn({ method: "POST" })
       "@/lib/billing.server"
     );
     if (!stripeKey()) {
-      return { url: null, message: "Оплата ещё не подключена, отменять пока нечего." };
+      return { url: null, message: "Payments are not connected yet, so there is nothing to cancel." };
     }
     const email = (context.claims["email"] as string | undefined) ?? "";
     const row = await loadSubscriber(context.userId, email);
@@ -181,6 +181,6 @@ export const customerPortal = createServerFn({ method: "POST" })
       })) as { url?: string };
       return { url: portal.url ?? null, message: "" };
     } catch (e) {
-      return { url: null, message: `Управление подпиской не открылось: ${(e as Error).message}` };
+      return { url: null, message: `The subscription portal did not open: ${(e as Error).message}` };
     }
   });

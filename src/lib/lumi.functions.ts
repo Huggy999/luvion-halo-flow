@@ -12,11 +12,11 @@ export const askLumi = createServerFn({ method: "POST" })
     const { consumeAiCall } = await import("@/lib/billing.server");
     const email = (context.claims["email"] as string | undefined) ?? "";
 
-    // Счётчик запросов увеличивается на сервере, клиент на него не влияет.
+    // The request counter is incremented on the server, the client cannot change it.
     const quota = await consumeAiCall(context.userId, email);
     if (!quota.allowed) {
       return {
-        text: `Запросы к Луми на этот месяц закончились: ${quota.used} из ${quota.limit}. Поиск по документам и задачам продолжает работать, черновики и ответы вернутся после обновления счёта или смены тарифа.`,
+        text: `Lumi requests for this month are used up: ${quota.used} of ${quota.limit}. Search across your docs and tasks keeps working, drafts and answers return after the counter resets or the plan changes.`,
         used: quota.used,
         limit: quota.limit,
         limited: true,
@@ -32,7 +32,7 @@ export const askLumi = createServerFn({ method: "POST" })
     const fail = (text: string) => ({ text, used: quota.used, limit: quota.limit, limited: false });
 
     if (!url || !key) {
-      return fail("База недоступна. Обновите страницу и повторите вопрос.");
+      return fail("The database is unreachable. Reload the page and ask again.");
     }
 
     const supabase = createClient(url, key, {
@@ -48,20 +48,20 @@ export const askLumi = createServerFn({ method: "POST" })
     ]);
 
     const hubName = (id: string | null) =>
-      hubs?.find((h) => h.id === id)?.name ?? "без хаба";
+      hubs?.find((h) => h.id === id)?.name ?? "no hub";
 
     const contextText = [
-      `Хабы: ${(hubs ?? []).map((h) => `${h.name} (${h.description || "без описания"})`).join("; ") || "нет"}`,
-      `Задачи:`,
+      `Hubs: ${(hubs ?? []).map((h) => `${h.name} (${h.description || "no description"})`).join("; ") || "none"}`,
+      `Tasks:`,
       ...(tasks ?? []).map(
         (t) =>
-          `- ${t.title} | хаб: ${hubName(t.hub_id)} | приоритет: ${t.priority} | колонка: ${t.board_column} | на сегодня: ${t.is_today ? "да" : "нет"} | выполнена: ${t.is_done ? "да" : "нет"}`,
+          `- ${t.title} | hub: ${hubName(t.hub_id)} | priority: ${t.priority} | column: ${t.board_column} | today: ${t.is_today ? "yes" : "no"} | done: ${t.is_done ? "yes" : "no"}`,
       ),
     ].join("\n");
 
     if (!apiKey) {
       return fail(
-        "Ключ доступа к модели не настроен. Добавьте его в настройках проекта, чтобы Луми отвечал.",
+        "The model key is not configured. Add it in the project settings so Lumi can answer.",
       );
     }
 
@@ -77,7 +77,7 @@ export const askLumi = createServerFn({ method: "POST" })
           {
             role: "system",
             content:
-              "Ты Луми, помощник приложения Luvion. Отвечай по-русски, спокойно и коротко, без эмодзи и восклицательных знаков. Используй только данные пользователя ниже, ничего не выдумывай. Если данных нет, скажи об этом прямо и предложи следующий шаг.\n\n" +
+              "You are Lumi, the assistant inside Luvion. Answer in English, calmly and briefly, with no emoji and no exclamation marks. State facts, never praise abstractly. Use only the user data below and invent nothing. When the data is missing, say so plainly and name the next step.\n\n" +
               contextText,
           },
           { role: "user", content: data.question },
@@ -86,14 +86,14 @@ export const askLumi = createServerFn({ method: "POST" })
     });
 
     if (res.status === 429) {
-      return fail("Лимит запросов исчерпан. Попробуйте позже.");
+      return fail("The model rate limit is reached. Try again in a few minutes.");
     }
     if (!res.ok) {
-      return fail(`Ответ не получен, код ${res.status}. Повторите вопрос через минуту.`);
+      return fail(`No answer came back, status ${res.status}. Ask again in a minute.`);
     }
 
     const json = (await res.json()) as {
       choices?: { message?: { content?: string } }[];
     };
-    return fail(json.choices?.[0]?.message?.content ?? "Ответ пустой. Повторите вопрос.");
+    return fail(json.choices?.[0]?.message?.content ?? "The answer came back empty. Ask again.");
   });
