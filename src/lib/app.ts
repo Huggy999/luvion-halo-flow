@@ -75,6 +75,79 @@ export const COLUMNS: { key: BoardColumn; label: string }[] = [
   { key: "done", label: "Done" },
 ];
 
+export const WIP_LIMIT = 3;
+
+export type DocTemplateKey = "blank" | "meeting" | "weekly" | "brief" | "decision";
+
+export const DOC_TEMPLATES: {
+  key: DocTemplateKey;
+  name: string;
+  description: string;
+  blocks: { type: Block["type"]; text: string }[];
+}[] = [
+  {
+    key: "blank",
+    name: "Blank page",
+    description: "Start from nothing",
+    blocks: [{ type: "paragraph", text: "" }],
+  },
+  {
+    key: "meeting",
+    name: "Meeting notes",
+    description: "Who was there, what was decided",
+    blocks: [
+      { type: "heading", text: "Meeting notes" },
+      { type: "paragraph", text: "Date and who was there" },
+      { type: "heading", text: "Decisions" },
+      { type: "check", text: "" },
+      { type: "heading", text: "Next steps" },
+      { type: "check", text: "" },
+    ],
+  },
+  {
+    key: "weekly",
+    name: "Weekly review",
+    description: "What moved, what did not",
+    blocks: [
+      { type: "heading", text: "Weekly review" },
+      { type: "heading", text: "What moved" },
+      { type: "paragraph", text: "" },
+      { type: "heading", text: "What did not" },
+      { type: "paragraph", text: "" },
+      { type: "heading", text: "One thing for next week" },
+      { type: "check", text: "" },
+    ],
+  },
+  {
+    key: "brief",
+    name: "Project brief",
+    description: "The shape of a new direction",
+    blocks: [
+      { type: "heading", text: "Project brief" },
+      { type: "callout", text: "One sentence on why this exists" },
+      { type: "heading", text: "What done looks like" },
+      { type: "paragraph", text: "" },
+      { type: "heading", text: "First three steps" },
+      { type: "check", text: "" },
+      { type: "check", text: "" },
+      { type: "check", text: "" },
+    ],
+  },
+  {
+    key: "decision",
+    name: "Decision log",
+    description: "What was chosen and why",
+    blocks: [
+      { type: "heading", text: "Decision" },
+      { type: "paragraph", text: "" },
+      { type: "heading", text: "Why this and not the alternative" },
+      { type: "paragraph", text: "" },
+      { type: "heading", text: "What would change our mind" },
+      { type: "paragraph", text: "" },
+    ],
+  },
+];
+
 export const HUB_COLORS = [
   { key: "blue", label: "Blue", value: "var(--blue)" },
   { key: "mint", label: "Mint", value: "var(--mint)" },
