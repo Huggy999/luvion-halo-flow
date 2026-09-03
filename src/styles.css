@@ -38,6 +38,7 @@
   --color-bg: var(--bg);
   --color-line: var(--line);
   --color-line-2: var(--line-2);
+  --color-line-ctl: var(--line-ctl);
 
   /* совместимость с shadcn-примитивами */
   --color-background: var(--bg);
@@ -80,6 +81,7 @@
   --bg: #f2f6fd;
   --line: #e4ecf8;
   --line-2: #d2dff1;
+  --line-ctl: #8194b1;
   --sunk: #edf2fb;
   --line-card: #d8e3f3;
   --shadow-soft: 0 8px 28px -14px rgba(10, 18, 35, 0.28);
@@ -94,6 +96,7 @@
   --ink-3: #8a8474;
   --line: #1a1f2a;
   --line-2: #262d3b;
+  --line-ctl: #5a6270;
   --sunk: #11151e;
   --line-card: #242c3a;
   --blue: #3d9aff;
