@@ -102,10 +102,20 @@ function HubsScreen() {
 
       <div className="space-y-3">
         {hubs.length === 0 ? (
-          <p className="card p-4 text-sm text-ink-2">
-            No hubs yet. Create the first one to keep tasks and docs together.
-          </p>
+          <div className="card p-4">
+            <p className="text-sm text-ink-2">
+              No hubs yet. Create the first one to keep tasks and docs together.
+            </p>
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+            >
+              New hub
+            </button>
+          </div>
         ) : null}
+
         {hubs.map((hub) => {
           const list = tasks.filter((t) => t.hub_id === hub.id);
           const done = list.filter((t) => t.is_done).length;
