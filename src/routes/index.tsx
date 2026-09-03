@@ -355,8 +355,8 @@ function PulseScreen() {
             <p className="label-xs" style={{ color: "var(--ink-2)" }}>
               Luvion AI
             </p>
-            <p className="mt-1 text-[15px] font-bold text-ink">Ask Lumi about your work</p>
-            <p className="mt-1 text-[13px] text-ink-2">
+            <p className="mt-1 t-body font-bold text-ink">Ask Lumi about your work</p>
+            <p className="mt-1 t-aux text-ink-2">
               Answers from your hubs and tasks, nothing invented
             </p>
           </div>
