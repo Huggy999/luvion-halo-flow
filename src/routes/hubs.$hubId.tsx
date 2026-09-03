@@ -4,6 +4,8 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText } from "lucide-rea
 import { Sheet } from "@/components/Sheet";
 import { TaskRow } from "@/components/TaskRow";
 import { DocEditor } from "@/components/DocEditor";
+import { BoundaryCard } from "@/components/BoundaryCard";
+import { LIMITS, TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
 import {
   COLUMNS,
   hubColor,
@@ -15,6 +17,7 @@ import {
   useTaskMutations,
   useTasks,
 } from "@/lib/app";
+
 
 export const Route = createFileRoute("/hubs/$hubId")({
   head: () => ({
