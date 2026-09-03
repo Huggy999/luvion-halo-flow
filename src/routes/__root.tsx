@@ -217,6 +217,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeSync />
+      <StreakHaptics />
       <LiveRegion />
       <AppFrame />
     </QueryClientProvider>
