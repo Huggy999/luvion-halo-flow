@@ -338,7 +338,7 @@ function DayScreen() {
         <h2 className="t-title text-ink">Closed today</h2>
         <ul className="mt-2 space-y-2">
           {closedToday.length === 0 ? (
-            <li className="text-sm text-ink-2">Nothing closed yet today.</li>
+            <li className="t-body font-normal text-ink-2">Nothing closed yet today.</li>
           ) : (
             closedToday.map((t) => (
               <li key={t.id} className="flex items-center gap-3">
@@ -359,7 +359,7 @@ function DayScreen() {
       <Sheet open={poolOpen} onClose={() => setPoolOpen(false)} title="Pick from your tasks">
         <ul className="space-y-2">
           {pool.length === 0 ? (
-            <li className="text-sm text-ink-2">
+            <li className="t-body font-normal text-ink-2">
               No free tasks left. Create one with the plus button.
             </li>
           ) : (

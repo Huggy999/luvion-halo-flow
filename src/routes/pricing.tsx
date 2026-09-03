@@ -122,7 +122,7 @@ function PricingScreen() {
                 ) : null}
               </div>
 
-              <p className="num mt-3 text-xl font-bold text-ink">
+              <p className="num mt-3 t-section text-ink">
                 {plan.key === "free"
                   ? formatPrice(0, currency)
                   : `${formatPrice(PLAN_AMOUNT[plan.key][currency], currency)} per month`}

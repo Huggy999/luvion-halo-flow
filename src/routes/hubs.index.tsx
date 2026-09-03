@@ -126,7 +126,7 @@ function HubsScreen() {
       <div className="space-y-3">
         {hubs.length === 0 ? (
           <div className="card p-4">
-            <p className="text-sm text-ink-2">
+            <p className="t-body font-normal text-ink-2">
               No hubs yet. Create the first one to keep tasks and docs together.
             </p>
             <button
@@ -152,7 +152,7 @@ function HubsScreen() {
             >
               <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
                 <span
-                  className="grid h-12 w-12 shrink-0 place-items-center rounded-tile text-lg font-extrabold text-white"
+                  className="grid h-12 w-12 shrink-0 place-items-center rounded-tile t-section text-white"
                   style={{ background: hubColor(hub.color) }}
                   aria-hidden="true"
                 >

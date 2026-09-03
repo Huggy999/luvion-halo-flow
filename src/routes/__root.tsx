@@ -26,7 +26,7 @@ function NotFoundComponent() {
     <div className="flex min-h-[70vh] items-center justify-center px-6">
       <div className="max-w-xs text-center">
         <h1 className="t-screen text-ink">Page not found</h1>
-        <p className="mt-2 text-sm text-ink-2">
+        <p className="mt-2 t-body font-normal text-ink-2">
           This address does not exist or the section moved. Go back to Pulse.
         </p>
         <Link
@@ -50,7 +50,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-[70vh] items-center justify-center px-6">
       <div className="max-w-xs text-center">
         <h1 className="t-screen text-ink">The data did not load</h1>
-        <p className="mt-2 text-sm text-ink-2">
+        <p className="mt-2 t-body font-normal text-ink-2">
           Cause: {error.message || "no response from the server"}. Try again.
         </p>
         <button

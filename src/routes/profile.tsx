@@ -134,7 +134,7 @@ function ProfileScreen() {
                 ? `${level.name} · day ${streak} of your streak`
                 : `${level.name} · your streak has not started`}
             </p>
-            <p className="num mt-1 text-2xl font-bold text-ink">{streakLabel(streak)}</p>
+            <p className="num mt-1 t-section text-ink">{streakLabel(streak)}</p>
 
             <p className="mt-1 t-aux text-ink-2">
               Best {state?.best_streak ?? 0} · {closed} tasks closed
@@ -337,7 +337,7 @@ function ProfileScreen() {
         onClose={() => setConfirmDelete(false)}
         title="Delete account"
       >
-        <p className="text-sm text-ink-2">
+        <p className="t-body font-normal text-ink-2">
           The account, the plan and the Lumi request counter will be deleted permanently. This
           cannot be undone and support cannot restore it.
         </p>
@@ -388,7 +388,7 @@ function ProfileScreen() {
       </Sheet>
 
       <Sheet open={confirm} onClose={() => setConfirm(false)} title="Reset all data">
-        <p className="text-sm text-ink-2">
+        <p className="t-body font-normal text-ink-2">
           This cannot be undone. Hubs, tasks, docs and chat history will be removed.
         </p>
         <div className="mt-5 grid grid-cols-2 gap-2">

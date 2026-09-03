@@ -290,7 +290,7 @@ function PulseScreen() {
         </p>
         <ul className="surface-sunk mt-3 divide-y divide-line px-3">
           {focus.length === 0 ? (
-            <li className="py-4 text-sm text-ink-2">
+            <li className="py-4 t-body font-normal text-ink-2">
               Nothing is picked for today. Tasks are picked on the Today screen.
             </li>
           ) : (

@@ -170,7 +170,7 @@ function LumiScreen() {
 
       <section className="space-y-5" aria-label="Conversation">
         {messages.length === 0 ? (
-          <p className="card p-4 text-sm text-ink-2">
+          <p className="card p-4 t-body font-normal text-ink-2">
             Lumi reads your hubs and tasks and answers only from them. Ask a question or pick a
             prompt below.
           </p>

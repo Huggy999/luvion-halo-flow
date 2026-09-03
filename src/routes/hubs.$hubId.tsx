@@ -127,7 +127,7 @@ function HubScreen() {
         <Link to="/hubs" className="inline-flex min-h-11 items-center gap-2 text-sm font-bold" style={{ color: "var(--blue-ink)" }}>
           <ArrowLeft size={18} aria-hidden="true" /> Back to hubs
         </Link>
-        <p className="card p-4 text-sm text-ink-2">
+        <p className="card p-4 t-body font-normal text-ink-2">
           This hub was not found — it was deleted or the link is out of date. Go back to the hub list.
         </p>
       </div>
@@ -220,7 +220,7 @@ function HubScreen() {
           <div className="surface-sunk mt-1 divide-y divide-line px-3">
             {hubTasks.length === 0 ? (
               <div className="py-4">
-                <p className="text-sm text-ink-2">No tasks yet in this hub.</p>
+                <p className="t-body font-normal text-ink-2">No tasks yet in this hub.</p>
                 <button
                   type="button"
                   onClick={() => setOpenTask(true)}
@@ -343,7 +343,7 @@ function HubScreen() {
             <ul className="surface-sunk mt-2 divide-y divide-line px-3">
               {hubDocs.length === 0 ? (
                 <li className="py-4">
-                  <p className="text-sm text-ink-2">No docs yet in this hub.</p>
+                  <p className="t-body font-normal text-ink-2">No docs yet in this hub.</p>
                   <button
                     type="button"
                     onClick={() => setOpenDocPicker(true)}
@@ -393,7 +393,7 @@ function HubScreen() {
         title="Three cards are already in progress"
       >
         <div className="space-y-3">
-          <p className="text-sm text-ink-2">
+          <p className="t-body font-normal text-ink-2">
             To start {wipCandidate?.title}, pick the card that goes back to Backlog.
           </p>
           <ul className="space-y-2">

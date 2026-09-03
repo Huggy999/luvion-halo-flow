@@ -72,7 +72,7 @@ export function DocEditor({ doc, onBack }: { doc: Doc; onBack: () => void }) {
 
   const styleFor = (type: Block["type"]) =>
     type === "heading"
-      ? "text-xl font-extrabold text-ink"
+      ? "t-section text-ink"
       : type === "callout"
         ? "text-[16px] text-ink"
         : "text-[16px] text-ink";
