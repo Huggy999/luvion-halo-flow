@@ -1,9 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Pause, Play, RotateCcw, Plus } from "lucide-react";
+import { Pause, Play, RotateCcw, MoreHorizontal } from "lucide-react";
 import { Lumi } from "@/components/Lumi";
-import { TaskRow } from "@/components/TaskRow";
-import { announce, todayISO, useHubs, useTaskMutations, useTasks } from "@/lib/app";
+import { Sheet } from "@/components/Sheet";
+import { TaskCheck } from "@/components/TaskRow";
+import {
+  announce,
+  hubColor,
+  todayISO,
+  useHubs,
+  useTaskMutations,
+  useTasks,
+  type Task,
+} from "@/lib/app";
 
 export const Route = createFileRoute("/day")({
   head: () => ({
@@ -12,12 +21,12 @@ export const Route = createFileRoute("/day")({
       {
         name: "description",
         content:
-          "A real 25 minute focus timer with Lumi inside the ring and the three tasks picked for today.",
+          "A real 25 minute focus timer with Lumi inside the ring and three numbered slots for the tasks of today.",
       },
       { property: "og:title", content: "Today — Luvion" },
       {
         property: "og:description",
-        content: "Focus sessions of 25 minutes and a short list of tasks for today.",
+        content: "Focus sessions of 25 minutes and three slots for today.",
       },
     ],
   }),
@@ -35,6 +44,10 @@ function DayScreen() {
   const [running, setRunning] = useState(false);
   const [session, setSession] = useState(1);
   const tick = useRef<number | null>(null);
+
+  const [poolOpen, setPoolOpen] = useState(false);
+  const [menuTask, setMenuTask] = useState<Task | null>(null);
+  const [swapCandidate, setSwapCandidate] = useState<Task | null>(null);
 
   useEffect(() => {
     if (!running) return;
@@ -55,9 +68,23 @@ function DayScreen() {
   }, [running]);
 
   const today = todayISO();
-  const focus = tasks.filter((t) => t.is_today);
+  const focusOpen = tasks.filter((t) => t.is_today && !t.is_done);
+  const closedToday = tasks.filter(
+    (t) => t.is_done && t.done_at?.slice(0, 10) === today,
+  );
   const pool = tasks.filter((t) => !t.is_today && !t.is_done);
-  const doneToday = tasks.filter((t) => t.done_at?.slice(0, 10) === today).length;
+  const slots: (Task | null)[] = [0, 1, 2].map((i) => focusOpen[i] ?? null);
+  const full = focusOpen.length >= 3;
+
+  const pick = (task: Task) => {
+    if (full) {
+      setPoolOpen(false);
+      setSwapCandidate(task);
+      return;
+    }
+    patchTask.mutate({ id: task.id, patch: { is_today: true } });
+    setPoolOpen(false);
+  };
 
   const ring = 2 * Math.PI * 46;
   const progress = 1 - left / FOCUS_SECONDS;
@@ -131,60 +158,172 @@ function DayScreen() {
       <section className="card p-4" aria-label="Three tasks for today">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-extrabold text-ink">Three tasks for today</h2>
-          <span className="num text-[13px] text-ink-3">{doneToday} closed</span>
+          <span className="num text-[13px] text-ink-3">{closedToday.length} closed</span>
         </div>
-        <div className="mt-1 divide-y divide-line">
-          {focus.length === 0 ? (
-            <p className="py-4 text-sm text-ink-2">
-              The list is empty. Pick tasks from the pool below.
-            </p>
-          ) : (
-            focus.map((t) => (
-              <TaskRow
-                key={t.id}
-                task={t}
-                hub={hubs.find((h) => h.id === t.hub_id)}
-                onToggle={() => completeTask.mutate(t)}
-                right={
+        <p className="mt-1 text-[13px] text-ink-2">
+          Three slots, no more. A fourth task takes the place of one of these.
+        </p>
+
+        <ol className="mt-2 divide-y divide-line">
+          {slots.map((task, i) => (
+            <li key={i} className="flex items-center gap-3 py-2.5">
+              <span
+                className="num grid h-7 w-7 shrink-0 place-items-center rounded-chip border border-line-2 text-[13px] font-bold text-ink-3"
+                aria-hidden="true"
+              >
+                {i + 1}
+              </span>
+              {task ? (
+                <>
+                  <TaskCheck
+                    checked={task.is_done}
+                    onToggle={() => completeTask.mutate(task)}
+                    label={`Mark ${task.title} done`}
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-medium text-ink">
+                      {task.title}
+                    </span>
+                    {(() => {
+                      const hub = hubs.find((h) => h.id === task.hub_id);
+                      return hub ? (
+                        <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-ink-2">
+                          <span
+                            className="h-2 w-2 rounded-chip"
+                            style={{ background: hubColor(hub.color) }}
+                            aria-hidden="true"
+                          />
+                          {hub.name}
+                        </span>
+                      ) : null;
+                    })()}
+                  </span>
                   <button
                     type="button"
-                    aria-label={`Remove ${t.title} from today`}
-                    onClick={() => patchTask.mutate({ id: t.id, patch: { is_today: false } })}
-                    className="min-h-11 px-2 text-[13px] font-bold"
-                    style={{ color: "var(--blue-ink)" }}
+                    aria-label={`More actions for ${task.title}`}
+                    onClick={() => setMenuTask(task)}
+                    className="grid h-11 w-11 shrink-0 place-items-center rounded-btn text-ink-3"
                   >
-                    Remove
+                    <MoreHorizontal size={18} aria-hidden="true" />
                   </button>
-                }
-              />
-            ))
-          )}
-        </div>
-      </section>
-
-      <section className="card p-4" aria-label="Add to today">
-        <h2 className="text-base font-extrabold text-ink">Add to today</h2>
-        <ul className="mt-2 space-y-2">
-          {pool.length === 0 ? (
-            <li className="text-sm text-ink-2">No free tasks left.</li>
-          ) : (
-            pool.map((t) => (
-              <li key={t.id} className="flex items-center gap-3">
-                <span className="min-w-0 flex-1 truncate text-[15px] text-ink">{t.title}</span>
+                </>
+              ) : (
                 <button
                   type="button"
-                  aria-label={`Add ${t.title} to today`}
-                  onClick={() => patchTask.mutate({ id: t.id, patch: { is_today: true } })}
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-btn border border-line-2"
+                  onClick={() => setPoolOpen(true)}
+                  className="min-h-11 min-w-0 flex-1 text-left text-[15px] font-medium"
                   style={{ color: "var(--blue-ink)" }}
                 >
-                  <Plus size={18} aria-hidden="true" />
+                  Pick from your tasks
                 </button>
+              )}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="card p-4" aria-label="Closed today">
+        <h2 className="text-base font-extrabold text-ink">Closed today</h2>
+        <ul className="mt-2 space-y-2">
+          {closedToday.length === 0 ? (
+            <li className="text-sm text-ink-2">Nothing closed yet today.</li>
+          ) : (
+            closedToday.map((t) => (
+              <li key={t.id} className="flex items-center gap-3">
+                <TaskCheck
+                  checked
+                  onToggle={() => completeTask.mutate(t)}
+                  label={`Reopen ${t.title}`}
+                />
+                <span className="strike min-w-0 flex-1 truncate text-[15px] text-ink-3">
+                  {t.title}
+                </span>
               </li>
             ))
           )}
         </ul>
       </section>
+
+      <Sheet open={poolOpen} onClose={() => setPoolOpen(false)} title="Pick from your tasks">
+        <ul className="space-y-2">
+          {pool.length === 0 ? (
+            <li className="text-sm text-ink-2">No free tasks left. New ones are created in Hubs.</li>
+          ) : (
+            pool.map((t) => (
+              <li key={t.id}>
+                <button
+                  type="button"
+                  onClick={() => pick(t)}
+                  className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left text-[15px] text-ink"
+                >
+                  {t.title}
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+      </Sheet>
+
+      <Sheet
+        open={menuTask !== null}
+        onClose={() => setMenuTask(null)}
+        title={menuTask?.title ?? "Task"}
+      >
+        <button
+          type="button"
+          onClick={() => {
+            if (menuTask) patchTask.mutate({ id: menuTask.id, patch: { is_today: false } });
+            setMenuTask(null);
+          }}
+          className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
+          style={{ color: "var(--blue-ink)" }}
+        >
+          Remove from today
+        </button>
+        <button
+          type="button"
+          onClick={() => setMenuTask(null)}
+          className="mt-2 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold text-ink-2"
+        >
+          Cancel
+        </button>
+      </Sheet>
+
+      <Sheet
+        open={swapCandidate !== null}
+        onClose={() => setSwapCandidate(null)}
+        title="All three slots are taken"
+      >
+        <p className="text-[14px] leading-relaxed text-ink-2">
+          To add {swapCandidate?.title}, pick the task that leaves today. It stays in its hub and
+          keeps everything it has.
+        </p>
+        <ul className="mt-3 space-y-2">
+          {focusOpen.map((t) => (
+            <li key={t.id}>
+              <button
+                type="button"
+                onClick={() => {
+                  patchTask.mutate({ id: t.id, patch: { is_today: false } });
+                  if (swapCandidate)
+                    patchTask.mutate({ id: swapCandidate.id, patch: { is_today: true } });
+                  setSwapCandidate(null);
+                }}
+                className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left text-[15px] text-ink"
+              >
+                Replace {t.title}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button
+          type="button"
+          onClick={() => setSwapCandidate(null)}
+          className="mt-3 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold text-ink-2"
+        >
+          Keep today as it is
+        </button>
+      </Sheet>
     </div>
   );
 }
