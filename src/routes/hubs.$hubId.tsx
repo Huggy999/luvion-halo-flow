@@ -166,15 +166,30 @@ function HubScreen() {
           </div>
           <div className="mt-1 divide-y divide-line">
             {hubTasks.length === 0 ? (
-              <p className="py-4 text-sm text-ink-2">No tasks yet.</p>
+              <div className="py-4">
+                <p className="text-sm text-ink-2">No tasks yet in this hub.</p>
+                <button
+                  type="button"
+                  onClick={() => setOpenTask(true)}
+                  className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+                >
+                  New task
+                </button>
+              </div>
             ) : (
               hubTasks.map((t) => (
-                <TaskRow key={t.id} task={t} onToggle={() => completeTask.mutate(t)} />
+                <TaskRow
+                  key={t.id}
+                  task={t}
+                  onToggle={() => completeTask.mutate(t)}
+                  onOpen={() => setDetailTask(t)}
+                />
               ))
             )}
           </div>
         </section>
       ) : null}
+
 
       {segment === "board" ? (
         <section aria-label="Task board">
