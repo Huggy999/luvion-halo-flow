@@ -16,7 +16,9 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LiveRegion } from "../components/LiveRegion";
 import { CreateMenu } from "../components/CreateMenu";
 import { InstallHint } from "../components/InstallHint";
-import { useAppState } from "../lib/app";
+import { UndoToast } from "../components/UndoToast";
+import { STREAK_EVENT, useAppState } from "../lib/app";
+import { haptic } from "../lib/haptics";
 
 
 function NotFoundComponent() {
