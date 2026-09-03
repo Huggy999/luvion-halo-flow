@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { Button } from "@/components/Button";
+import { Field } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
 import { BoundaryCard } from "@/components/BoundaryCard";
 import { DataError } from "@/components/DataError";
@@ -83,26 +85,26 @@ function HubsScreen() {
         </div>
 
         {atLimit ? (
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={() => {
               setDismissed(false);
               setShowBoundary(true);
             }}
-            className="min-h-11 shrink-0 rounded-btn border border-line-2 px-3 t-aux font-bold"
+            className="shrink-0"
             style={{ color: "var(--ink-2)" }}
           >
             {hubs.length} of {limit} on {TIER_LABEL[billing.tier]}
-          </button>
+          </Button>
         ) : (
-          <button
-            type="button"
+          <Button
+            variant="primary"
             aria-label="Create hub"
             onClick={() => setOpen(true)}
-            className="ring-on-solid grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
+            className="h-11 w-11 shrink-0 px-0"
           >
             <Plus size={20} aria-hidden="true" />
-          </button>
+          </Button>
         )}
       </header>
 
@@ -129,13 +131,9 @@ function HubsScreen() {
             <p className="t-body font-normal text-ink-2">
               No hubs yet. Create the first one to keep tasks and docs together.
             </p>
-            <button
-              type="button"
-              onClick={() => setOpen(true)}
-              className="ring-on-solid mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
-            >
+            <Button variant="primary" block className="mt-3" onClick={() => setOpen(true)}>
               New hub
-            </button>
+            </Button>
           </div>
         ) : null}
 
@@ -188,24 +186,20 @@ function HubsScreen() {
 
       <Sheet open={open} onClose={() => setOpen(false)} title="New hub">
         <div className="space-y-3">
-          <label className="block">
-            <span className="label-xs text-ink-3">Name</span>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="For example, Marketing"
-            />
-          </label>
-          <label className="block">
-            <span className="label-xs text-ink-3">Description</span>
-            <input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="A short explanation"
-            />
-          </label>
+          <Field
+            id="new-hub-name"
+            label="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="For example, Marketing"
+          />
+          <Field
+            id="new-hub-description"
+            label="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="A short explanation"
+          />
           <fieldset>
             <legend className="label-xs text-ink-3">Color</legend>
             <div className="mt-2 flex gap-2">
@@ -230,8 +224,9 @@ function HubsScreen() {
               {error}
             </p>
           ) : null}
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            block
             onClick={async () => {
               if (!name.trim()) {
                 setError("The name is empty. Enter a hub name.");
@@ -260,10 +255,9 @@ function HubsScreen() {
                 setError(`Couldn't create the hub — ${(e as Error).message}. Try again.`);
               }
             }}
-            className="ring-on-solid min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
             Create hub
-          </button>
+          </Button>
         </div>
       </Sheet>
     </div>

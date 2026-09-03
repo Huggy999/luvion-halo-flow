@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { Button } from "@/components/Button";
+import { Field } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
 import {
   HUB_COLORS,
@@ -47,55 +49,41 @@ export function CreateMenu() {
           className="pointer-events-none relative mx-3 w-full max-w-[406px]"
           style={{ marginBottom: "calc(84px + env(safe-area-inset-bottom))" }}
         >
-          <button
-            type="button"
+          <Button
+            variant="primary"
             aria-label="Create something new"
             onClick={() => setMode("menu")}
-            className="shadow-float pointer-events-auto absolute bottom-0 right-0 grid h-14 w-14 place-items-center rounded-btn ring-on-solid bg-blue-btn text-white"
+            className="shadow-float pointer-events-auto absolute bottom-0 right-0 h-14 w-14 px-0"
             style={{ boxShadow: "var(--shadow-float)" }}
           >
             <Plus size={24} aria-hidden="true" />
-          </button>
+          </Button>
         </div>
       </div>
 
       <Sheet open={mode === "menu"} onClose={close} title="Create">
         <div className="space-y-2">
-          <button
-            type="button"
-            onClick={() => setMode("task")}
-            className="min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink"
-          >
+          <Button variant="secondary" size="lg" block onClick={() => setMode("task")}>
             New task
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("hub")}
-            className="min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink"
-          >
+          </Button>
+          <Button variant="secondary" size="lg" block onClick={() => setMode("hub")}>
             New hub
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("doc")}
-            className="min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink"
-          >
+          </Button>
+          <Button variant="secondary" size="lg" block onClick={() => setMode("doc")}>
             New doc
-          </button>
+          </Button>
         </div>
       </Sheet>
 
       <Sheet open={mode === "task"} onClose={close} title="New task">
         <div className="space-y-3">
-          <label className="block">
-            <span className="label-xs text-ink-3">Title</span>
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="What has to be done"
-              className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-            />
-          </label>
+          <Field
+            id="new-task-title"
+            label="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="What has to be done"
+          />
 
           {hubs.length > 0 ? (
             <fieldset>
@@ -153,8 +141,10 @@ export function CreateMenu() {
             </p>
           ) : null}
 
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="lg"
+            block
             onClick={async () => {
               if (!title.trim()) {
                 setError("The title is empty. Write what has to be done.");
@@ -175,24 +165,21 @@ export function CreateMenu() {
                 setError(`Couldn't create the task — ${(e as Error).message}. Try again.`);
               }
             }}
-            className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
           >
             Create task
-          </button>
+          </Button>
         </div>
       </Sheet>
 
       <Sheet open={mode === "hub"} onClose={close} title="New hub">
         <div className="space-y-3">
-          <label className="block">
-            <span className="label-xs text-ink-3">Name</span>
-            <input
-              value={hubName}
-              onChange={(e) => setHubName(e.target.value)}
-              placeholder="For example, Marketing"
-              className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-            />
-          </label>
+          <Field
+            id="new-hub-name"
+            label="Name"
+            value={hubName}
+            onChange={(e) => setHubName(e.target.value)}
+            placeholder="For example, Marketing"
+          />
           <fieldset>
             <legend className="label-xs text-ink-3">Color</legend>
             <div className="mt-2 flex gap-2">
@@ -217,8 +204,10 @@ export function CreateMenu() {
               {error}
             </p>
           ) : null}
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="lg"
+            block
             onClick={async () => {
               if (!hubName.trim()) {
                 setError("The name is empty. Enter a hub name.");
@@ -237,10 +226,9 @@ export function CreateMenu() {
                 setError(`Couldn't create the hub — ${(e as Error).message}. Try again.`);
               }
             }}
-            className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
           >
             Create hub
-          </button>
+          </Button>
         </div>
       </Sheet>
 
@@ -250,20 +238,19 @@ export function CreateMenu() {
             <p className="t-body font-normal text-ink-2">
               A doc lives in a hub, and there is no hub yet. Create a hub first.
             </p>
-            <button
-              type="button"
-              onClick={() => setMode("hub")}
-              className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
-            >
+            <Button variant="primary" size="lg" block onClick={() => setMode("hub")}>
               New hub
-            </button>
+            </Button>
           </div>
         ) : (
           <ul className="space-y-2">
             {hubs.map((h) => (
               <li key={h.id}>
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  block
+                  className="justify-start px-3 text-left t-body font-normal"
                   onClick={async () => {
                     try {
                       await createDoc.mutateAsync({ hub_id: h.id });
@@ -275,10 +262,9 @@ export function CreateMenu() {
                       setError(`Couldn't create the doc — ${(e as Error).message}. Try again.`);
                     }
                   }}
-                  className="min-h-12 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
                 >
                   In {h.name}
-                </button>
+                </Button>
               </li>
             ))}
             {error ? (

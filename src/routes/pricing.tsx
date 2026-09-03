@@ -13,6 +13,7 @@ import {
   type Tier,
 } from "@/lib/billing";
 import { checkSubscription, createCheckout, customerPortal } from "@/lib/billing.functions";
+import { Button } from "@/components/Button";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -143,14 +144,9 @@ function PricingScreen() {
               </ul>
 
               {plan.key !== "free" && !current ? (
-                <button
-                  type="button"
-                  disabled={busy === plan.key}
-                  onClick={() => start(plan.key as "pro" | "team")}
-                  className="mt-4 min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
-                >
+                <Button variant="primary" size="lg" block disabled={busy === plan.key} onClick={() => start(plan.key as "pro" | "team")} className="mt-4">
                   {busy === plan.key ? "Opening checkout" : `Switch to ${plan.name}`}
-                </button>
+                </Button>
               ) : null}
             </section>
           );
@@ -175,56 +171,12 @@ function PricingScreen() {
         </ul>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            disabled={busy === "portal"}
-            onClick={async () => {
-              setMessage("");
-              if (!billing.signedIn) {
-                setMessage("Sign in to open subscription management.");
-                return;
-              }
-              setBusy("portal");
-              try {
-                const res = await portal();
-                if (res.url) window.location.href = res.url;
-                else setMessage(res.message);
-              } catch (e) {
-                setMessage(`It did not open — ${(e as Error).message}`);
-              } finally {
-                setBusy(null);
-              }
-            }}
-            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
-            style={{ color: "var(--blue-ink)" }}
-          >
+          <Button variant="secondary" size="md" disabled={busy === "portal"} onClick={async () => { setMessage(""); if (!billing.signedIn) { setMessage("Sign in to open subscription management."); return; } setBusy("portal"); try { const res = await portal(); if (res.url) window.location.href = res.url; else setMessage(res.message); } catch (e) { setMessage(`It did not open — ${(e as Error).message}`); } finally { setBusy(null); } }} style={{ color: "var(--blue-ink)" }}>
             Manage subscription
-          </button>
-          <button
-            type="button"
-            disabled={busy === "check"}
-            onClick={async () => {
-              setMessage("");
-              if (!billing.signedIn) {
-                setMessage("Sign in to check the subscription.");
-                return;
-              }
-              setBusy("check");
-              try {
-                const res = await check();
-                await refetch();
-                setMessage(res.message || `Current plan: ${TIER_LABEL[res.tier as Tier]}.`);
-              } catch (e) {
-                setMessage(`The check failed — ${(e as Error).message}`);
-              } finally {
-                setBusy(null);
-              }
-            }}
-            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
-            style={{ color: "var(--blue-ink)" }}
-          >
+          </Button>
+          <Button variant="secondary" size="md" disabled={busy === "check"} onClick={async () => { setMessage(""); if (!billing.signedIn) { setMessage("Sign in to check the subscription."); return; } setBusy("check"); try { const res = await check(); await refetch(); setMessage(res.message || `Current plan: ${TIER_LABEL[res.tier as Tier]}.`); } catch (e) { setMessage(`The check failed — ${(e as Error).message}`); } finally { setBusy(null); } }} style={{ color: "var(--blue-ink)" }}>
             Check subscription
-          </button>
+          </Button>
         </div>
       </section>
 

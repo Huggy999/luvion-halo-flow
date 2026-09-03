@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/Button";
+import { Field } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
+import { Switch } from "@/components/Switch";
 import {
   PRIORITY_LABEL,
   announce,
@@ -31,18 +34,16 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
   return (
     <Sheet open onClose={onClose} title="Task">
       <div className="space-y-4">
-        <label className="block">
-          <span className="label-xs text-ink-3">Title</span>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onBlur={() => {
-              const next = title.trim();
-              if (next && next !== task.title) patch({ title: next });
-            }}
-            className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-          />
-        </label>
+        <Field
+          id="task-title"
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          onBlur={() => {
+            const next = title.trim();
+            if (next && next !== task.title) patch({ title: next });
+          }}
+        />
 
         <fieldset>
           <legend className="label-xs text-ink-3">Hub</legend>
@@ -93,27 +94,14 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
 
         <div className="flex items-center justify-between gap-3">
           <span className="t-body text-ink">Add to today</span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={task.is_today}
+          <Switch
             aria-label="Add to today"
-            onClick={() => {
-              patch({ is_today: !task.is_today });
-              announce(task.is_today ? "Removed from today" : "Added to today");
+            checked={task.is_today}
+            onCheckedChange={(next) => {
+              patch({ is_today: next });
+              announce(next ? "Added to today" : "Removed from today");
             }}
-            className="relative h-7 w-12 shrink-0 rounded-chip border transition-colors"
-            style={{
-              background: task.is_today ? "var(--mint)" : "var(--line-2)",
-              borderColor: task.is_today ? "var(--mint)" : "var(--line-2)",
-            }}
-          >
-            <span
-              className="absolute top-0.5 h-5 w-5 rounded-chip bg-paper transition-all"
-              style={{ left: task.is_today ? "26px" : "4px" }}
-              aria-hidden="true"
-            />
-          </button>
+          />
         </div>
 
         <fieldset>
@@ -137,8 +125,10 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
           </div>
         </fieldset>
 
-        <button
-          type="button"
+        <Button
+          variant="danger"
+          size="md"
+          block
           onClick={() => {
             const snapshot = task;
             removeTask.mutate(snapshot.id);
@@ -148,11 +138,9 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
             });
             onClose();
           }}
-          className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
-          style={{ color: "var(--coral-tx)" }}
         >
           Delete task
-        </button>
+        </Button>
       </div>
     </Sheet>
   );
