@@ -403,6 +403,11 @@ export function useChat() {
 
 /* ---------- mutations ---------- */
 
+function reason(e: unknown) {
+  const m = (e as { message?: string })?.message;
+  return m && m.trim() ? m : "no response from the server";
+}
+
 export function useUpdateState() {
   const qc = useQueryClient();
   return useMutation({
@@ -413,9 +418,20 @@ export function useUpdateState() {
         .eq("id", "main");
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["app_state"] }),
+    onMutate: async (patch) => {
+      await qc.cancelQueries({ queryKey: ["app_state"] });
+      const snapshot = qc.getQueryData<AppState>(["app_state"]);
+      if (snapshot) qc.setQueryData<AppState>(["app_state"], { ...snapshot, ...patch });
+      return { snapshot };
+    },
+    onError: (error, _patch, ctx) => {
+      if (ctx?.snapshot) qc.setQueryData(["app_state"], ctx.snapshot);
+      announce(`Couldn't save the setting — ${reason(error)}. The change was undone.`);
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: ["app_state"] }),
   });
 }
+
 
 /** Counts one halo day for the first task closed on a calendar day. */
 async function registerStreakDay(): Promise<boolean> {
