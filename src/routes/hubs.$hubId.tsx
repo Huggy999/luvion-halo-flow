@@ -252,7 +252,7 @@ function HubScreen() {
               const idx = COLUMNS.findIndex((c) => c.key === col.key);
               return (
                 <div key={col.key} className="snap-col w-[80%] shrink-0">
-                  <div className="card h-full p-3">
+                  <div className="surface-sunk h-full p-3">
                     <div className="flex items-center justify-between">
                       <h2 className="t-title text-ink">{col.label}</h2>
                       {col.key === "doing" ? (
