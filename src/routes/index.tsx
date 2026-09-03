@@ -211,7 +211,10 @@ function PulseScreen() {
                   variant={streak > 0 ? "glow" : "sleep"}
                   size={62}
                   className={flash ? "halo-flash" : ""}
+                  draw
+                  interactive
                 />
+
               </HaloRing>
 
               <p className="label-xs mt-2 text-center text-ink-2">
