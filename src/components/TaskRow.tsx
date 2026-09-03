@@ -52,9 +52,9 @@ export function TaskRow({
   right,
 }: {
   task: Task;
-  hub?: Hub;
+  hub?: Hub | undefined;
   onToggle: () => void;
-  right?: React.ReactNode;
+  right?: React.ReactNode | undefined;
 }) {
   return (
     <div className="flex items-center gap-3 py-2.5">
