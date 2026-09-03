@@ -10,33 +10,99 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DayRouteImport } from './routes/day'
+import { Route as HubsRouteImport } from './routes/hubs'
+import { Route as LumiRouteImport } from './routes/lumi'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as HubsIndexRouteImport } from './routes/hubs.index'
+import { Route as HubsHubIdRouteImport } from './routes/hubs.$hubId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DayRoute = DayRouteImport.update({
+  id: '/day',
+  path: '/day',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HubsRoute = HubsRouteImport.update({
+  id: '/hubs',
+  path: '/hubs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LumiRoute = LumiRouteImport.update({
+  id: '/lumi',
+  path: '/lumi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HubsIndexRoute = HubsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HubsRoute,
+} as any)
+const HubsHubIdRoute = HubsHubIdRouteImport.update({
+  id: '/$hubId',
+  path: '/$hubId',
+  getParentRoute: () => HubsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/day': typeof DayRoute
+  '/hubs': typeof HubsRouteWithChildren
+  '/lumi': typeof LumiRoute
+  '/profile': typeof ProfileRoute
+  '/hubs/$hubId': typeof HubsHubIdRoute
+  '/hubs/': typeof HubsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/day': typeof DayRoute
+  '/lumi': typeof LumiRoute
+  '/profile': typeof ProfileRoute
+  '/hubs/$hubId': typeof HubsHubIdRoute
+  '/hubs': typeof HubsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/day': typeof DayRoute
+  '/hubs': typeof HubsRouteWithChildren
+  '/lumi': typeof LumiRoute
+  '/profile': typeof ProfileRoute
+  '/hubs/$hubId': typeof HubsHubIdRoute
+  '/hubs/': typeof HubsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/day' | '/hubs' | '/lumi' | '/profile' | '/hubs/$hubId' | '/hubs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/day' | '/lumi' | '/profile' | '/hubs/$hubId' | '/hubs'
+  id:
+    | '__root__'
+    | '/'
+    | '/day'
+    | '/hubs'
+    | '/lumi'
+    | '/profile'
+    | '/hubs/$hubId'
+    | '/hubs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DayRoute: typeof DayRoute
+  HubsRoute: typeof HubsRouteWithChildren
+  LumiRoute: typeof LumiRoute
+  ProfileRoute: typeof ProfileRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +114,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/day': {
+      id: '/day'
+      path: '/day'
+      fullPath: '/day'
+      preLoaderRoute: typeof DayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hubs': {
+      id: '/hubs'
+      path: '/hubs'
+      fullPath: '/hubs'
+      preLoaderRoute: typeof HubsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lumi': {
+      id: '/lumi'
+      path: '/lumi'
+      fullPath: '/lumi'
+      preLoaderRoute: typeof LumiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hubs/': {
+      id: '/hubs/'
+      path: '/'
+      fullPath: '/hubs/'
+      preLoaderRoute: typeof HubsIndexRouteImport
+      parentRoute: typeof HubsRoute
+    }
+    '/hubs/$hubId': {
+      id: '/hubs/$hubId'
+      path: '/$hubId'
+      fullPath: '/hubs/$hubId'
+      preLoaderRoute: typeof HubsHubIdRouteImport
+      parentRoute: typeof HubsRoute
+    }
   }
 }
 
+interface HubsRouteChildren {
+  HubsHubIdRoute: typeof HubsHubIdRoute
+  HubsIndexRoute: typeof HubsIndexRoute
+}
+
+const HubsRouteChildren: HubsRouteChildren = {
+  HubsHubIdRoute: HubsHubIdRoute,
+  HubsIndexRoute: HubsIndexRoute,
+}
+
+const HubsRouteWithChildren = HubsRoute._addFileChildren(HubsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DayRoute: DayRoute,
+  HubsRoute: HubsRouteWithChildren,
+  LumiRoute: LumiRoute,
+  ProfileRoute: ProfileRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
