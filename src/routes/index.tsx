@@ -97,22 +97,22 @@ function Welcome() {
     <div className="cascade flex min-h-[80vh] flex-col justify-center gap-6 text-center">
       <Lumi variant="glow" size={128} className="mx-auto" label="Lumi" draw interactive />
       <div>
-        <h1 className="screen-title text-[32px] leading-tight text-ink">Luvion</h1>
-        <p className="mt-2 text-[17px] font-bold" style={{ color: "var(--halo-tx)" }}>
+        <h1 className="t-screen text-ink">Luvion</h1>
+        <p className="mt-2 t-title" style={{ color: "var(--halo-tx)" }}>
           Less chaos. More structure.
         </p>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
+        <p className="mt-3 t-body text-ink-2">
           Three tasks a day, the hubs they belong to and a focus timer that keeps the day moving.
         </p>
       </div>
       <div className="space-y-3">
         <Link
           to="/onboarding"
-          className="flex min-h-12 w-full items-center justify-center rounded-btn bg-blue-btn text-sm font-bold text-white"
+          className="ring-on-solid flex min-h-12 w-full items-center justify-center rounded-btn bg-blue-btn text-sm font-bold text-white"
         >
           Get started
         </Link>
-        <Link to="/auth" className="block text-[14px] text-ink-2">
+        <Link to="/auth" className="block t-body font-normal text-ink-2">
           I already have an account
         </Link>
       </div>
@@ -191,18 +191,18 @@ function PulseScreen() {
     <div className="cascade space-y-4">
       <header>
         <p className="label-xs text-ink-3">{dateLabel}</p>
-        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">
+        <h1 className="t-screen mt-1 text-ink">
           {state?.display_name ? `Pulse · ${state.display_name}` : "Pulse"}
         </h1>
       </header>
 
       {state?.freeze_notice ? (
         <section className="card p-4" aria-live="polite">
-          <p className="text-[14px] text-ink">Your halo held. One pause left this month.</p>
+          <p className="t-body text-ink">Your halo held. One pause left this month.</p>
           <button
             type="button"
             onClick={() => updateState.mutate({ freeze_notice: false })}
-            className="mt-2 min-h-11 rounded-btn border border-line-2 px-4 text-[13px] font-bold text-ink"
+            className="mt-2 min-h-11 rounded-btn border border-line-2 px-4 t-aux font-bold text-ink"
           >
             Got it
           </button>
@@ -243,18 +243,18 @@ function PulseScreen() {
               </p>
             </div>
             <div className="min-w-0">
-              <p className="text-[13px] font-bold" style={{ color: "var(--halo-tx)" }}>
+              <p className="t-aux font-bold" style={{ color: "var(--halo-tx)" }}>
                 {streak > 0
                   ? `${level.name} · day ${streak} of your streak`
                   : `${level.name} · your streak has not started`}
               </p>
-              <p className="num mt-1 overflow-hidden text-[42px] font-bold leading-none text-ink">
+              <p className="t-hero mt-1 overflow-hidden text-ink">
                 <span className={flash ? "roll inline-block" : "inline-block"}>{streak}</span>
-                <span className="ml-2 text-base font-medium text-ink-2">
+                <span className="ml-2 t-body text-ink-2">
                   {streak === 1 ? "day in a row" : "days in a row"}
                 </span>
               </p>
-              <p className="mt-1.5 text-[13px] text-ink-2">
+              <p className="mt-1.5 t-aux text-ink-2">
                 {!state?.streaks_enabled
                   ? "Streaks are turned off in Profile"
                   : streak === 0
@@ -263,7 +263,7 @@ function PulseScreen() {
                       ? `${level.next - streak} more days to ${nextName}`
                       : "Highest halo level"}
               </p>
-              <p className="mt-1.5 text-[13px] text-ink-3">Tap to see all five levels</p>
+              <p className="mt-1.5 t-aux text-ink-3">Tap to see all five levels</p>
             </div>
           </div>
         </button>
@@ -279,23 +279,18 @@ function PulseScreen() {
 
       <section className="card p-4" aria-label="Today at a glance">
         <div className="flex items-center justify-between gap-3">
-          <p className="num text-xl font-bold text-ink">{focusDone} of 3 today</p>
-        </div>
-        <p className="mt-1 text-[13px] text-ink-2">
-          {countedToday ? "Today counted" : "Today not counted yet"}
-        </p>
-      </section>
-
-      <section className="card p-4" aria-label="In focus today">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-ink">In focus today</h2>
-          <Link to="/day" className="text-[13px] font-bold" style={{ color: "var(--blue-ink)" }}>
+          <h2 className="t-title text-ink">In focus today</h2>
+          <Link to="/day" className="t-aux font-bold" style={{ color: "var(--blue-ink)" }}>
             Open Today
           </Link>
         </div>
-        <ul className="mt-1 divide-y divide-line">
+        <p className="num mt-2 t-section text-ink">{focusDone} of 3 today</p>
+        <p className="mt-1 t-aux text-ink-2">
+          {countedToday ? "Today counted" : "Today not counted yet"}
+        </p>
+        <ul className="surface-sunk mt-3 divide-y divide-line px-3">
           {focus.length === 0 ? (
-            <li className="py-4 text-sm text-ink-2">
+            <li className="py-4 t-body font-normal text-ink-2">
               Nothing is picked for today. Tasks are picked on the Today screen.
             </li>
           ) : (
@@ -310,14 +305,14 @@ function PulseScreen() {
                   />
                   <span className="min-w-0 flex-1">
                     <span
-                      className={`block truncate text-[15px] font-medium ${
+                      className={`block truncate t-body ${
                         t.is_done ? "strike text-ink-3" : "text-ink"
                       }`}
                     >
                       {t.title}
                     </span>
                     {hub ? (
-                      <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-ink-2">
+                      <span className="mt-0.5 flex items-center gap-1.5 label-xs text-ink-2">
                         <span
                           className="h-2 w-2 rounded-chip"
                           style={{ background: hubColor(hub.color) }}
@@ -360,8 +355,8 @@ function PulseScreen() {
             <p className="label-xs" style={{ color: "var(--ink-2)" }}>
               Luvion AI
             </p>
-            <p className="mt-1 text-[15px] font-bold text-ink">Ask Lumi about your work</p>
-            <p className="mt-1 text-[13px] text-ink-2">
+            <p className="mt-1 t-body font-bold text-ink">Ask Lumi about your work</p>
+            <p className="mt-1 t-aux text-ink-2">
               Answers from your hubs and tasks, nothing invented
             </p>
           </div>

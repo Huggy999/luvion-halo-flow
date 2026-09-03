@@ -21,15 +21,15 @@ export function DataError({ error, onRetry, what }: Props) {
 
   return (
     <section className="card p-4">
-      <h2 className="text-base font-extrabold text-ink">Couldn't load {what}</h2>
-      <p className="mt-1 text-[13px] text-ink-2">{reason}</p>
-      <p className="mt-1 text-[13px] text-ink-3">
+      <h2 className="t-title text-ink">Couldn't load {what}</h2>
+      <p className="mt-1 t-aux text-ink-2">{reason}</p>
+      <p className="mt-1 t-aux text-ink-3">
         Nothing was lost. The data is on the server and will show once the request goes through.
       </p>
       <button
         type="button"
         onClick={onRetry}
-        className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+        className="mt-3 min-h-11 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
       >
         Try again
       </button>

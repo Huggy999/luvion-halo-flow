@@ -79,14 +79,14 @@ function AuthScreen() {
         <Lumi variant="glow" size={56} className="shrink-0" breathe />
         <div className="min-w-0">
           <p className="label-xs text-ink-3">Luvion</p>
-          <h1 className="screen-title text-[26px] leading-tight text-ink">
+          <h1 className="t-screen text-ink">
             {mode === "in" ? "Sign in" : "Create account"}
           </h1>
         </div>
       </header>
 
       <section className="card p-4">
-        <p className="text-[14px] leading-relaxed text-ink-2">
+        <p className="t-body font-normal text-ink-2">
           Less chaos. More structure. An account keeps your plan and Lumi requests with you. The
           halo, the streak and the focus timer are free on every plan.
         </p>
@@ -119,13 +119,13 @@ function AuthScreen() {
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-pressed={showPassword}
-                className="absolute right-1 top-0 min-h-11 rounded-btn px-3 text-[13px] font-bold"
+                className="absolute right-1 top-0 min-h-11 rounded-btn px-3 t-aux font-bold"
                 style={{ color: "var(--blue-ink)" }}
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
             </span>
-            <span id="password-rule" className="mt-1 block text-[13px] text-ink-2">
+            <span id="password-rule" className="mt-1 block t-aux text-ink-2">
               At least six characters. Nothing else is required.
             </span>
           </label>
@@ -133,17 +133,17 @@ function AuthScreen() {
         </div>
 
         {error ? (
-          <p className="mt-3 text-[13px]" style={{ color: "var(--coral-tx)" }}>
+          <p className="mt-3 t-aux" style={{ color: "var(--coral-tx)" }}>
             {error}
           </p>
         ) : null}
-        {note ? <p className="mt-3 text-[13px] text-ink-2">{note}</p> : null}
+        {note ? <p className="mt-3 t-aux text-ink-2">{note}</p> : null}
 
         <button
           type="button"
           disabled={busy}
           onClick={submit}
-          className="mt-4 min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
+          className="mt-4 min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
         >
           {busy ? "Sending" : mode === "in" ? "Sign in" : "Create account"}
         </button>
@@ -162,7 +162,7 @@ function AuthScreen() {
         </button>
       </section>
 
-      <p className="px-1 text-[13px] text-ink-2">
+      <p className="px-1 t-aux text-ink-2">
         The app also opens without an account: tasks, the board, docs, the halo and the timer all
         work. <Link to="/" style={{ color: "var(--blue-ink)" }}>Back to Pulse</Link>
       </p>

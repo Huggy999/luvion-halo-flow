@@ -51,7 +51,7 @@ export function CreateMenu() {
             type="button"
             aria-label="Create something new"
             onClick={() => setMode("menu")}
-            className="pointer-events-auto absolute bottom-0 right-0 grid h-14 w-14 place-items-center rounded-btn bg-blue-btn text-white"
+            className="shadow-float pointer-events-auto absolute bottom-0 right-0 grid h-14 w-14 place-items-center rounded-btn ring-on-solid bg-blue-btn text-white"
             style={{ boxShadow: "var(--shadow-float)" }}
           >
             <Plus size={24} aria-hidden="true" />
@@ -107,7 +107,7 @@ export function CreateMenu() {
                     type="button"
                     aria-pressed={chosenHub === h.id}
                     onClick={() => setHubId(h.id)}
-                    className="min-h-11 rounded-chip border px-3 text-[13px] font-bold text-ink"
+                    className="min-h-11 rounded-chip border px-3 t-aux font-bold text-ink"
                     style={{
                       borderColor: chosenHub === h.id ? "var(--ink)" : "var(--line-2)",
                     }}
@@ -128,7 +128,7 @@ export function CreateMenu() {
                   type="button"
                   aria-pressed={priority === p}
                   onClick={() => setPriority(p)}
-                  className="min-h-11 rounded-btn border text-[13px] font-bold text-ink"
+                  className="min-h-11 rounded-btn border t-aux font-bold text-ink"
                   style={{ borderColor: priority === p ? "var(--ink)" : "var(--line-2)" }}
                 >
                   {p === "p1" ? "Important" : p === "p2" ? "Normal" : "Later"}
@@ -138,7 +138,7 @@ export function CreateMenu() {
           </fieldset>
 
           <label className="flex items-center justify-between gap-3">
-            <span className="text-[15px] text-ink">Add to today</span>
+            <span className="t-body text-ink">Add to today</span>
             <input
               type="checkbox"
               checked={today}
@@ -148,7 +148,7 @@ export function CreateMenu() {
           </label>
 
           {error ? (
-            <p className="text-[13px]" style={{ color: "var(--coral-tx)" }}>
+            <p className="t-aux" style={{ color: "var(--coral-tx)" }}>
               {error}
             </p>
           ) : null}
@@ -175,7 +175,7 @@ export function CreateMenu() {
                 setError(`Couldn't create the task — ${(e as Error).message}. Try again.`);
               }
             }}
-            className="min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+            className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
           >
             Create task
           </button>
@@ -213,7 +213,7 @@ export function CreateMenu() {
             </div>
           </fieldset>
           {error ? (
-            <p className="text-[13px]" style={{ color: "var(--coral-tx)" }}>
+            <p className="t-aux" style={{ color: "var(--coral-tx)" }}>
               {error}
             </p>
           ) : null}
@@ -237,7 +237,7 @@ export function CreateMenu() {
                 setError(`Couldn't create the hub — ${(e as Error).message}. Try again.`);
               }
             }}
-            className="min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+            className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
           >
             Create hub
           </button>
@@ -247,13 +247,13 @@ export function CreateMenu() {
       <Sheet open={mode === "doc"} onClose={close} title="New doc">
         {hubs.length === 0 ? (
           <div className="space-y-3">
-            <p className="text-[14px] text-ink-2">
+            <p className="t-body font-normal text-ink-2">
               A doc lives in a hub, and there is no hub yet. Create a hub first.
             </p>
             <button
               type="button"
               onClick={() => setMode("hub")}
-              className="min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+              className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
             >
               New hub
             </button>
@@ -275,14 +275,14 @@ export function CreateMenu() {
                       setError(`Couldn't create the doc — ${(e as Error).message}. Try again.`);
                     }
                   }}
-                  className="min-h-12 w-full rounded-btn border border-line-2 px-3 text-left text-[15px] text-ink"
+                  className="min-h-12 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
                 >
                   In {h.name}
                 </button>
               </li>
             ))}
             {error ? (
-              <li className="text-[13px]" style={{ color: "var(--coral-tx)" }}>
+              <li className="t-aux" style={{ color: "var(--coral-tx)" }}>
                 {error}
               </li>
             ) : null}

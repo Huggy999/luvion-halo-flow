@@ -56,8 +56,8 @@ function Toggle({
   return (
     <div className="flex items-center justify-between gap-4 py-3">
       <div className="min-w-0">
-        <p className="text-[15px] font-bold text-ink">{label}</p>
-        <p className="text-[13px] text-ink-2">{hint}</p>
+        <p className="t-body font-bold text-ink">{label}</p>
+        <p className="t-aux text-ink-2">{hint}</p>
       </div>
       <button
         type="button"
@@ -122,7 +122,7 @@ function ProfileScreen() {
     <div className="cascade space-y-4">
       <header>
         <p className="label-xs text-ink-3">Your space</p>
-        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Profile</h1>
+        <h1 className="t-screen mt-1 text-ink">Profile</h1>
       </header>
 
       <section className="card p-5" aria-label="Halo level">
@@ -134,9 +134,9 @@ function ProfileScreen() {
                 ? `${level.name} · day ${streak} of your streak`
                 : `${level.name} · your streak has not started`}
             </p>
-            <p className="num mt-1 text-2xl font-bold text-ink">{streakLabel(streak)}</p>
+            <p className="num mt-1 t-section text-ink">{streakLabel(streak)}</p>
 
-            <p className="mt-1 text-[13px] text-ink-2">
+            <p className="mt-1 t-aux text-ink-2">
               Best {state?.best_streak ?? 0} · {closed} tasks closed
             </p>
           </div>
@@ -146,10 +146,10 @@ function ProfileScreen() {
       <section className="card p-4" aria-label="Plan and account">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <div className="min-w-0">
-            <h2 className="text-base font-extrabold text-ink">
+            <h2 className="t-title text-ink">
               {TIER_LABEL[billing.tier]} plan
             </h2>
-            <p className="mt-1 text-[13px] text-ink-2">
+            <p className="mt-1 t-aux text-ink-2">
               {billing.signedIn
                 ? `Lumi requests: ${billing.aiUsed} of ${billing.aiLimit} this month`
                 : "Sign in to attach the plan and the request counter to an account"}
@@ -157,13 +157,13 @@ function ProfileScreen() {
           </div>
           <Link
             to="/pricing"
-            className="grid min-h-11 shrink-0 place-items-center rounded-btn border border-line-2 px-3 text-[13px] font-bold"
+            className="grid min-h-11 shrink-0 place-items-center rounded-btn border border-line-2 px-3 t-aux font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
             Plans
           </Link>
         </div>
-        <p className="mt-3 text-[13px] text-ink-2">
+        <p className="mt-3 t-aux text-ink-2">
           The halo, the streak and the focus timer are always free and do not depend on the plan.
         </p>
         <div className="mt-3">
@@ -185,7 +185,7 @@ function ProfileScreen() {
           ) : (
             <Link
               to="/auth"
-              className="grid min-h-11 w-full place-items-center rounded-btn bg-blue-btn text-sm font-bold text-white"
+              className="grid min-h-11 w-full place-items-center rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
             >
               Sign in or create an account
             </Link>
@@ -194,14 +194,14 @@ function ProfileScreen() {
       </section>
 
       <section className="card p-4" aria-label="Export my data">
-        <h2 className="text-base font-extrabold text-ink">Export my data</h2>
-        <p className="mt-1 text-[13px] text-ink-2">
+        <h2 className="t-title text-ink">Export my data</h2>
+        <p className="mt-1 t-aux text-ink-2">
           Downloads your hubs, tasks and docs. Works on every plan, including an expired subscription. The data stays yours.
         </p>
         <button
           type="button"
           onClick={() => exportJson(hubs, tasks, docs)}
-          className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+          className="mt-3 min-h-11 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
         >
           Download JSON
         </button>
@@ -226,7 +226,7 @@ function ProfileScreen() {
       </section>
 
       <section className="card p-4" aria-label="Theme">
-        <h2 className="text-base font-extrabold text-ink">Theme</h2>
+        <h2 className="t-title text-ink">Theme</h2>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {[
             { key: "light", label: "Light" },
@@ -255,7 +255,7 @@ function ProfileScreen() {
         </div>
       </section>
 
-      <section className="card px-4 py-1" aria-label="Settings">
+      <section className="surface-sunk px-4 py-1" aria-label="Settings">
         <Toggle
           checked={state?.lumi_enabled ?? true}
           onChange={(v) => update.mutate({ lumi_enabled: v })}
@@ -272,12 +272,12 @@ function ProfileScreen() {
       </section>
 
       <section className="card p-4" aria-label="Data">
-        <h2 className="text-base font-extrabold text-ink">Data</h2>
-        <p className="mt-1 text-[13px] text-ink-2">
+        <h2 className="t-title text-ink">Data</h2>
+        <p className="mt-1 t-aux text-ink-2">
           Reset removes hubs, tasks, docs and chat history, and sets the streak back to zero.
         </p>
         {error ? (
-          <p className="mt-2 text-[13px]" style={{ color: "var(--coral-tx)" }}>
+          <p className="mt-2 t-aux" style={{ color: "var(--coral-tx)" }}>
             {error}
           </p>
         ) : null}
@@ -292,8 +292,8 @@ function ProfileScreen() {
       </section>
 
       <section className="card p-4" aria-label="Legal">
-        <h2 className="text-base font-extrabold text-ink">Privacy and terms</h2>
-        <p className="mt-1 text-[13px] text-ink-2">
+        <h2 className="t-title text-ink">Privacy and terms</h2>
+        <p className="mt-1 t-aux text-ink-2">
           What is collected, why, how long it is kept, and how to export or delete it.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2">
@@ -316,8 +316,8 @@ function ProfileScreen() {
 
       {billing.signedIn ? (
         <section className="card p-4" aria-label="Delete account">
-          <h2 className="text-base font-extrabold text-ink">Delete account</h2>
-          <p className="mt-1 text-[13px] text-ink-2">
+          <h2 className="t-title text-ink">Delete account</h2>
+          <p className="mt-1 t-aux text-ink-2">
             Removes the account, the plan and the Lumi counter. Export your data first if you want
             a copy.
           </p>
@@ -337,12 +337,12 @@ function ProfileScreen() {
         onClose={() => setConfirmDelete(false)}
         title="Delete account"
       >
-        <p className="text-sm text-ink-2">
+        <p className="t-body font-normal text-ink-2">
           The account, the plan and the Lumi request counter will be deleted permanently. This
           cannot be undone and support cannot restore it.
         </p>
         {error ? (
-          <p className="mt-2 text-[13px]" style={{ color: "var(--coral-tx)" }}>
+          <p className="mt-2 t-aux" style={{ color: "var(--coral-tx)" }}>
             {error}
           </p>
         ) : null}
@@ -388,7 +388,7 @@ function ProfileScreen() {
       </Sheet>
 
       <Sheet open={confirm} onClose={() => setConfirm(false)} title="Reset all data">
-        <p className="text-sm text-ink-2">
+        <p className="t-body font-normal text-ink-2">
           This cannot be undone. Hubs, tasks, docs and chat history will be removed.
         </p>
         <div className="mt-5 grid grid-cols-2 gap-2">

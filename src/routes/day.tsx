@@ -157,7 +157,7 @@ function DayScreen() {
     <div className="cascade space-y-4">
       <header>
         <p className="label-xs text-ink-3">Focus · Session {session} of 4</p>
-        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Today</h1>
+        <h1 className="t-screen mt-1 text-ink">Today</h1>
       </header>
 
       <section className="card p-5" aria-label="Focus timer">
@@ -165,14 +165,14 @@ function DayScreen() {
           <HaloRing skin={haloSkin(streak)} progress={progress} size={224} breathe={running}>
             <div className="flex flex-col items-center justify-center gap-1">
               <Lumi variant={running ? "glow" : "sleep"} size={70} breathe={running} />
-              <p className="num text-[34px] font-bold leading-none text-ink">
+              <p className="t-hero text-ink">
                 {mm}:{ss}
               </p>
             </div>
           </HaloRing>
         </div>
 
-        <p className="mt-4 text-center text-[17px] font-bold text-ink">
+        <p className="mt-4 text-center t-title text-ink">
           {activeTask ? activeTask.title : "No task picked for this session"}
         </p>
 
@@ -181,7 +181,7 @@ function DayScreen() {
             <button
               type="button"
               onClick={() => setRunning((r) => !r)}
-              className="inline-flex min-h-11 items-center gap-2 rounded-btn bg-blue-btn px-5 text-sm font-bold text-white"
+              className="ring-on-solid inline-flex min-h-11 items-center gap-2 rounded-btn bg-blue-btn px-5 text-sm font-bold text-white"
             >
               {running ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
               {running ? "Pause" : left === FOCUS_SECONDS ? "Start focus" : "Resume"}
@@ -217,7 +217,7 @@ function DayScreen() {
           </div>
         ) : (
           <div className="mt-5 space-y-2">
-            <p className="text-center text-[13px] text-ink-2">
+            <p className="text-center t-aux text-ink-2">
               A session runs on one task. Pick one of the three slots of today.
             </p>
             {focusOpen.length === 0 ? (
@@ -227,7 +227,7 @@ function DayScreen() {
                   setPickForFocus(false);
                   setPoolOpen(true);
                 }}
-                className="min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+                className="ring-on-solid min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
               >
                 Pick from your tasks
               </button>
@@ -240,7 +240,7 @@ function DayScreen() {
                     setActiveId(t.id);
                     setLeft(FOCUS_SECONDS);
                   }}
-                  className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left text-[15px] text-ink"
+                  className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
                 >
                   {i + 1}. {t.title}
                 </button>
@@ -262,18 +262,18 @@ function DayScreen() {
 
       <section className="card p-4" aria-label="Three tasks for today">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-ink">Three tasks for today</h2>
-          <span className="num text-[13px] text-ink-3">{closedToday.length} closed</span>
+          <h2 className="t-title text-ink">Three tasks for today</h2>
+          <span className="num t-aux text-ink-3">{closedToday.length} closed</span>
         </div>
-        <p className="mt-1 text-[13px] text-ink-2">
+        <p className="mt-1 t-aux text-ink-2">
           Three slots, no more. A fourth task takes the place of one of these.
         </p>
 
-        <ol className="mt-2 divide-y divide-line">
+        <ol className="surface-sunk mt-2 divide-y divide-line px-3">
           {slots.map((task, i) => (
             <li key={i} className="flex items-center gap-3 py-2.5">
               <span
-                className="num grid h-7 w-7 shrink-0 place-items-center rounded-chip border border-line-2 text-[13px] font-bold text-ink-3"
+                className="num grid h-7 w-7 shrink-0 place-items-center rounded-chip border border-line-2 t-aux font-bold text-ink-3"
                 aria-hidden="true"
               >
                 {i + 1}
@@ -290,13 +290,13 @@ function DayScreen() {
                     onClick={() => setDetailTask(task)}
                     className="min-w-0 flex-1 py-1 text-left"
                   >
-                    <span className="block truncate text-[15px] font-medium text-ink">
+                    <span className="block truncate t-body text-ink">
                       {task.title}
                     </span>
                     {(() => {
                       const hub = hubs.find((h) => h.id === task.hub_id);
                       return hub ? (
-                        <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-ink-2">
+                        <span className="mt-0.5 flex items-center gap-1.5 label-xs text-ink-2">
                           <span
                             className="h-2 w-2 rounded-chip"
                             style={{ background: hubColor(hub.color) }}
@@ -323,7 +323,7 @@ function DayScreen() {
                     setPickForFocus(false);
                     setPoolOpen(true);
                   }}
-                  className="min-h-11 min-w-0 flex-1 text-left text-[15px] font-medium"
+                  className="min-h-11 min-w-0 flex-1 text-left t-body"
                   style={{ color: "var(--blue-ink)" }}
                 >
                   Pick from your tasks
@@ -335,10 +335,10 @@ function DayScreen() {
       </section>
 
       <section className="card p-4" aria-label="Closed today">
-        <h2 className="text-base font-extrabold text-ink">Closed today</h2>
+        <h2 className="t-title text-ink">Closed today</h2>
         <ul className="mt-2 space-y-2">
           {closedToday.length === 0 ? (
-            <li className="text-sm text-ink-2">Nothing closed yet today.</li>
+            <li className="t-body font-normal text-ink-2">Nothing closed yet today.</li>
           ) : (
             closedToday.map((t) => (
               <li key={t.id} className="flex items-center gap-3">
@@ -347,7 +347,7 @@ function DayScreen() {
                   onToggle={() => completeTask.mutate(t)}
                   label={`Reopen ${t.title}`}
                 />
-                <span className="strike min-w-0 flex-1 truncate text-[15px] text-ink-3">
+                <span className="strike min-w-0 flex-1 truncate t-body text-ink-3">
                   {t.title}
                 </span>
               </li>
@@ -359,7 +359,7 @@ function DayScreen() {
       <Sheet open={poolOpen} onClose={() => setPoolOpen(false)} title="Pick from your tasks">
         <ul className="space-y-2">
           {pool.length === 0 ? (
-            <li className="text-sm text-ink-2">
+            <li className="t-body font-normal text-ink-2">
               No free tasks left. Create one with the plus button.
             </li>
           ) : (
@@ -368,7 +368,7 @@ function DayScreen() {
                 <button
                   type="button"
                   onClick={() => pick(t)}
-                  className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left text-[15px] text-ink"
+                  className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
                 >
                   {t.title}
                 </button>
@@ -393,7 +393,7 @@ function DayScreen() {
               setSession((s) => (s >= 4 ? 1 : s + 1));
               setDoneOpen(false);
             }}
-            className="min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+            className="ring-on-solid min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
             Close task
           </button>
@@ -419,7 +419,7 @@ function DayScreen() {
       </Sheet>
 
       <Sheet open={breakOpen} onClose={() => setBreakOpen(false)} title="Time for a break">
-        <p className="text-[14px] leading-relaxed text-ink-2">
+        <p className="t-body font-normal text-ink-2">
           {session >= 4
             ? "Four sessions are done. A longer break of fifteen minutes fits well here."
             : "Step away for five minutes. The timer waits at twenty five minutes."}
@@ -486,7 +486,7 @@ function DayScreen() {
         onClose={() => setSwapCandidate(null)}
         title="All three slots are taken"
       >
-        <p className="text-[14px] leading-relaxed text-ink-2">
+        <p className="t-body font-normal text-ink-2">
           To add {swapCandidate?.title}, pick the task that leaves today. It stays in its hub and
           keeps everything it has.
         </p>
@@ -501,7 +501,7 @@ function DayScreen() {
                     patchTask.mutate({ id: swapCandidate.id, patch: { is_today: true } });
                   setSwapCandidate(null);
                 }}
-                className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left text-[15px] text-ink"
+                className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
               >
                 Replace {t.title}
               </button>

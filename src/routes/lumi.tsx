@@ -129,25 +129,25 @@ function LumiScreen() {
           <p className="label-xs text-ink-3">
             {thinking ? "Thinking" : "Ready to help"}
           </p>
-          <h1 className="screen-title text-[26px] leading-tight text-ink">Lumi</h1>
+          <h1 className="t-screen text-ink">Lumi</h1>
         </div>
       </header>
 
       {billing.signedIn ? (
-        <p className="num px-1 text-[13px] text-ink-2">
+        <p className="num px-1 t-aux text-ink-2">
           {billing.aiUsed} of {billing.aiLimit} this month · {TIER_LABEL[billing.tier]}
         </p>
       ) : (
         <div className="card p-4">
           <p className="label-xs text-ink-3">Example</p>
-          <p className="mt-2 text-[15px] font-bold text-ink">
+          <p className="mt-2 t-body font-bold text-ink">
             What matters most to close today
           </p>
-          <p className="mt-2 text-[15px] leading-relaxed text-ink-2">
+          <p className="mt-2 t-body font-normal text-ink-2">
             Two of your three slots are open. Prepare the team meeting is marked Important and sits
             in Work, so start there. The other slot holds a task with one focus session left.
           </p>
-          <p className="mt-3 text-[14px] leading-relaxed text-ink-2">
+          <p className="mt-3 t-body font-normal text-ink-2">
             Lumi needs an account: requests are counted on the server and belong to you. Tasks, the
             board, docs, the halo and the focus timer work without signing in.{" "}
             <Link to="/auth" style={{ color: "var(--blue-ink)" }}>
@@ -170,7 +170,7 @@ function LumiScreen() {
 
       <section className="space-y-5" aria-label="Conversation">
         {messages.length === 0 ? (
-          <p className="card p-4 text-sm text-ink-2">
+          <p className="card p-4 t-body font-normal text-ink-2">
             Lumi reads your hubs and tasks and answers only from them. Ask a question or pick a
             prompt below.
           </p>
@@ -180,14 +180,14 @@ function LumiScreen() {
           m.role === "user" ? (
             <div key={m.id} className="text-right">
               <p className="label-xs text-ink-3">You</p>
-              <p className="mt-1 text-[15px] font-bold text-ink">{m.content}</p>
+              <p className="mt-1 t-body font-bold text-ink">{m.content}</p>
             </div>
           ) : (
             <div key={m.id}>
               <p className="label-xs" style={{ color: "var(--ink-2)" }}>
                 Lumi
               </p>
-              <p className="mt-1 whitespace-pre-wrap text-[15px] leading-relaxed text-ink">
+              <p className="mt-1 whitespace-pre-wrap t-body font-normal text-ink">
                 {m.content}
               </p>
               {matched(m.content).length > 0 ? (
@@ -197,10 +197,10 @@ function LumiScreen() {
                     return (
                       <li
                         key={t.id}
-                        className="rounded-tile border border-line bg-paper p-3"
+                        className="surface-sunk p-3"
                       >
-                        <p className="text-[14px] font-bold text-ink">{t.title}</p>
-                        <p className="mt-1 flex items-center gap-1.5 text-[12px] text-ink-2">
+                        <p className="t-body font-bold text-ink">{t.title}</p>
+                        <p className="mt-1 flex items-center gap-1.5 t-aux text-ink-2">
                           <span
                             className="h-2 w-2 rounded-chip"
                             style={{ background: hubColor(hub?.color ?? "blue") }}
@@ -219,10 +219,10 @@ function LumiScreen() {
         )}
 
         {thinking ? (
-          <p className="text-[15px] text-ink-2">Lumi is looking through your tasks</p>
+          <p className="t-body text-ink-2">Lumi is looking through your tasks</p>
         ) : null}
         {error ? (
-          <p className="text-[13px]" style={{ color: "var(--coral-tx)" }}>
+          <p className="t-aux" style={{ color: "var(--coral-tx)" }}>
             {error}
           </p>
         ) : null}
@@ -235,7 +235,7 @@ function LumiScreen() {
             key={c}
             type="button"
             onClick={() => send(c)}
-            className="min-h-11 shrink-0 rounded-chip border border-line-2 bg-paper px-4 text-[13px] font-bold"
+            className="min-h-11 shrink-0 rounded-chip border border-line-2 bg-paper px-4 t-aux font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
             {c}
@@ -261,7 +261,7 @@ function LumiScreen() {
           type="submit"
           aria-label="Send question"
           disabled={thinking}
-          className="grid h-12 w-12 place-items-center rounded-btn bg-blue-btn text-white disabled:opacity-60"
+          className="grid h-12 w-12 place-items-center rounded-btn ring-on-solid bg-blue-btn text-white disabled:opacity-60"
         >
           <Send size={18} aria-hidden="true" />
         </button>

@@ -60,11 +60,11 @@ export function BoundaryCard({
         <Lumi variant="glow" size={44} className="shrink-0" />
         <div className="min-w-0">
           <p className="label-xs text-ink-3">Lumi</p>
-          <p className="mt-1 text-[15px] leading-relaxed text-ink">{left}</p>
-          <p className="mt-2 text-[14px] leading-relaxed text-ink-2">
+          <p className="mt-1 t-body font-normal text-ink">{left}</p>
+          <p className="mt-2 t-body font-normal text-ink-2">
             When they run out: {stops}
           </p>
-          <p className="mt-1 text-[14px] leading-relaxed" style={{ color: "var(--mint-tx)" }}>
+          <p className="mt-1 t-body font-normal" style={{ color: "var(--mint-tx)" }}>
             Keeps working: {continues}
           </p>
         </div>

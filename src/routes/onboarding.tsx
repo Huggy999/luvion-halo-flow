@@ -145,7 +145,7 @@ function OnboardingScreen() {
 
       {step === 1 ? (
         <section className="space-y-3">
-          <h1 className="screen-title text-[26px] leading-tight text-ink">
+          <h1 className="t-screen text-ink">
             What should Lumi call you
           </h1>
           <label className="block">
@@ -163,10 +163,10 @@ function OnboardingScreen() {
 
       {step === 2 ? (
         <section className="space-y-3">
-          <h1 className="screen-title text-[26px] leading-tight text-ink">
+          <h1 className="t-screen text-ink">
             Which areas do you work in
           </h1>
-          <p className="text-[13px] text-ink-2">
+          <p className="t-aux text-ink-2">
             Choose one to three. Each one becomes a hub with its tasks, board and docs.
           </p>
           <ul className="grid grid-cols-2 gap-2">
@@ -181,23 +181,23 @@ function OnboardingScreen() {
                     className="min-h-16 w-full rounded-tile border px-3 py-2 text-left"
                     style={{ borderColor: on ? "var(--ink)" : "var(--line-2)" }}
                   >
-                    <span className="block text-[15px] font-bold text-ink">{t.name}</span>
-                    <span className="block text-[12px] text-ink-2">{t.description}</span>
+                    <span className="block t-body font-bold text-ink">{t.name}</span>
+                    <span className="block t-aux text-ink-2">{t.description}</span>
                   </button>
                 </li>
               );
             })}
           </ul>
-          <p className="text-[13px] text-ink-3">{areas.length} of 3 chosen</p>
+          <p className="t-aux text-ink-3">{areas.length} of 3 chosen</p>
         </section>
       ) : null}
 
       {step === 3 ? (
         <section className="space-y-4">
-          <h1 className="screen-title text-[26px] leading-tight text-ink">
+          <h1 className="t-screen text-ink">
             Three tasks for today
           </h1>
-          <p className="text-[13px] text-ink-2">
+          <p className="t-aux text-ink-2">
             Pick exactly three. {picked.length} of 3 chosen.
           </p>
           {templates.map((t) => (
@@ -212,7 +212,7 @@ function OnboardingScreen() {
                         type="button"
                         aria-pressed={on}
                         onClick={() => togglePick(title)}
-                        className="min-h-11 w-full rounded-btn border px-3 text-left text-[15px] text-ink"
+                        className="min-h-11 w-full rounded-btn border px-3 text-left t-body text-ink"
                         style={{ borderColor: on ? "var(--ink)" : "var(--line-2)" }}
                       >
                         {title}
@@ -257,7 +257,7 @@ function OnboardingScreen() {
                       type="button"
                       aria-pressed
                       onClick={() => togglePick(p)}
-                      className="min-h-11 w-full rounded-btn border px-3 text-left text-[15px] text-ink"
+                      className="min-h-11 w-full rounded-btn border px-3 text-left t-body text-ink"
                       style={{ borderColor: "var(--ink)" }}
                     >
                       {p}
@@ -272,10 +272,10 @@ function OnboardingScreen() {
       {step === 4 ? (
         <section className="space-y-3 text-center">
           <Lumi variant="glow" size={96} className="mx-auto" />
-          <h1 className="screen-title text-[26px] leading-tight text-ink">
+          <h1 className="t-screen text-ink">
             Start your first session
           </h1>
-          <p className="text-[14px] leading-relaxed text-ink-2">
+          <p className="t-body font-normal text-ink-2">
             {name.trim() ? `${name.trim()}, your ` : "Your "}three tasks are on Today with a timer
             ready to run. Close one task a day and the halo grows.
           </p>
@@ -283,7 +283,7 @@ function OnboardingScreen() {
       ) : null}
 
       {error ? (
-        <p className="text-[13px]" style={{ color: "var(--coral-tx)" }}>
+        <p className="t-aux" style={{ color: "var(--coral-tx)" }}>
           {error}
         </p>
       ) : null}
@@ -293,7 +293,7 @@ function OnboardingScreen() {
           <button
             type="button"
             onClick={next}
-            className="min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+            className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
           >
             Continue
           </button>
@@ -302,7 +302,7 @@ function OnboardingScreen() {
             type="button"
             onClick={finish}
             disabled={saving}
-            className="min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
+            className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
           >
             {saving ? "Setting things up" : "Start your first session"}
           </button>

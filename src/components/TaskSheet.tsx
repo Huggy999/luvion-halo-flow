@@ -53,7 +53,7 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
                 type="button"
                 aria-pressed={task.hub_id === h.id}
                 onClick={() => patch({ hub_id: h.id })}
-                className="inline-flex min-h-11 items-center gap-2 rounded-chip border px-3 text-[13px] font-bold"
+                className="inline-flex min-h-11 items-center gap-2 rounded-chip border px-3 t-aux font-bold"
                 style={{
                   borderColor: task.hub_id === h.id ? "var(--ink)" : "var(--line-2)",
                   color: "var(--ink)",
@@ -79,7 +79,7 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
                 type="button"
                 aria-pressed={task.priority === p}
                 onClick={() => patch({ priority: p })}
-                className="min-h-11 rounded-btn border text-[13px] font-bold"
+                className="min-h-11 rounded-btn border t-aux font-bold"
                 style={{
                   borderColor: task.priority === p ? "var(--ink)" : "var(--line-2)",
                   color: "var(--ink)",
@@ -92,7 +92,7 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
         </fieldset>
 
         <div className="flex items-center justify-between gap-3">
-          <span className="text-[15px] text-ink">Add to today</span>
+          <span className="t-body text-ink">Add to today</span>
           <button
             type="button"
             role="switch"
@@ -125,7 +125,7 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
                 type="button"
                 aria-pressed={task.focus_sessions === n}
                 onClick={() => patch({ focus_sessions: n })}
-                className="num min-h-11 rounded-btn border text-[15px] font-bold"
+                className="num min-h-11 rounded-btn border t-body font-bold"
                 style={{
                   borderColor: task.focus_sessions === n ? "var(--ink)" : "var(--line-2)",
                   color: "var(--ink)",
