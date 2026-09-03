@@ -20,15 +20,15 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-6">
       <div className="max-w-xs text-center">
-        <h1 className="screen-title text-3xl text-ink">Страница не найдена</h1>
+        <h1 className="screen-title text-3xl text-ink">Page not found</h1>
         <p className="mt-2 text-sm text-ink-2">
-          Адрес не существует или раздел перенесён. Вернитесь на Пульс.
+          This address does not exist or the section moved. Go back to Pulse.
         </p>
         <Link
           to="/"
           className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn bg-blue-btn px-5 text-sm font-bold text-white"
         >
-          На Пульс
+          Go to Pulse
         </Link>
       </div>
     </div>
@@ -44,9 +44,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-6">
       <div className="max-w-xs text-center">
-        <h1 className="screen-title text-2xl text-ink">Данные не загрузились</h1>
+        <h1 className="screen-title text-2xl text-ink">The data did not load</h1>
         <p className="mt-2 text-sm text-ink-2">
-          Причина: {error.message || "нет ответа от сервера"}. Повторите попытку.
+          Cause: {error.message || "no response from the server"}. Try again.
         </p>
         <button
           onClick={() => {
@@ -55,7 +55,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           }}
           className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn bg-blue-btn px-5 text-sm font-bold text-white"
         >
-          Повторить
+          Try again
         </button>
       </div>
     </div>
@@ -70,11 +70,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { title: "Luvion — продуктивность с нимбом" },
+      { title: "Luvion — structure with a halo" },
       {
         name: "description",
         content:
-          "Luvion — мобильное пространство для личных и командных задач: хабы, доска, фокус-таймер и помощник Луми.",
+          "Luvion is a mobile space for personal and team work: hubs, a board, a focus timer and Lumi. Less chaos. More structure.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -102,7 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="ru">
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
@@ -115,18 +115,18 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 const TABS = [
-  { to: "/", label: "Пульс", icon: Activity },
-  { to: "/hubs", label: "Хабы", icon: Boxes },
-  { to: "/day", label: "Мой день", icon: CalendarCheck },
-  { to: "/lumi", label: "Луми", icon: Sparkles },
-  { to: "/profile", label: "Профиль", icon: User },
+  { to: "/", label: "Pulse", icon: Activity },
+  { to: "/hubs", label: "Hubs", icon: Boxes },
+  { to: "/day", label: "Today", icon: CalendarCheck },
+  { to: "/lumi", label: "Lumi", icon: Sparkles },
+  { to: "/profile", label: "Profile", icon: User },
 ] as const;
 
 function TabBar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <nav
-      aria-label="Основная навигация"
+      aria-label="Main navigation"
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center"
     >
       <div

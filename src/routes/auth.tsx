@@ -8,16 +8,16 @@ import { useSessionUser } from "@/lib/billing";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Вход — Luvion" },
+      { title: "Sign in — Luvion" },
       {
         name: "description",
         content:
-          "Вход и регистрация в Luvion по почте и паролю: тариф и запросы к Луми привязаны к аккаунту.",
+          "Sign in or create a Luvion account with email and password. Your plan and Lumi requests belong to the account.",
       },
-      { property: "og:title", content: "Вход — Luvion" },
+      { property: "og:title", content: "Sign in — Luvion" },
       {
         property: "og:description",
-        content: "Аккаунт Luvion нужен, чтобы считать запросы к Луми и хранить тариф.",
+        content: "A Luvion account keeps your plan and your Lumi request count.",
       },
     ],
   }),
@@ -42,7 +42,7 @@ function AuthScreen() {
     setError("");
     setNote("");
     if (!email.trim() || password.length < 6) {
-      setError("Введите почту и пароль не короче шести символов.");
+      setError("Enter an email and a password of at least six characters.");
       return;
     }
     setBusy(true);
@@ -53,7 +53,7 @@ function AuthScreen() {
           password,
         });
         if (err) throw err;
-        announce("Вход выполнен");
+        announce("Signed in");
         navigate({ to: "/profile", replace: true });
       } else {
         const { error: err } = await supabase.auth.signUp({
@@ -62,10 +62,10 @@ function AuthScreen() {
           options: { emailRedirectTo: `${window.location.origin}/profile` },
         });
         if (err) throw err;
-        setNote("Аккаунт создан. Если нужна проверка почты, подтвердите письмо и войдите.");
+        setNote("Account created. If email confirmation is required, confirm the message and sign in.");
       }
     } catch (e) {
-      setError(`Не получилось: ${(e as Error).message}. Проверьте данные и повторите.`);
+      setError(`Couldn't continue — ${(e as Error).message}. Check the details and try again.`);
     } finally {
       setBusy(false);
     }
@@ -78,20 +78,20 @@ function AuthScreen() {
         <div className="min-w-0">
           <p className="label-xs text-ink-3">Luvion</p>
           <h1 className="screen-title text-[26px] leading-tight text-ink">
-            {mode === "in" ? "Вход" : "Регистрация"}
+            {mode === "in" ? "Sign in" : "Create account"}
           </h1>
         </div>
       </header>
 
       <section className="card p-4">
         <p className="text-[14px] leading-relaxed text-ink-2">
-          Аккаунт нужен, чтобы тариф и запросы к Луми были привязаны к вам. Серия, нимб и
-          фокус-таймер работают без оплаты на любом тарифе.
+          Less chaos. More structure. An account keeps your plan and Lumi requests with you. The
+          halo, the streak and the focus timer are free on every plan.
         </p>
 
         <div className="mt-4 space-y-3">
           <label className="block">
-            <span className="label-xs text-ink-3">Почта</span>
+            <span className="label-xs text-ink-3">Email</span>
             <input
               type="email"
               autoComplete="email"
@@ -102,14 +102,14 @@ function AuthScreen() {
             />
           </label>
           <label className="block">
-            <span className="label-xs text-ink-3">Пароль</span>
+            <span className="label-xs text-ink-3">Password</span>
             <input
               type="password"
               autoComplete={mode === "in" ? "current-password" : "new-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="Не короче шести символов"
+              placeholder="At least six characters"
             />
           </label>
         </div>
@@ -127,7 +127,7 @@ function AuthScreen() {
           onClick={submit}
           className="mt-4 min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
         >
-          {busy ? "Отправка" : mode === "in" ? "Войти" : "Создать аккаунт"}
+          {busy ? "Sending" : mode === "in" ? "Sign in" : "Create account"}
         </button>
 
         <button
@@ -140,13 +140,13 @@ function AuthScreen() {
           className="mt-2 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
           style={{ color: "var(--blue-ink)" }}
         >
-          {mode === "in" ? "У меня ещё нет аккаунта" : "У меня уже есть аккаунт"}
+          {mode === "in" ? "I don\u2019t have an account yet" : "I already have an account"}
         </button>
       </section>
 
       <p className="px-1 text-[13px] text-ink-2">
-        Без аккаунта приложение тоже открывается: задачи, доска, документы, серия и таймер
-        работают. <Link to="/" style={{ color: "var(--blue-ink)" }}>Вернуться на Пульс</Link>
+        The app also opens without an account: tasks, the board, docs, the halo and the timer all
+        work. <Link to="/" style={{ color: "var(--blue-ink)" }}>Back to Pulse</Link>
       </p>
     </div>
   );
