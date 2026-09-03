@@ -5,8 +5,10 @@ import { Lumi } from "@/components/Lumi";
 import { Sheet } from "@/components/Sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { TIER_LABEL, useBilling } from "@/lib/billing";
-import { exportCsv, exportMarkdown } from "@/lib/export";
+import { exportCsv, exportJson, exportMarkdown } from "@/lib/export";
 import { useDocs, useHubs } from "@/lib/app";
+import { useServerFn } from "@tanstack/react-start";
+import { deleteAccount } from "@/lib/account.functions";
 import {
   announce,
   haloLevel,
@@ -19,16 +21,16 @@ import {
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
-      { title: "Профиль — Luvion" },
+      { title: "Profile — Luvion" },
       {
         name: "description",
         content:
-          "Уровень нимба, рекорд серии, выбор светлой или чёрно-золотой темы и сброс данных Luvion.",
+          "Halo level, best streak, plan and account, data export, privacy and terms, and account deletion in Luvion.",
       },
-      { property: "og:title", content: "Профиль — Luvion" },
+      { property: "og:title", content: "Profile — Luvion" },
       {
         property: "og:description",
-        content: "Настройки Luvion: тема, Луми, серии и сброс данных.",
+        content: "Luvion settings: theme, Lumi, streaks, export and account.",
       },
     ],
   }),
@@ -80,6 +82,8 @@ function ProfileScreen() {
   const update = useUpdateState();
   const qc = useQueryClient();
   const [confirm, setConfirm] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const removeAccount = useServerFn(deleteAccount);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -90,35 +94,35 @@ function ProfileScreen() {
   return (
     <div className="cascade space-y-4">
       <header>
-        <p className="label-xs text-ink-3">Личное пространство</p>
-        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Профиль</h1>
+        <p className="label-xs text-ink-3">Your space</p>
+        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Profile</h1>
       </header>
 
-      <section className="card p-5" aria-label="Уровень нимба">
+      <section className="card p-5" aria-label="Halo level">
         <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4">
           <Lumi variant="glow" size={68} className="shrink-0" breathe />
           <div className="min-w-0">
             <p className="label-xs" style={{ color: "var(--halo-tx)" }}>
-              Уровень {level.name}
+              Halo · {level.name}
             </p>
-            <p className="num mt-1 text-2xl font-bold text-ink">{streak} дней подряд</p>
+            <p className="num mt-1 text-2xl font-bold text-ink">{streak} days in a row</p>
             <p className="mt-1 text-[13px] text-ink-2">
-              Рекорд {state?.best_streak ?? 0} · закрыто задач {closed}
+              Best {state?.best_streak ?? 0} · {closed} tasks closed
             </p>
           </div>
         </div>
       </section>
 
-      <section className="card p-4" aria-label="Тариф и аккаунт">
+      <section className="card p-4" aria-label="Plan and account">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <div className="min-w-0">
             <h2 className="text-base font-extrabold text-ink">
-              Тариф {TIER_LABEL[billing.tier]}
+              {TIER_LABEL[billing.tier]} plan
             </h2>
             <p className="mt-1 text-[13px] text-ink-2">
               {billing.signedIn
-                ? `Запросы к Луми: ${billing.aiUsed} из ${billing.aiLimit} в месяц`
-                : "Войдите, чтобы привязать тариф и счётчик запросов к аккаунту"}
+                ? `Lumi requests: ${billing.aiUsed} of ${billing.aiLimit} this month`
+                : "Sign in to attach the plan and the request counter to an account"}
             </p>
           </div>
           <Link
@@ -126,11 +130,11 @@ function ProfileScreen() {
             className="grid min-h-11 shrink-0 place-items-center rounded-btn border border-line-2 px-3 text-[13px] font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
-            Тарифы
+            Plans
           </Link>
         </div>
         <p className="mt-3 text-[13px] text-ink-2">
-          Серия, нимб и фокус-таймер бесплатны всегда и не зависят от тарифа.
+          The halo, the streak and the focus timer are always free and do not depend on the plan.
         </p>
         <div className="mt-3">
           {billing.signedIn ? (
@@ -140,31 +144,38 @@ function ProfileScreen() {
                 await qc.cancelQueries();
                 qc.clear();
                 await supabase.auth.signOut();
-                announce("Выход выполнен");
+                announce("Signed out");
                 navigate({ to: "/auth", replace: true });
               }}
               className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
               style={{ color: "var(--blue-ink)" }}
             >
-              Выйти из аккаунта
+              Sign out
             </button>
           ) : (
             <Link
               to="/auth"
               className="grid min-h-11 w-full place-items-center rounded-btn bg-blue-btn text-sm font-bold text-white"
             >
-              Войти или создать аккаунт
+              Sign in or create an account
             </Link>
           )}
         </div>
       </section>
 
-      <section className="card p-4" aria-label="Экспорт">
-        <h2 className="text-base font-extrabold text-ink">Экспорт</h2>
+      <section className="card p-4" aria-label="Export my data">
+        <h2 className="text-base font-extrabold text-ink">Export my data</h2>
         <p className="mt-1 text-[13px] text-ink-2">
-          Работает на любом тарифе, включая просроченную подписку. Данные остаются вашими.
+          Downloads your hubs, tasks and docs. Works on every plan, including an expired subscription. The data stays yours.
         </p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => exportJson(hubs, tasks, docs)}
+          className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+        >
+          Download JSON
+        </button>
+        <div className="mt-2 grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={() => exportMarkdown(hubs, tasks, docs)}
@@ -184,12 +195,12 @@ function ProfileScreen() {
         </div>
       </section>
 
-      <section className="card p-4" aria-label="Тема">
-        <h2 className="text-base font-extrabold text-ink">Тема</h2>
+      <section className="card p-4" aria-label="Theme">
+        <h2 className="text-base font-extrabold text-ink">Theme</h2>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {[
-            { key: "light", label: "Светлая" },
-            { key: "dark", label: "Чёрно-золотая" },
+            { key: "light", label: "Light" },
+            { key: "dark", label: "Black and gold" },
           ].map((t) => {
             const active = (state?.theme ?? "light") === t.key;
             return (
@@ -214,26 +225,26 @@ function ProfileScreen() {
         </div>
       </section>
 
-      <section className="card px-4 py-1" aria-label="Настройки">
+      <section className="card px-4 py-1" aria-label="Settings">
         <Toggle
           checked={state?.lumi_enabled ?? true}
           onChange={(v) => update.mutate({ lumi_enabled: v })}
-          label="Луми"
-          hint="Помощник и подсказки в интерфейсе"
+          label="Lumi"
+          hint="The assistant and its prompts in the interface"
         />
         <div className="h-px bg-line" />
         <Toggle
           checked={state?.streaks_enabled ?? true}
           onChange={(v) => update.mutate({ streaks_enabled: v })}
-          label="Серии"
-          hint="Счётчик дней подряд и празднование"
+          label="Streaks"
+          hint="The days in a row counter and the halo celebration"
         />
       </section>
 
-      <section className="card p-4" aria-label="Данные">
-        <h2 className="text-base font-extrabold text-ink">Данные</h2>
+      <section className="card p-4" aria-label="Data">
+        <h2 className="text-base font-extrabold text-ink">Data</h2>
         <p className="mt-1 text-[13px] text-ink-2">
-          Сброс удалит хабы, задачи, документы, историю чата и обнулит серию.
+          Reset removes hubs, tasks, docs and chat history, and sets the streak back to zero.
         </p>
         {error ? (
           <p className="mt-2 text-[13px]" style={{ color: "var(--coral-tx)" }}>
@@ -246,13 +257,109 @@ function ProfileScreen() {
           className="mt-3 min-h-11 w-full rounded-btn border px-4 text-sm font-bold"
           style={{ borderColor: "var(--coral)", color: "var(--coral-tx)" }}
         >
-          Сбросить данные
+          Reset data
         </button>
       </section>
 
-      <Sheet open={confirm} onClose={() => setConfirm(false)} title="Сбросить все данные">
+      <section className="card p-4" aria-label="Legal">
+        <h2 className="text-base font-extrabold text-ink">Privacy and terms</h2>
+        <p className="mt-1 text-[13px] text-ink-2">
+          What is collected, why, how long it is kept, and how to export or delete it.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <Link
+            to="/privacy"
+            className="grid min-h-11 place-items-center rounded-btn border border-line-2 text-sm font-bold"
+            style={{ color: "var(--blue-ink)" }}
+          >
+            Privacy
+          </Link>
+          <Link
+            to="/terms"
+            className="grid min-h-11 place-items-center rounded-btn border border-line-2 text-sm font-bold"
+            style={{ color: "var(--blue-ink)" }}
+          >
+            Terms
+          </Link>
+        </div>
+      </section>
+
+      {billing.signedIn ? (
+        <section className="card p-4" aria-label="Delete account">
+          <h2 className="text-base font-extrabold text-ink">Delete account</h2>
+          <p className="mt-1 text-[13px] text-ink-2">
+            Removes the account, the plan and the Lumi counter. Export your data first if you want
+            a copy.
+          </p>
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            className="mt-3 min-h-11 w-full rounded-btn border px-4 text-sm font-bold"
+            style={{ borderColor: "var(--coral)", color: "var(--coral-tx)" }}
+          >
+            Delete account
+          </button>
+        </section>
+      ) : null}
+
+      <Sheet
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Delete account"
+      >
         <p className="text-sm text-ink-2">
-          Действие необратимо. Хабы, задачи, документы и история чата будут удалены.
+          The account, the plan and the Lumi request counter will be deleted permanently. This
+          cannot be undone and support cannot restore it.
+        </p>
+        {error ? (
+          <p className="mt-2 text-[13px]" style={{ color: "var(--coral-tx)" }}>
+            {error}
+          </p>
+        ) : null}
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(false)}
+            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold text-ink-2"
+          >
+            Keep account
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true);
+              setError("");
+              try {
+                const res = await removeAccount();
+                if (!res.ok) {
+                  setError(res.message);
+                  return;
+                }
+                await supabase.auth.signOut();
+                qc.clear();
+                announce("Account deleted");
+                setConfirmDelete(false);
+                navigate({ to: "/", replace: true });
+              } catch (e) {
+                setError(
+                  `Couldn't delete the account — ${(e as Error).message}. Nothing was removed, try again.`,
+                );
+              } finally {
+                setBusy(false);
+              }
+            }}
+            className="min-h-11 rounded-btn text-sm font-bold text-white"
+            style={{ background: "var(--coral)" }}
+          >
+            {busy ? "Deleting" : "Delete account"}
+          </button>
+        </div>
+      </Sheet>
+
+      <Sheet open={confirm} onClose={() => setConfirm(false)} title="Reset all data">
+        <p className="text-sm text-ink-2">
+          This cannot be undone. Hubs, tasks, docs and chat history will be removed.
         </p>
         <div className="mt-5 grid grid-cols-2 gap-2">
           <button
@@ -260,7 +367,7 @@ function ProfileScreen() {
             onClick={() => setConfirm(false)}
             className="min-h-11 rounded-btn border border-line-2 text-sm font-bold text-ink-2"
           >
-            Отмена
+            Cancel
           </button>
           <button
             type="button"
@@ -271,11 +378,11 @@ function ProfileScreen() {
               try {
                 await resetAllData();
                 await qc.invalidateQueries();
-                announce("Данные сброшены");
+                announce("Data reset");
                 setConfirm(false);
               } catch (e) {
                 setError(
-                  `Сброс не выполнен: ${(e as Error).message}. Проверьте соединение и повторите.`,
+                  `Couldn't reset — ${(e as Error).message}. Check the connection and try again.`,
                 );
               } finally {
                 setBusy(false);
@@ -284,7 +391,7 @@ function ProfileScreen() {
             className="min-h-11 rounded-btn text-sm font-bold text-white"
             style={{ background: "var(--coral)" }}
           >
-            {busy ? "Удаление" : "Сбросить"}
+            {busy ? "Removing" : "Reset"}
           </button>
         </div>
       </Sheet>

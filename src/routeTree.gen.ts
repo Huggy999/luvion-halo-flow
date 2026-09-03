@@ -15,7 +15,9 @@ import { Route as DayRouteImport } from './routes/day'
 import { Route as HubsRouteImport } from './routes/hubs'
 import { Route as LumiRouteImport } from './routes/lumi'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as HubsIndexRouteImport } from './routes/hubs.index'
 import { Route as HubsHubIdRouteImport } from './routes/hubs.$hubId'
 
@@ -49,9 +51,19 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HubsIndexRoute = HubsIndexRouteImport.update({
@@ -72,7 +84,9 @@ export interface FileRoutesByFullPath {
   '/hubs': typeof HubsRouteWithChildren
   '/lumi': typeof LumiRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/terms': typeof TermsRoute
   '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs/': typeof HubsIndexRoute
 }
@@ -82,7 +96,9 @@ export interface FileRoutesByTo {
   '/day': typeof DayRoute
   '/lumi': typeof LumiRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/terms': typeof TermsRoute
   '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs': typeof HubsIndexRoute
 }
@@ -94,7 +110,9 @@ export interface FileRoutesById {
   '/hubs': typeof HubsRouteWithChildren
   '/lumi': typeof LumiRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/terms': typeof TermsRoute
   '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs/': typeof HubsIndexRoute
 }
@@ -107,7 +125,9 @@ export interface FileRouteTypes {
     | '/hubs'
     | '/lumi'
     | '/pricing'
+    | '/privacy'
     | '/profile'
+    | '/terms'
     | '/hubs/$hubId'
     | '/hubs/'
   fileRoutesByTo: FileRoutesByTo
@@ -117,7 +137,9 @@ export interface FileRouteTypes {
     | '/day'
     | '/lumi'
     | '/pricing'
+    | '/privacy'
     | '/profile'
+    | '/terms'
     | '/hubs/$hubId'
     | '/hubs'
   id:
@@ -128,7 +150,9 @@ export interface FileRouteTypes {
     | '/hubs'
     | '/lumi'
     | '/pricing'
+    | '/privacy'
     | '/profile'
+    | '/terms'
     | '/hubs/$hubId'
     | '/hubs/'
   fileRoutesById: FileRoutesById
@@ -140,7 +164,9 @@ export interface RootRouteChildren {
   HubsRoute: typeof HubsRouteWithChildren
   LumiRoute: typeof LumiRoute
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
+  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -187,11 +213,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hubs/': {
@@ -230,7 +270,9 @@ const rootRouteChildren: RootRouteChildren = {
   HubsRoute: HubsRouteWithChildren,
   LumiRoute: LumiRoute,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
+  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

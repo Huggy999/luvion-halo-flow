@@ -10,6 +10,7 @@ import {
   COLUMNS,
   hubColor,
   type BoardColumn,
+  PRIORITY_LABEL,
   type Priority,
   useDocMutations,
   useDocs,
@@ -22,16 +23,16 @@ import {
 export const Route = createFileRoute("/hubs/$hubId")({
   head: () => ({
     meta: [
-      { title: "Хаб — Luvion" },
+      { title: "Hub — Luvion" },
       {
         name: "description",
         content:
-          "Внутри хаба Luvion: список задач, доска по колонкам и блочные документы направления.",
+          "Inside a Luvion hub: the task list, the column board and the block docs of that area.",
       },
-      { property: "og:title", content: "Хаб — Luvion" },
+      { property: "og:title", content: "Hub — Luvion" },
       {
         property: "og:description",
-        content: "Задачи, доска и документы выбранного направления.",
+        content: "Tasks, the board and docs of the selected area.",
       },
     ],
   }),
@@ -71,10 +72,10 @@ function HubScreen() {
     return (
       <div className="cascade space-y-3">
         <Link to="/hubs" className="inline-flex min-h-11 items-center gap-2 text-sm font-bold" style={{ color: "var(--blue-ink)" }}>
-          <ArrowLeft size={18} aria-hidden="true" /> К хабам
+          <ArrowLeft size={18} aria-hidden="true" /> Back to hubs
         </Link>
         <p className="card p-4 text-sm text-ink-2">
-          Хаб не найден: он был удалён или ссылка устарела. Вернитесь к списку хабов.
+          This hub was not found — it was deleted or the link is out of date. Go back to the hub list.
         </p>
       </div>
     );
@@ -85,13 +86,13 @@ function HubScreen() {
       <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
         <Link
           to="/hubs"
-          aria-label="К списку хабов"
+          aria-label="Back to the hub list"
           className="grid h-11 w-11 shrink-0 place-items-center rounded-btn border border-line-2 text-ink-2"
         >
           <ArrowLeft size={18} aria-hidden="true" />
         </Link>
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">Хаб</p>
+          <p className="label-xs text-ink-3">Hub</p>
           <h1 className="screen-title truncate text-[24px] leading-tight text-ink">{hub.name}</h1>
         </div>
         <span
@@ -103,14 +104,14 @@ function HubScreen() {
 
       <div
         role="tablist"
-        aria-label="Разделы хаба"
+        aria-label="Hub sections"
         className="grid grid-cols-3 gap-1 rounded-btn border border-line bg-paper p-1"
       >
         {(
           [
-            ["tasks", "Задачи"],
-            ["board", boardAllowed ? "Доска" : `Доска · 1 из 1`],
-            ["docs", "Документы"],
+            ["tasks", "Tasks"],
+            ["board", boardAllowed ? "Board" : "Board · 1 of 1"],
+            ["docs", "Docs"],
           ] as const
         ).map(([key, label]) => (
           <button
@@ -141,9 +142,9 @@ function HubScreen() {
       {boardBoundary && !isBoundaryHidden("board-limit") ? (
         <BoundaryCard
           id="board-limit"
-          left={`Доска на тарифе ${TIER_LABEL[billing.tier]} одна и уже занята первым хабом.`}
-          stops="доска по колонкам в этом хабе"
-          continues="задачи и документы этого хаба, доска первого хаба, серия и фокус-таймер"
+          left={`${TIER_LABEL[billing.tier]} includes one board, and the first hub already uses it.`}
+          stops="the column board in this hub"
+          continues="the tasks and docs of this hub, the first hub board, the halo and the focus timer"
           onDismiss={() => setBoardBoundary(false)}
         />
       ) : null}
@@ -151,12 +152,12 @@ function HubScreen() {
 
 
       {segment === "tasks" ? (
-        <section className="card p-4" aria-label="Задачи хаба">
+        <section className="card p-4" aria-label="Hub tasks">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-            <h2 className="truncate text-base font-extrabold text-ink">Задачи</h2>
+            <h2 className="truncate text-base font-extrabold text-ink">Tasks</h2>
             <button
               type="button"
-              aria-label="Добавить задачу"
+              aria-label="Add task"
               onClick={() => setOpenTask(true)}
               className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
             >
@@ -165,7 +166,7 @@ function HubScreen() {
           </div>
           <div className="mt-1 divide-y divide-line">
             {hubTasks.length === 0 ? (
-              <p className="py-4 text-sm text-ink-2">Задач пока нет.</p>
+              <p className="py-4 text-sm text-ink-2">No tasks yet.</p>
             ) : (
               hubTasks.map((t) => (
                 <TaskRow key={t.id} task={t} onToggle={() => completeTask.mutate(t)} />
@@ -176,7 +177,7 @@ function HubScreen() {
       ) : null}
 
       {segment === "board" ? (
-        <section aria-label="Доска задач">
+        <section aria-label="Task board">
           <div className="snap-x-cols no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
             {COLUMNS.map((col) => {
               const items = hubTasks.filter((t) => t.board_column === col.key);
@@ -190,7 +191,7 @@ function HubScreen() {
                     </div>
                     <ul className="mt-3 space-y-2">
                       {items.length === 0 ? (
-                        <li className="text-[13px] text-ink-3">Пусто</li>
+                        <li className="text-[13px] text-ink-3">Empty</li>
                       ) : null}
                       {items.map((t) => (
                         <li
@@ -199,11 +200,11 @@ function HubScreen() {
                         >
                           <p className="text-[14px] font-medium text-ink">{t.title}</p>
                           <div className="mt-2 flex items-center justify-between">
-                            <span className="label-xs text-ink-3">{t.priority.toUpperCase()}</span>
+                            <span className="label-xs text-ink-3">{PRIORITY_LABEL[t.priority]}</span>
                             <span className="flex gap-1">
                               <button
                                 type="button"
-                                aria-label={`Перенести задачу ${t.title} влево`}
+                                aria-label={`Move ${t.title} one column left`}
                                 disabled={idx === 0}
                                 onClick={() =>
                                   moveTask.mutate({
@@ -218,7 +219,7 @@ function HubScreen() {
                               </button>
                               <button
                                 type="button"
-                                aria-label={`Перенести задачу ${t.title} вправо`}
+                                aria-label={`Move ${t.title} one column right`}
                                 disabled={idx === COLUMNS.length - 1}
                                 onClick={() =>
                                   moveTask.mutate({
@@ -248,12 +249,12 @@ function HubScreen() {
         openDoc ? (
           <DocEditor doc={openDoc} onBack={() => setOpenDocId(null)} />
         ) : (
-          <section className="card p-4" aria-label="Документы хаба">
+          <section className="card p-4" aria-label="Hub docs">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-              <h2 className="truncate text-base font-extrabold text-ink">Документы</h2>
+              <h2 className="truncate text-base font-extrabold text-ink">Docs</h2>
               <button
                 type="button"
-                aria-label="Создать документ"
+                aria-label="Create doc"
                 onClick={async () => {
                   const created = await createDoc.mutateAsync(hub.id);
                   setOpenDocId(created.id);
@@ -265,7 +266,7 @@ function HubScreen() {
             </div>
             <ul className="mt-2 divide-y divide-line">
               {hubDocs.length === 0 ? (
-                <li className="py-4 text-sm text-ink-2">Документов нет.</li>
+                <li className="py-4 text-sm text-ink-2">No docs yet.</li>
               ) : null}
               {hubDocs.map((d) => (
                 <li key={d.id} className="flex items-center gap-2 py-2">
@@ -280,18 +281,18 @@ function HubScreen() {
                         {d.title}
                       </span>
                       <span className="num block text-[11px] text-ink-3">
-                        {d.blocks?.length ?? 0} блоков
+                        {d.blocks?.length ?? 0} blocks
                       </span>
                     </span>
                   </button>
                   <button
                     type="button"
-                    aria-label={`Удалить документ ${d.title}`}
+                    aria-label={`Delete doc ${d.title}`}
                     onClick={() => removeDoc.mutate(d.id)}
                     className="min-h-11 px-2 text-[13px] font-bold"
                     style={{ color: "var(--coral-tx)" }}
                   >
-                    Удалить
+                    Delete
                   </button>
                 </li>
               ))}
@@ -300,19 +301,19 @@ function HubScreen() {
         )
       ) : null}
 
-      <Sheet open={openTask} onClose={() => setOpenTask(false)} title="Новая задача">
+      <Sheet open={openTask} onClose={() => setOpenTask(false)} title="New task">
         <div className="space-y-3">
           <label className="block">
-            <span className="label-xs text-ink-3">Заголовок</span>
+            <span className="label-xs text-ink-3">Title</span>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="Что нужно сделать"
+              placeholder="What needs doing"
             />
           </label>
           <fieldset>
-            <legend className="label-xs text-ink-3">Приоритет</legend>
+            <legend className="label-xs text-ink-3">Priority</legend>
             <div className="mt-2 grid grid-cols-3 gap-2">
               {(["p1", "p2", "p3"] as Priority[]).map((p) => (
                 <button
@@ -326,18 +327,18 @@ function HubScreen() {
                     color: priority === p ? "var(--blue-ink)" : "var(--ink-2)",
                   }}
                 >
-                  {p.toUpperCase()}
+                  {PRIORITY_LABEL[p]}
                 </button>
               ))}
             </div>
           </fieldset>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-[15px] font-bold text-ink">На сегодня</span>
+            <span className="text-[15px] font-bold text-ink">Add to today</span>
             <button
               type="button"
               role="switch"
               aria-checked={isToday}
-              aria-label="На сегодня"
+              aria-label="Add to today"
               onClick={() => setIsToday((v) => !v)}
               className="relative h-11 w-16 shrink-0 rounded-chip border border-line-2 px-1"
               style={{ background: isToday ? "var(--blue-btn)" : "var(--bg)" }}
@@ -357,7 +358,7 @@ function HubScreen() {
             type="button"
             onClick={async () => {
               if (!title.trim()) {
-                setError("Заголовок пустой. Введите название задачи.");
+                setError("The title is empty. Enter a task title.");
                 return;
               }
               try {
@@ -372,12 +373,12 @@ function HubScreen() {
                 setError("");
                 setOpenTask(false);
               } catch (e) {
-                setError(`Задача не создана: ${(e as Error).message}. Повторите попытку.`);
+                setError(`Couldn't create the task — ${(e as Error).message}. Try again.`);
               }
             }}
             className="min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
-            Добавить задачу
+            Add task
           </button>
         </div>
       </Sheet>

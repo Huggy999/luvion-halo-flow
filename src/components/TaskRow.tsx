@@ -61,7 +61,7 @@ export function TaskRow({
       <TaskCheck
         checked={task.is_done}
         onToggle={onToggle}
-        label={`Отметить задачу ${task.title}`}
+        label={`Mark ${task.title} done`}
       />
       <div className="min-w-0 flex-1">
         <div className="relative inline-block max-w-full">

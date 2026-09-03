@@ -22,7 +22,7 @@ function nextMonthISO() {
   return d.toISOString();
 }
 
-/** Возвращает строку подписчика, создаёт её при первом обращении и раз в месяц обнуляет счётчик. */
+/** Returns the subscriber row, creates it on first use and resets the monthly counter. */
 export async function loadSubscriber(userId: string, email: string): Promise<SubscriberRow> {
   const { data } = await supabaseAdmin
     .from("subscribers")
@@ -42,7 +42,7 @@ export async function loadSubscriber(userId: string, email: string): Promise<Sub
     row = created.data as unknown as SubscriberRow;
   }
 
-  // Срок подписки истёк: тариф возвращается к Free, данные остаются нетронутыми.
+  // Subscription expired: the plan returns to Free, the data stays untouched.
   if (row.tier !== "free" && row.subscription_end && new Date(row.subscription_end) < new Date()) {
     const patched = await supabaseAdmin
       .from("subscribers")
@@ -53,7 +53,7 @@ export async function loadSubscriber(userId: string, email: string): Promise<Sub
     if (!patched.error) row = patched.data as unknown as SubscriberRow;
   }
 
-  // Месячный сброс счётчика запросов к Луми выполняется на сервере.
+  // The monthly reset of Lumi requests happens on the server.
   if (new Date(row.ai_calls_reset_at) < new Date()) {
     const patched = await supabaseAdmin
       .from("subscribers")
@@ -67,7 +67,7 @@ export async function loadSubscriber(userId: string, email: string): Promise<Sub
   return row;
 }
 
-/** Увеличивает счётчик запросов на сервере. Возвращает false, если лимит исчерпан. */
+/** Increments the request counter on the server. Returns false when the limit is reached. */
 export async function consumeAiCall(userId: string, email: string) {
   const row = await loadSubscriber(userId, email);
   const limit = AI_LIMIT[row.tier];
@@ -88,9 +88,12 @@ export async function setTier(
 
 /* ---------- Stripe ---------- */
 
-export const PRICE: Record<"pro" | "team", { amount: number; name: string }> = {
-  pro: { amount: 69000, name: "Luvion Pro" },
-  team: { amount: 149000, name: "Luvion Team" },
+export type Currency = "usd" | "eur";
+
+/** Amounts in minor units, shown in the currency of the user region. */
+export const PRICE: Record<"pro" | "team", { amount: Record<Currency, number>; name: string }> = {
+  pro: { amount: { usd: 900, eur: 900 }, name: "Luvion Pro" },
+  team: { amount: { usd: 1900, eur: 1900 }, name: "Luvion Team" },
 };
 
 export function stripeKey() {
@@ -117,7 +120,7 @@ export async function stripeCall(
   const json = (await res.json()) as Record<string, unknown>;
   if (!res.ok) {
     const err = json["error"] as { message?: string } | undefined;
-    throw new Error(err?.message ?? `Stripe ответил кодом ${res.status}`);
+    throw new Error(err?.message ?? `Stripe responded with status ${res.status}`);
   }
   return json;
 }

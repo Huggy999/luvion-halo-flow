@@ -17,23 +17,46 @@ import { isBoundaryHidden, useBilling } from "@/lib/billing";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Пульс — Luvion" },
+      { title: "Pulse — Luvion" },
       {
         name: "description",
         content:
-          "Пульс дня в Luvion: серия дней с нимбом, счётчики закрытых задач и список того, что в фокусе сегодня.",
+          "The daily pulse in Luvion: the halo streak, counters of closed tasks and what is in focus today.",
       },
-      { property: "og:title", content: "Пульс — Luvion" },
+      { property: "og:title", content: "Pulse — Luvion" },
       {
         property: "og:description",
-        content: "Серия дней, счётчики и фокус на сегодня в одном экране.",
+        content: "The halo streak, counters and today's focus on one screen.",
       },
     ],
   }),
   component: PulseScreen,
 });
 
-const WEEKDAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+// Week start follows the browser locale: Monday in most of the EU, Sunday in the US.
+function localeFirstDay() {
+  try {
+    const loc = new Intl.Locale(navigator.language) as Intl.Locale & {
+      weekInfo?: { firstDay: number };
+      getWeekInfo?: () => { firstDay: number };
+    };
+    const info = loc.getWeekInfo ? loc.getWeekInfo() : loc.weekInfo;
+    if (info?.firstDay) return info.firstDay % 7; // 7 (Sunday) -> 0
+  } catch {
+    // fall through to Monday
+  }
+  return 1;
+}
+
+function weekdayLabels(firstDay: number) {
+  const fmt = new Intl.DateTimeFormat(undefined, { weekday: "short" });
+  const base = new Date(Date.UTC(2024, 0, 7)); // a Sunday
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(base);
+    d.setUTCDate(base.getUTCDate() + ((firstDay + i) % 7));
+    return fmt.format(d);
+  });
+}
 
 function isoOf(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -128,21 +151,22 @@ function PulseScreen() {
   const doneTotal = tasks.filter((t) => t.is_done).length;
 
   const week = useMemo(() => {
+    const firstDay = localeFirstDay();
     const now = new Date();
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+    const start = new Date(now);
+    start.setDate(now.getDate() - ((now.getDay() - firstDay + 7) % 7));
     const doneDays = new Set(
       tasks.filter((t) => t.done_at).map((t) => t.done_at!.slice(0, 10)),
     );
-    return WEEKDAYS.map((label, i) => {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
+    return weekdayLabels(firstDay).map((label, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
       const iso = isoOf(d);
       return { label, iso, day: d.getDate(), counted: doneDays.has(iso), isToday: iso === today };
     });
   }, [tasks, today]);
 
-  const dateLabel = new Date().toLocaleDateString("ru-RU", {
+  const dateLabel = new Date().toLocaleDateString(undefined, {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -154,7 +178,7 @@ function PulseScreen() {
     <div className="cascade space-y-4">
       <header>
         <p className="label-xs text-ink-3">{dateLabel}</p>
-        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Пульс</h1>
+        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Pulse</h1>
       </header>
 
       <section
@@ -163,7 +187,7 @@ function PulseScreen() {
           background:
             "linear-gradient(150deg, color-mix(in oklab, var(--halo) 22%, var(--paper)), var(--paper))",
         }}
-        aria-label="Нимб и серия дней"
+        aria-label="Halo and streak"
       >
         <Celebration streak={streak} />
         <div className="grid grid-cols-[112px_minmax(0,1fr)] items-center gap-4">
@@ -193,31 +217,31 @@ function PulseScreen() {
           </div>
           <div className="min-w-0">
             <p className="label-xs" style={{ color: "var(--halo-tx)" }}>
-              Серия · {level.name}
+              Halo · {level.name}
             </p>
             <p className="num mt-1 overflow-hidden text-[42px] font-bold leading-none text-ink">
               <span className={flash ? "roll inline-block" : "inline-block"}>{streak}</span>
               <span className="ml-2 text-base font-medium text-ink-2">
-                {streak === 1 ? "день" : "дней"}
+                {streak === 1 ? "day in a row" : "days in a row"}
               </span>
             </p>
             <p className="mt-1.5 text-[13px] text-ink-2">
               {!state?.streaks_enabled
-                ? "Серии выключены в профиле"
+                ? "Streaks are turned off in Profile"
                 : streak === 0
-                  ? "Серия ждёт первой закрытой задачи"
+                  ? "The halo starts with the first closed task"
                   : level.next
-                    ? `До уровня ${haloLevel(level.next).name}: ${level.next - streak}`
-                    : "Максимальный уровень нимба"}
+                    ? `${level.next - streak} to ${haloLevel(level.next).name}`
+                    : "Highest halo level"}
             </p>
           </div>
         </div>
 
         <div className="mt-5 grid grid-cols-3 gap-2">
           {[
-            { k: "На сегодня", v: focus.length },
-            { k: "Всего", v: tasks.length },
-            { k: "Закрыто", v: doneTotal },
+            { k: "Today", v: focus.length },
+            { k: "All", v: tasks.length },
+            { k: "Closed", v: doneTotal },
           ].map((c) => (
             <div key={c.k} className="rounded-tile border border-line bg-paper px-3 py-2.5">
               <p className="num text-xl font-bold text-ink">{c.v}</p>
@@ -227,7 +251,7 @@ function PulseScreen() {
         </div>
       </section>
 
-      <section className="card p-4" aria-label="Неделя">
+      <section className="card p-4" aria-label="This week">
         <div className="flex items-center justify-between">
           {week.map((d) => (
             <div key={d.iso} className="flex flex-col items-center gap-1.5">
@@ -256,17 +280,17 @@ function PulseScreen() {
         </div>
       </section>
 
-      <section className="card p-4" aria-label="Сегодня в фокусе">
+      <section className="card p-4" aria-label="In focus today">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-ink">Сегодня в фокусе</h2>
+          <h2 className="text-base font-extrabold text-ink">In focus today</h2>
           <span className="num text-[13px] text-ink-3">
-            {doneToday} из {focus.length}
+            {doneToday} of {focus.length}
           </span>
         </div>
         <div className="mt-1 divide-y divide-line">
           {focus.length === 0 ? (
             <p className="py-4 text-sm text-ink-2">
-              На сегодня ничего не выбрано. Задачи добавляются на экране Мой день.
+              Nothing is picked for today. Tasks are added on the Today screen.
             </p>
           ) : (
             focus.map((t) => (
@@ -284,9 +308,9 @@ function PulseScreen() {
       {softWarning ? (
         <BoundaryCard
           id="lumi-soft-pulse"
-          left={`Осталось ${billing.aiLimit - billing.aiUsed} запросов к Луми из ${billing.aiLimit} в этом месяце.`}
-          stops="ответы и черновики от Луми"
-          continues="поиск по вашим документам и задачам, серия, нимб и фокус-таймер"
+          left={`${billing.aiLimit - billing.aiUsed} of ${billing.aiLimit} Lumi requests left this month.`}
+          stops="Lumi answers and drafts"
+          continues="search across your docs and tasks, the halo, the streak and the focus timer"
           onDismiss={() => setSoftDismissed(true)}
         />
       ) : null}
@@ -304,9 +328,9 @@ function PulseScreen() {
             <p className="label-xs" style={{ color: "var(--ink-2)" }}>
               Luvion AI
             </p>
-            <p className="mt-1 text-[15px] font-bold text-ink">Спросить Луми о задачах</p>
+            <p className="mt-1 text-[15px] font-bold text-ink">Ask Lumi about your work</p>
             <p className="mt-1 text-[13px] text-ink-2">
-              Ответит по вашим хабам и задачам, без выдумок
+              Answers from your hubs and tasks, nothing invented
             </p>
           </div>
           <Lumi variant="idle" size={54} className="shrink-0" />

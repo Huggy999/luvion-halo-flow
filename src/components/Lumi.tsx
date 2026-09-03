@@ -24,7 +24,7 @@ export function Lumi({
       height={size}
       viewBox="0 0 100 100"
       role="img"
-      aria-label="Луми"
+      aria-label="Lumi"
       className={className}
       style={{ color: "var(--blue)" }}
     >

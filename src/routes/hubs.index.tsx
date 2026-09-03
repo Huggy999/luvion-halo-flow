@@ -12,16 +12,16 @@ import { createHubGuarded } from "@/lib/billing.functions";
 export const Route = createFileRoute("/hubs/")({
   head: () => ({
     meta: [
-      { title: "Хабы — Luvion" },
+      { title: "Hubs — Luvion" },
       {
         name: "description",
         content:
-          "Хабы Luvion объединяют задачи, доску и документы одного направления: продукт, компания, личное.",
+          "Luvion hubs keep the tasks, the board and the docs of one area together: Product, Company, Personal.",
       },
-      { property: "og:title", content: "Хабы — Luvion" },
+      { property: "og:title", content: "Hubs — Luvion" },
       {
         property: "og:description",
-        content: "Задачи, доска и документы, сгруппированные по направлениям.",
+        content: "Tasks, the board and docs grouped by area.",
       },
     ],
   }),
@@ -53,8 +53,8 @@ function HubsScreen() {
     <div className="cascade space-y-4">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">Направления</p>
-          <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Хабы</h1>
+          <p className="label-xs text-ink-3">Areas</p>
+          <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Hubs</h1>
         </div>
         {atLimit ? (
           <button
@@ -66,12 +66,12 @@ function HubsScreen() {
             className="min-h-11 shrink-0 rounded-btn border border-line-2 px-3 text-[13px] font-bold"
             style={{ color: "var(--ink-2)" }}
           >
-            {hubs.length} из {limit} на тарифе {TIER_LABEL[billing.tier]}
+            {hubs.length} of {limit} on {TIER_LABEL[billing.tier]}
           </button>
         ) : (
           <button
             type="button"
-            aria-label="Создать хаб"
+            aria-label="Create hub"
             onClick={() => setOpen(true)}
             className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
           >
@@ -82,17 +82,17 @@ function HubsScreen() {
 
       {nearLimit ? (
         <p className="px-1 text-[13px] text-ink-2">
-          Остался один хаб из {limit} на тарифе {TIER_LABEL[billing.tier]}. Задачи, документы
-          и доска существующих хабов не меняются.
+          One hub left of {limit} on {TIER_LABEL[billing.tier]}. Tasks, docs and the board of
+          existing hubs stay exactly as they are.
         </p>
       ) : null}
 
       {boundaryVisible ? (
         <BoundaryCard
           id="hubs-limit"
-          left={`Хабов ${hubs.length} из ${limit} на тарифе ${TIER_LABEL[billing.tier]}. Новый пока не создать.`}
-          stops="создание новых хабов сверх лимита"
-          continues="все существующие хабы, задачи, документы, серия и фокус-таймер"
+          left={`${hubs.length} of ${limit} hubs on ${TIER_LABEL[billing.tier]}. A new one cannot be created yet.`}
+          stops="creating new hubs beyond the limit"
+          continues="every existing hub, task and doc, the halo, the streak and the focus timer"
           onDismiss={() => setDismissed(true)}
         />
       ) : null}
@@ -100,7 +100,7 @@ function HubsScreen() {
       <div className="space-y-3">
         {hubs.length === 0 ? (
           <p className="card p-4 text-sm text-ink-2">
-            Хабов нет. Создайте первый, чтобы собрать задачи и документы вместе.
+            No hubs yet. Create the first one to keep tasks and docs together.
           </p>
         ) : null}
         {hubs.map((hub) => {
@@ -127,7 +127,7 @@ function HubsScreen() {
                     {hub.name}
                   </span>
                   <span className="block truncate text-[13px] text-ink-2">
-                    {hub.description || "Без описания"}
+                    {hub.description || "No description"}
                   </span>
                 </span>
                 <span className="num shrink-0 text-[13px] text-ink-3">
@@ -145,28 +145,28 @@ function HubsScreen() {
         })}
       </div>
 
-      <Sheet open={open} onClose={() => setOpen(false)} title="Новый хаб">
+      <Sheet open={open} onClose={() => setOpen(false)} title="New hub">
         <div className="space-y-3">
           <label className="block">
-            <span className="label-xs text-ink-3">Название</span>
+            <span className="label-xs text-ink-3">Name</span>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="Например, Маркетинг"
+              placeholder="For example, Marketing"
             />
           </label>
           <label className="block">
-            <span className="label-xs text-ink-3">Описание</span>
+            <span className="label-xs text-ink-3">Description</span>
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="Короткое пояснение"
+              placeholder="A short explanation"
             />
           </label>
           <fieldset>
-            <legend className="label-xs text-ink-3">Цвет</legend>
+            <legend className="label-xs text-ink-3">Color</legend>
             <div className="mt-2 flex gap-2">
               {HUB_COLORS.map((c) => (
                 <button
@@ -193,12 +193,12 @@ function HubsScreen() {
             type="button"
             onClick={async () => {
               if (!name.trim()) {
-                setError("Название пустое. Введите название хаба.");
+                setError("The name is empty. Enter a hub name.");
                 return;
               }
               try {
                 if (billing.signedIn) {
-                  // Лимит проверяется на сервере, клиентская проверка — только удобство.
+                  // The limit is enforced on the server; the client check is only convenience.
                   const res = await guarded({
                     data: { name: name.trim(), description, color },
                   });
@@ -216,12 +216,12 @@ function HubsScreen() {
                 setError("");
                 setOpen(false);
               } catch (e) {
-                setError(`Хаб не создан: ${(e as Error).message}. Повторите попытку.`);
+                setError(`Couldn't create the hub — ${(e as Error).message}. Try again.`);
               }
             }}
             className="min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
-            Создать хаб
+            Create hub
           </button>
         </div>
       </Sheet>

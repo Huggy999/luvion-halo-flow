@@ -3,22 +3,30 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { Lumi } from "@/components/Lumi";
-import { PLANS, TIER_LABEL, useBilling, type Tier } from "@/lib/billing";
+import {
+  PLANS,
+  PLAN_AMOUNT,
+  TIER_LABEL,
+  formatPrice,
+  regionCurrency,
+  useBilling,
+  type Tier,
+} from "@/lib/billing";
 import { checkSubscription, createCheckout, customerPortal } from "@/lib/billing.functions";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Тарифы — Luvion" },
+      { title: "Plans — Luvion" },
       {
         name: "description",
         content:
-          "Тарифы Luvion: Free, Pro и Team. Серия, нимб и фокус-таймер бесплатны всегда, экспорт доступен на любом тарифе.",
+          "Luvion plans: Free, Pro and Team. The halo, the streak and the focus timer are always free, and export works on every plan.",
       },
-      { property: "og:title", content: "Тарифы — Luvion" },
+      { property: "og:title", content: "Plans — Luvion" },
       {
         property: "og:description",
-        content: "Что входит в Free, Pro и Team и что происходит при отмене подписки.",
+        content: "What Free, Pro and Team include, and what happens when you cancel.",
       },
     ],
   }),
@@ -32,20 +40,21 @@ function PricingScreen() {
   const check = useServerFn(checkSubscription);
   const [busy, setBusy] = useState<Tier | "portal" | "check" | null>(null);
   const [message, setMessage] = useState("");
+  const [currency] = useState<"usd" | "eur">(() => regionCurrency());
 
   const start = async (tier: "pro" | "team") => {
     setMessage("");
     if (!billing.signedIn) {
-      setMessage("Сначала войдите: подписку нужно привязать к аккаунту.");
+      setMessage("Sign in first — a subscription has to belong to an account.");
       return;
     }
     setBusy(tier);
     try {
-      const res = await checkout({ data: { tier } });
+      const res = await checkout({ data: { tier, currency } });
       if (res.url) window.location.href = res.url;
       else setMessage(res.message);
     } catch (e) {
-      setMessage(`Оплата не открылась: ${(e as Error).message}`);
+      setMessage(`Checkout did not open — ${(e as Error).message}`);
     } finally {
       setBusy(null);
     }
@@ -56,20 +65,21 @@ function PricingScreen() {
       <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
         <Lumi variant="idle" size={52} className="shrink-0" />
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">Текущий тариф · {TIER_LABEL[billing.tier]}</p>
-          <h1 className="screen-title text-[26px] leading-tight text-ink">Тарифы</h1>
+          <p className="label-xs text-ink-3">Current plan · {TIER_LABEL[billing.tier]}</p>
+          <h1 className="screen-title text-[26px] leading-tight text-ink">Plans</h1>
         </div>
       </header>
 
       <p className="px-1 text-[14px] leading-relaxed text-ink-2">
-        Серия, нимб и фокус-таймер бесплатны на любом тарифе и никогда не станут платными.
-        Платные границы касаются только количества хабов, досок и запросов к Луми.
+        Less chaos. More structure. The halo, the streak and the focus timer are free on every
+        plan and will never be paid. Paid boundaries only touch the number of hubs, boards and
+        Lumi requests.
       </p>
 
       {!billing.stripeConfigured ? (
         <p className="card p-4 text-[14px] leading-relaxed text-ink-2">
-          Оплата ещё не подключена: владелец приложения пока не добавил ключ Stripe. Экран
-          тарифов работает, а кнопка оплаты сообщит об этом честно вместо ошибки.
+          Payments are not connected yet — the app owner has not added the Stripe key. This screen
+          works, and the payment button says so plainly instead of failing.
         </p>
       ) : null}
 
@@ -85,7 +95,7 @@ function PricingScreen() {
           return (
             <section
               key={plan.key}
-              aria-label={`Тариф ${plan.name}`}
+              aria-label={`${plan.name} plan`}
               className="card p-4"
               style={
                 current
@@ -106,12 +116,16 @@ function PricingScreen() {
                       color: "var(--blue-ink)",
                     }}
                   >
-                    Ваш тариф
+                    Your plan
                   </span>
                 ) : null}
               </div>
 
-              <p className="num mt-3 text-xl font-bold text-ink">{plan.price}</p>
+              <p className="num mt-3 text-xl font-bold text-ink">
+                {plan.key === "free"
+                  ? formatPrice(0, currency)
+                  : `${formatPrice(PLAN_AMOUNT[plan.key][currency], currency)} per month`}
+              </p>
 
               <ul className="mt-3 space-y-2">
                 {plan.includes.map((item) => (
@@ -134,7 +148,7 @@ function PricingScreen() {
                   onClick={() => start(plan.key as "pro" | "team")}
                   className="mt-4 min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
                 >
-                  {busy === plan.key ? "Открываем оплату" : `Перейти на ${plan.name}`}
+                  {busy === plan.key ? "Opening checkout" : `Switch to ${plan.name}`}
                 </button>
               ) : null}
             </section>
@@ -142,20 +156,20 @@ function PricingScreen() {
         })}
       </div>
 
-      <section className="card p-4" aria-label="Что происходит при отмене">
-        <h2 className="text-base font-extrabold text-ink">Что происходит при отмене</h2>
+      <section className="card p-4" aria-label="What happens when you cancel">
+        <h2 className="text-base font-extrabold text-ink">What happens when you cancel</h2>
         <ul className="mt-2 space-y-2 text-[14px] leading-relaxed text-ink-2">
-          <li>Данные остаются полностью читаемыми навсегда.</li>
+          <li>Your data stays fully readable forever.</li>
           <li>
-            Экспорт в Markdown и CSV работает всегда, включая просроченную подписку.
+            Export to JSON, Markdown and CSV works always, including an expired subscription.
           </li>
           <li>
-            Ограничивается только создание нового сверх лимитов и запросы к Луми.
-            Существующие хабы, доски и документы открываются и редактируются.
+            Only creating beyond the limits and Lumi requests are restricted. Existing hubs,
+            boards and docs still open and can be edited.
           </li>
           <li>
-            Отписка делается здесь же, в два нажатия: кнопка ниже открывает управление
-            подпиской. Через поддержку писать не нужно.
+            Cancelling happens right here in two taps: the button below opens subscription
+            management. You never have to write to support.
           </li>
         </ul>
 
@@ -166,7 +180,7 @@ function PricingScreen() {
             onClick={async () => {
               setMessage("");
               if (!billing.signedIn) {
-                setMessage("Войдите, чтобы открыть управление подпиской.");
+                setMessage("Sign in to open subscription management.");
                 return;
               }
               setBusy("portal");
@@ -175,7 +189,7 @@ function PricingScreen() {
                 if (res.url) window.location.href = res.url;
                 else setMessage(res.message);
               } catch (e) {
-                setMessage(`Не открылось: ${(e as Error).message}`);
+                setMessage(`It did not open — ${(e as Error).message}`);
               } finally {
                 setBusy(null);
               }
@@ -183,7 +197,7 @@ function PricingScreen() {
             className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
-            Управление подпиской
+            Manage subscription
           </button>
           <button
             type="button"
@@ -191,16 +205,16 @@ function PricingScreen() {
             onClick={async () => {
               setMessage("");
               if (!billing.signedIn) {
-                setMessage("Войдите, чтобы проверить подписку.");
+                setMessage("Sign in to check the subscription.");
                 return;
               }
               setBusy("check");
               try {
                 const res = await check();
                 await refetch();
-                setMessage(res.message || `Актуальный тариф: ${TIER_LABEL[res.tier as Tier]}.`);
+                setMessage(res.message || `Current plan: ${TIER_LABEL[res.tier as Tier]}.`);
               } catch (e) {
-                setMessage(`Проверка не удалась: ${(e as Error).message}`);
+                setMessage(`The check failed — ${(e as Error).message}`);
               } finally {
                 setBusy(null);
               }
@@ -208,16 +222,16 @@ function PricingScreen() {
             className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
-            Проверить подписку
+            Check subscription
           </button>
         </div>
       </section>
 
       {!billing.signedIn ? (
         <p className="px-1 text-[13px] text-ink-2">
-          Подписка привязывается к аккаунту.{" "}
+          A subscription belongs to an account.{" "}
           <Link to="/auth" style={{ color: "var(--blue-ink)" }}>
-            Войти или создать аккаунт
+            Sign in or create an account
           </Link>
         </p>
       ) : null}

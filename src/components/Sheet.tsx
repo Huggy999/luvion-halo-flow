@@ -1,8 +1,8 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 /**
- * Модальная шторка: фон получает inert, фокус уходит внутрь и возвращается
- * на триггер при закрытии, Escape закрывает. aria-hidden на фон не вешаем.
+ * Modal sheet: the background becomes inert, focus moves inside and returns to
+ * the trigger on close, Escape closes it. The background never gets aria-hidden.
  */
 export function Sheet({
   open,
@@ -68,7 +68,7 @@ export function Sheet({
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <button
         type="button"
-        aria-label="Закрыть шторку"
+        aria-label="Close sheet"
         onClick={onClose}
         className="fade-in absolute inset-0 bg-ink/45"
       />

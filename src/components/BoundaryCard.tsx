@@ -4,9 +4,9 @@ import { Lumi } from "@/components/Lumi";
 import { hideBoundaryForToday } from "@/lib/billing";
 
 /**
- * Карточка границы: выезжает снизу и остаётся в потоке экрана.
- * Она ничего не перекрывает и не блокирует работу, закрывается свайпом вниз
- * или кнопкой «Напомнить потом» и возвращается не раньше следующего дня.
+ * Boundary card: slides up from the bottom and stays in the flow of the screen.
+ * It covers nothing and blocks nothing, closes with a swipe down or the
+ * "Remind me later" button, and does not come back before the next day.
  */
 export function BoundaryCard({
   id,
@@ -16,11 +16,11 @@ export function BoundaryCard({
   onDismiss,
 }: {
   id: string;
-  /** Сколько осталось. */
+  /** How much is left. */
   left: string;
-  /** Что именно перестанет работать. */
+  /** What exactly stops working. */
   stops: string;
-  /** Что продолжит работать. Обязательно. */
+  /** What keeps working. Required. */
   continues: string;
   onDismiss?: () => void;
 }) {
@@ -34,7 +34,7 @@ export function BoundaryCard({
 
   return (
     <section
-      aria-label="Граница тарифа"
+      aria-label="Plan boundary"
       className="sheet-in card p-4"
       style={{ transform: drag ? `translateY(${drag}px)` : undefined }}
       onTouchStart={(e) => {
@@ -54,18 +54,18 @@ export function BoundaryCard({
       <div
         className="mx-auto mb-3 h-1 w-10 rounded-chip bg-line-2"
         aria-hidden="true"
-        title="Потяните вниз, чтобы скрыть"
+        title="Pull down to hide"
       />
       <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3">
         <Lumi variant="glow" size={44} className="shrink-0" />
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">Луми</p>
+          <p className="label-xs text-ink-3">Lumi</p>
           <p className="mt-1 text-[15px] leading-relaxed text-ink">{left}</p>
           <p className="mt-2 text-[14px] leading-relaxed text-ink-2">
-            Когда закончится: {stops}
+            When they run out: {stops}
           </p>
           <p className="mt-1 text-[14px] leading-relaxed" style={{ color: "var(--mint-tx)" }}>
-            Продолжит работать: {continues}
+            Keeps working: {continues}
           </p>
         </div>
       </div>
@@ -75,7 +75,7 @@ export function BoundaryCard({
           className="grid min-h-11 place-items-center rounded-btn border border-line-2 text-sm font-bold"
           style={{ color: "var(--blue-ink)" }}
         >
-          Посмотреть тарифы
+          See plans
         </Link>
         <button
           type="button"
@@ -83,7 +83,7 @@ export function BoundaryCard({
           className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
           style={{ color: "var(--blue-ink)" }}
         >
-          Напомнить потом
+          Remind me later
         </button>
       </div>
     </section>

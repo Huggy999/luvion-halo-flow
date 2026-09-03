@@ -8,16 +8,16 @@ import { announce, todayISO, useHubs, useTaskMutations, useTasks } from "@/lib/a
 export const Route = createFileRoute("/day")({
   head: () => ({
     meta: [
-      { title: "Мой день — Luvion" },
+      { title: "Today — Luvion" },
       {
         name: "description",
         content:
-          "Фокус-таймер на 25 минут с Луми в центре кольца и три задачи, выбранные на сегодня.",
+          "A real 25 minute focus timer with Lumi inside the ring and the three tasks picked for today.",
       },
-      { property: "og:title", content: "Мой день — Luvion" },
+      { property: "og:title", content: "Today — Luvion" },
       {
         property: "og:description",
-        content: "Фокус-сессии по 25 минут и короткий список задач на сегодня.",
+        content: "Focus sessions of 25 minutes and a short list of tasks for today.",
       },
     ],
   }),
@@ -43,7 +43,7 @@ function DayScreen() {
         if (prev <= 1) {
           setRunning(false);
           setSession((s) => (s >= 4 ? 1 : s + 1));
-          announce("Фокус-сессия завершена");
+          announce("Focus session finished");
           return FOCUS_SECONDS;
         }
         return prev - 1;
@@ -67,11 +67,11 @@ function DayScreen() {
   return (
     <div className="cascade space-y-4">
       <header>
-        <p className="label-xs text-ink-3">Фокус · сессия {session} из 4</p>
-        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Мой день</h1>
+        <p className="label-xs text-ink-3">Focus · Session {session} of 4</p>
+        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Today</h1>
       </header>
 
-      <section className="card p-5" aria-label="Фокус-таймер">
+      <section className="card p-5" aria-label="Focus timer">
         <div className="relative mx-auto h-56 w-56">
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full -rotate-90">
             <circle cx="50" cy="50" r="46" fill="none" stroke="var(--line)" strokeWidth="5" />
@@ -102,11 +102,11 @@ function DayScreen() {
             className="inline-flex min-h-11 items-center gap-2 rounded-btn bg-blue-btn px-6 text-sm font-bold text-white"
           >
             {running ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
-            {running ? "Пауза" : "Начать фокус"}
+            {running ? "Pause" : "Start focus"}
           </button>
           <button
             type="button"
-            aria-label="Сбросить таймер"
+            aria-label="Reset timer"
             onClick={() => {
               setRunning(false);
               setLeft(FOCUS_SECONDS);
@@ -128,15 +128,15 @@ function DayScreen() {
         </div>
       </section>
 
-      <section className="card p-4" aria-label="Три задачи на сегодня">
+      <section className="card p-4" aria-label="Three tasks for today">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-ink">Три задачи на сегодня</h2>
-          <span className="num text-[13px] text-ink-3">закрыто {doneToday}</span>
+          <h2 className="text-base font-extrabold text-ink">Three tasks for today</h2>
+          <span className="num text-[13px] text-ink-3">{doneToday} closed</span>
         </div>
         <div className="mt-1 divide-y divide-line">
           {focus.length === 0 ? (
             <p className="py-4 text-sm text-ink-2">
-              Список пуст. Выберите задачи из пула ниже.
+              The list is empty. Pick tasks from the pool below.
             </p>
           ) : (
             focus.map((t) => (
@@ -148,12 +148,12 @@ function DayScreen() {
                 right={
                   <button
                     type="button"
-                    aria-label={`Убрать задачу ${t.title} из сегодня`}
+                    aria-label={`Remove ${t.title} from today`}
                     onClick={() => patchTask.mutate({ id: t.id, patch: { is_today: false } })}
                     className="min-h-11 px-2 text-[13px] font-bold"
                     style={{ color: "var(--blue-ink)" }}
                   >
-                    Убрать
+                    Remove
                   </button>
                 }
               />
@@ -162,18 +162,18 @@ function DayScreen() {
         </div>
       </section>
 
-      <section className="card p-4" aria-label="Добавить на сегодня">
-        <h2 className="text-base font-extrabold text-ink">Добавить на сегодня</h2>
+      <section className="card p-4" aria-label="Add to today">
+        <h2 className="text-base font-extrabold text-ink">Add to today</h2>
         <ul className="mt-2 space-y-2">
           {pool.length === 0 ? (
-            <li className="text-sm text-ink-2">Свободных задач нет.</li>
+            <li className="text-sm text-ink-2">No free tasks left.</li>
           ) : (
             pool.map((t) => (
               <li key={t.id} className="flex items-center gap-3">
                 <span className="min-w-0 flex-1 truncate text-[15px] text-ink">{t.title}</span>
                 <button
                   type="button"
-                  aria-label={`Добавить задачу ${t.title} на сегодня`}
+                  aria-label={`Add ${t.title} to today`}
                   onClick={() => patchTask.mutate({ id: t.id, patch: { is_today: true } })}
                   className="grid h-11 w-11 shrink-0 place-items-center rounded-btn border border-line-2"
                   style={{ color: "var(--blue-ink)" }}
