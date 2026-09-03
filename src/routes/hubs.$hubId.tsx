@@ -281,8 +281,21 @@ function HubScreen() {
             </div>
             <ul className="mt-2 divide-y divide-line">
               {hubDocs.length === 0 ? (
-                <li className="py-4 text-sm text-ink-2">No docs yet.</li>
+                <li className="py-4">
+                  <p className="text-sm text-ink-2">No docs yet in this hub.</p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const created = await createDoc.mutateAsync(hub.id);
+                      setOpenDocId(created.id);
+                    }}
+                    className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+                  >
+                    New doc
+                  </button>
+                </li>
               ) : null}
+
               {hubDocs.map((d) => (
                 <li key={d.id} className="flex items-center gap-2 py-2">
                   <button
