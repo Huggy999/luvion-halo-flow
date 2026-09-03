@@ -92,7 +92,7 @@ function Celebration({ streak }: { streak: number }) {
 function Welcome() {
   return (
     <div className="cascade flex min-h-[80vh] flex-col justify-center gap-6 text-center">
-      <Lumi variant="glow" size={128} className="mx-auto" />
+      <Lumi variant="glow" size={128} className="mx-auto" label="Lumi" draw interactive />
       <div>
         <h1 className="screen-title text-[32px] leading-tight text-ink">Luvion</h1>
         <p className="mt-2 text-[17px] font-bold" style={{ color: "var(--halo-tx)" }}>
