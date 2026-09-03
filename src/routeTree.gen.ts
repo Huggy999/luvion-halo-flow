@@ -14,6 +14,7 @@ import { Route as DayRouteImport } from './routes/day'
 import { Route as HubsRouteImport } from './routes/hubs'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as HubsIndexRouteImport } from './routes/hubs.index'
+import { Route as HubsHubIdRouteImport } from './routes/hubs.$hubId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,18 +41,25 @@ const HubsIndexRoute = HubsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HubsRoute,
 } as any)
+const HubsHubIdRoute = HubsHubIdRouteImport.update({
+  id: '/$hubId',
+  path: '/$hubId',
+  getParentRoute: () => HubsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/day': typeof DayRoute
   '/hubs': typeof HubsRouteWithChildren
   '/profile': typeof ProfileRoute
+  '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs/': typeof HubsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/day': typeof DayRoute
   '/profile': typeof ProfileRoute
+  '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs': typeof HubsIndexRoute
 }
 export interface FileRoutesById {
@@ -60,14 +68,16 @@ export interface FileRoutesById {
   '/day': typeof DayRoute
   '/hubs': typeof HubsRouteWithChildren
   '/profile': typeof ProfileRoute
+  '/hubs/$hubId': typeof HubsHubIdRoute
   '/hubs/': typeof HubsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/day' | '/hubs' | '/profile' | '/hubs/'
+  fullPaths: '/' | '/day' | '/hubs' | '/profile' | '/hubs/$hubId' | '/hubs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/day' | '/profile' | '/hubs'
-  id: '__root__' | '/' | '/day' | '/hubs' | '/profile' | '/hubs/'
+  to: '/' | '/day' | '/profile' | '/hubs/$hubId' | '/hubs'
+  id:
+    '__root__' | '/' | '/day' | '/hubs' | '/profile' | '/hubs/$hubId' | '/hubs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -114,14 +124,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubsIndexRouteImport
       parentRoute: typeof HubsRoute
     }
+    '/hubs/$hubId': {
+      id: '/hubs/$hubId'
+      path: '/$hubId'
+      fullPath: '/hubs/$hubId'
+      preLoaderRoute: typeof HubsHubIdRouteImport
+      parentRoute: typeof HubsRoute
+    }
   }
 }
 
 interface HubsRouteChildren {
+  HubsHubIdRoute: typeof HubsHubIdRoute
   HubsIndexRoute: typeof HubsIndexRoute
 }
 
 const HubsRouteChildren: HubsRouteChildren = {
+  HubsHubIdRoute: HubsHubIdRoute,
   HubsIndexRoute: HubsIndexRoute,
 }
 
