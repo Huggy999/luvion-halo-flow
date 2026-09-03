@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+
 
 export type Hub = {
   id: string;
@@ -22,6 +24,7 @@ export type Task = {
   is_done: boolean;
   done_at: string | null;
   position: number;
+  focus_sessions: number;
   created_at: string;
 };
 
@@ -40,6 +43,8 @@ export type Doc = {
   updated_at: string;
 };
 
+export type HaloLogEntry = { day: number; level: string };
+
 export type AppState = {
   id: string;
   streak: number;
@@ -48,6 +53,11 @@ export type AppState = {
   theme: "light" | "dark";
   lumi_enabled: boolean;
   streaks_enabled: boolean;
+  onboarded: boolean;
+  display_name: string;
+  halo_log: HaloLogEntry[];
+  freeze_month: string;
+  freeze_notice: boolean;
 };
 
 export type ChatMessage = {
@@ -56,6 +66,7 @@ export type ChatMessage = {
   content: string;
   created_at: string;
 };
+
 
 export const COLUMNS: { key: BoardColumn; label: string }[] = [
   { key: "backlog", label: "Backlog" },
@@ -87,13 +98,111 @@ export function streakLabel(days: number) {
   return `${days} ${days === 1 ? "day" : "days"} in a row`;
 }
 
-export const HALO_LEVELS: { name: string; min: number; max: number | null; what: string }[] = [
-  { name: "Spark", min: 1, max: 6, what: "The halo lights up on the first closed task of a day" },
-  { name: "Ray", min: 7, max: 20, what: "A full week of days that counted" },
-  { name: "Glow", min: 21, max: 49, what: "Three weeks — the habit holds on its own" },
-  { name: "Beacon", min: 50, max: 99, what: "Fifty days of steady work" },
-  { name: "Constellation", min: 100, max: null, what: "A hundred days and beyond, the highest level" },
+export type HaloSkin = "spark" | "ray" | "glow" | "beacon" | "constellation";
+
+export const HALO_LEVELS: {
+  name: string;
+  min: number;
+  max: number | null;
+  what: string;
+  skin: HaloSkin;
+  ring: string;
+}[] = [
+  {
+    name: "Spark",
+    min: 1,
+    max: 6,
+    what: "The halo lights up on the first closed task of a day",
+    skin: "spark",
+    ring: "A thin blue ring",
+  },
+  {
+    name: "Ray",
+    min: 7,
+    max: 20,
+    what: "A full week of days that counted",
+    skin: "ray",
+    ring: "A gold ring",
+  },
+  {
+    name: "Glow",
+    min: 21,
+    max: 49,
+    what: "Three weeks — the habit holds on its own",
+    skin: "glow",
+    ring: "A gold ring with rays",
+  },
+  {
+    name: "Beacon",
+    min: 50,
+    max: 99,
+    what: "Fifty days of steady work",
+    skin: "beacon",
+    ring: "A double ring",
+  },
+  {
+    name: "Constellation",
+    min: 100,
+    max: null,
+    what: "A hundred days and beyond, the highest level",
+    skin: "constellation",
+    ring: "A ring of dots",
+  },
 ];
+
+export function haloSkin(streak: number): HaloSkin {
+  if (streak >= 100) return "constellation";
+  if (streak >= 50) return "beacon";
+  if (streak >= 21) return "glow";
+  if (streak >= 7) return "ray";
+  return "spark";
+}
+
+/** Hub templates offered during onboarding. Fixed for everyone, no random data. */
+export const HUB_TEMPLATES: {
+  name: string;
+  description: string;
+  color: string;
+  tasks: string[];
+}[] = [
+  {
+    name: "Work",
+    description: "The job and everything it asks for",
+    color: "blue",
+    tasks: ["Reply to the open messages", "Plan the week ahead", "Finish one thing left over"],
+  },
+  {
+    name: "Study",
+    description: "Courses, reading and practice",
+    color: "lilac",
+    tasks: ["Read one chapter", "Review yesterday's notes", "Do one practice set"],
+  },
+  {
+    name: "Personal",
+    description: "Life outside work",
+    color: "mint",
+    tasks: ["Tidy one room", "Call someone close", "Plan the weekend"],
+  },
+  {
+    name: "Product",
+    description: "What you are building",
+    color: "coral",
+    tasks: ["Write down the next step", "Talk to one user", "Fix the smallest bug"],
+  },
+  {
+    name: "Health",
+    description: "Body, sleep and food",
+    color: "halo",
+    tasks: ["Walk for thirty minutes", "Cook one real meal", "Go to bed on time"],
+  },
+  {
+    name: "Side project",
+    description: "The thing you do for yourself",
+    color: "blue",
+    tasks: ["Spend one session on it", "Write the next idea down", "Clean up what exists"],
+  },
+];
+
 
 export function haloLevel(streak: number) {
 
@@ -115,6 +224,12 @@ function shiftISO(iso: string, days: number) {
   dt.setDate(dt.getDate() + days);
   return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
 }
+
+/** Month key such as "2026-09" — the halo pause is one per calendar month. */
+export function monthKey(iso: string) {
+  return iso.slice(0, 7);
+}
+
 
 /* ---------- aria-live announcements ---------- */
 
@@ -186,14 +301,15 @@ export function useAppState() {
         .eq("id", "main")
         .maybeSingle();
       if (error) throw error;
-      if (data) return data as AppState;
+      if (data) return data as unknown as AppState;
       const created = await supabase
         .from("app_state")
         .insert({ id: "main" })
         .select()
         .single();
       if (created.error) throw created.error;
-      return created.data as AppState;
+      return created.data as unknown as AppState;
+
     },
   });
 }
@@ -220,7 +336,7 @@ export function useUpdateState() {
     mutationFn: async (patch: Partial<AppState>) => {
       const { error } = await supabase
         .from("app_state")
-        .update({ ...patch, updated_at: new Date().toISOString() })
+        .update({ ...patch, updated_at: new Date().toISOString() } as never)
         .eq("id", "main");
       if (error) throw error;
     },
@@ -236,23 +352,63 @@ async function registerStreakDay(): Promise<boolean> {
     .eq("id", "main")
     .single();
   if (error || !data) return false;
-  const state = data as AppState;
+  const state = data as unknown as AppState;
   if (!state.streaks_enabled) return false;
   const today = todayISO();
   if (state.last_streak_date === today) return false;
   const next =
     state.last_streak_date === shiftISO(today, -1) ? state.streak + 1 : 1;
+  const log = Array.isArray(state.halo_log) ? state.halo_log : [];
+  const reached = haloLevel(next).name;
+  const nextLog =
+    haloLevel(Math.max(next - 1, 1)).name !== reached || next === 1
+      ? [...log.filter((e) => e.level !== reached), { day: next, level: reached }]
+      : log;
   const { error: upErr } = await supabase
     .from("app_state")
     .update({
       streak: next,
       best_streak: Math.max(next, state.best_streak),
       last_streak_date: today,
+      halo_log: nextLog,
       updated_at: new Date().toISOString(),
-    })
+    } as never)
     .eq("id", "main");
   return !upErr;
 }
+
+/**
+ * One pause per calendar month. A single missed day is covered automatically and
+ * the halo keeps going; the next visit says so once, calmly.
+ */
+export function useHaloGuard() {
+  const qc = useQueryClient();
+  const { data: state } = useAppState();
+  const applied = useRef(false);
+
+  useEffect(() => {
+    if (!state || applied.current) return;
+    if (!state.streaks_enabled || state.streak <= 0 || !state.last_streak_date) return;
+    const today = todayISO();
+    const missedOneDay = state.last_streak_date === shiftISO(today, -2);
+    if (!missedOneDay) return;
+    if (state.freeze_month === monthKey(today)) return;
+    applied.current = true;
+    void (async () => {
+      await supabase
+        .from("app_state")
+        .update({
+          last_streak_date: shiftISO(today, -1),
+          freeze_month: monthKey(today),
+          freeze_notice: true,
+          updated_at: new Date().toISOString(),
+        } as never)
+        .eq("id", "main");
+      await qc.invalidateQueries({ queryKey: ["app_state"] });
+    })();
+  }, [state, qc]);
+}
+
 
 export function useTaskMutations() {
   const qc = useQueryClient();
@@ -267,17 +423,20 @@ export function useTaskMutations() {
       hub_id: string | null;
       priority: Priority;
       is_today?: boolean;
+      focus_sessions?: number;
     }) => {
       const { error } = await supabase.from("tasks").insert({
         title: input.title,
         hub_id: input.hub_id,
         priority: input.priority,
         is_today: input.is_today ?? false,
+        focus_sessions: input.focus_sessions ?? 1,
       });
       if (error) throw error;
     },
     onSuccess: refresh,
   });
+
 
   const patchTask = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<Task> }) => {
@@ -357,11 +516,13 @@ export function useHubMutations() {
 
   const createHub = useMutation({
     mutationFn: async (input: { name: string; description: string; color: string }) => {
-      const { error } = await supabase.from("hubs").insert(input);
+      const { data, error } = await supabase.from("hubs").insert(input).select().single();
       if (error) throw error;
+      return data as Hub;
     },
     onSuccess: refresh,
   });
+
 
   const removeHub = useMutation({
     mutationFn: async (id: string) => {

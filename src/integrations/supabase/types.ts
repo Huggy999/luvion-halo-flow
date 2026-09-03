@@ -17,9 +17,14 @@ export type Database = {
       app_state: {
         Row: {
           best_streak: number
+          display_name: string
+          freeze_month: string
+          freeze_notice: boolean
+          halo_log: Json
           id: string
           last_streak_date: string | null
           lumi_enabled: boolean
+          onboarded: boolean
           streak: number
           streaks_enabled: boolean
           theme: string
@@ -27,9 +32,14 @@ export type Database = {
         }
         Insert: {
           best_streak?: number
+          display_name?: string
+          freeze_month?: string
+          freeze_notice?: boolean
+          halo_log?: Json
           id: string
           last_streak_date?: string | null
           lumi_enabled?: boolean
+          onboarded?: boolean
           streak?: number
           streaks_enabled?: boolean
           theme?: string
@@ -37,9 +47,14 @@ export type Database = {
         }
         Update: {
           best_streak?: number
+          display_name?: string
+          freeze_month?: string
+          freeze_notice?: boolean
+          halo_log?: Json
           id?: string
           last_streak_date?: string | null
           lumi_enabled?: boolean
+          onboarded?: boolean
           streak?: number
           streaks_enabled?: boolean
           theme?: string
@@ -174,6 +189,7 @@ export type Database = {
           board_column: string
           created_at: string
           done_at: string | null
+          focus_sessions: number
           hub_id: string | null
           id: string
           is_done: boolean
@@ -186,6 +202,7 @@ export type Database = {
           board_column?: string
           created_at?: string
           done_at?: string | null
+          focus_sessions?: number
           hub_id?: string | null
           id?: string
           is_done?: boolean
@@ -198,6 +215,7 @@ export type Database = {
           board_column?: string
           created_at?: string
           done_at?: string | null
+          focus_sessions?: number
           hub_id?: string | null
           id?: string
           is_done?: boolean

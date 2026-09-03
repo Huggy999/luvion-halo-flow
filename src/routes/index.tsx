@@ -1,19 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lumi } from "@/components/Lumi";
+import { HaloRing } from "@/components/HaloRing";
 import { HaloSheet } from "@/components/HaloSheet";
 import {
   haloLevel,
+  haloSkin,
   hubColor,
   STREAK_EVENT,
   streakLabel,
   todayISO,
   useAppState,
+  useHaloGuard,
   useHubs,
   useTasks,
+  useUpdateState,
 } from "@/lib/app";
 import { BoundaryCard } from "@/components/BoundaryCard";
 import { isBoundaryHidden, useBilling } from "@/lib/billing";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -85,11 +90,42 @@ function Celebration({ streak }: { streak: number }) {
   );
 }
 
+function Welcome() {
+  return (
+    <div className="cascade flex min-h-[80vh] flex-col justify-center gap-6 text-center">
+      <Lumi variant="glow" size={128} className="mx-auto" />
+      <div>
+        <h1 className="screen-title text-[32px] leading-tight text-ink">Luvion</h1>
+        <p className="mt-2 text-[17px] font-bold" style={{ color: "var(--halo-tx)" }}>
+          Less chaos. More structure.
+        </p>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
+          Three tasks a day, the hubs they belong to and a focus timer that keeps the day moving.
+        </p>
+      </div>
+      <div className="space-y-3">
+        <Link
+          to="/onboarding"
+          className="flex min-h-12 w-full items-center justify-center rounded-btn bg-blue-btn text-sm font-bold text-white"
+        >
+          Get started
+        </Link>
+        <Link to="/auth" className="block text-[14px] text-ink-2">
+          I already have an account
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 function PulseScreen() {
-  const { data: state } = useAppState();
+  const { data: state, isLoading } = useAppState();
   const { data: tasks = [] } = useTasks();
   const { data: hubs = [] } = useHubs();
   const { billing } = useBilling();
+  const updateState = useUpdateState();
+  useHaloGuard();
+
   const [softDismissed, setSoftDismissed] = useState(false);
   const [haloOpen, setHaloOpen] = useState(false);
   const softWarning =
@@ -128,14 +164,31 @@ function PulseScreen() {
     month: "long",
   });
 
-  const ring = 2 * Math.PI * 46;
+  if (isLoading) return <p className="text-sm text-ink-2">Loading your day</p>;
+  if (state && !state.onboarded) return <Welcome />;
 
   return (
     <div className="cascade space-y-4">
       <header>
         <p className="label-xs text-ink-3">{dateLabel}</p>
-        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">Pulse</h1>
+        <h1 className="screen-title mt-1 text-[30px] leading-tight text-ink">
+          {state?.display_name ? `Pulse · ${state.display_name}` : "Pulse"}
+        </h1>
       </header>
+
+      {state?.freeze_notice ? (
+        <section className="card p-4" aria-live="polite">
+          <p className="text-[14px] text-ink">Your halo held. One pause left this month.</p>
+          <button
+            type="button"
+            onClick={() => updateState.mutate({ freeze_notice: false })}
+            className="mt-2 min-h-11 rounded-btn border border-line-2 px-4 text-[13px] font-bold text-ink"
+          >
+            Got it
+          </button>
+        </section>
+      ) : null}
+
 
       <section
         className="card relative overflow-hidden"
@@ -154,30 +207,14 @@ function PulseScreen() {
         >
           <div className="grid grid-cols-[112px_minmax(0,1fr)] items-center gap-4">
             <div>
-              <div className="relative h-28 w-28">
-                <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full -rotate-90">
-                  <circle cx="50" cy="50" r="46" fill="none" stroke="var(--line-2)" strokeWidth="6" />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="46"
-                    fill="none"
-                    stroke="var(--halo)"
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                    strokeDasharray={ring}
-                    strokeDashoffset={ring * (1 - progress)}
-                    className="halo-breathe"
-                  />
-                </svg>
-                <div className="absolute inset-0 grid place-items-center">
-                  <Lumi
-                    variant={streak > 0 ? "glow" : "sleep"}
-                    size={62}
-                    className={flash ? "halo-flash" : ""}
-                  />
-                </div>
-              </div>
+              <HaloRing skin={haloSkin(streak)} progress={progress} size={112}>
+                <Lumi
+                  variant={streak > 0 ? "glow" : "sleep"}
+                  size={62}
+                  className={flash ? "halo-flash" : ""}
+                />
+              </HaloRing>
+
               <p className="label-xs mt-2 text-center text-ink-2">
                 {nextName ? `${level.name} → ${nextName}` : `${level.name} · highest level`}
               </p>
