@@ -95,7 +95,16 @@ function PulseScreen() {
   const { data: tasks = [] } = useTasks();
   const { data: hubs = [] } = useHubs();
   const { completeTask } = useTaskMutations();
+  const { billing } = useBilling();
+  const [softDismissed, setSoftDismissed] = useState(false);
+  const softWarning =
+    billing.signedIn &&
+    billing.aiLimit > 0 &&
+    billing.aiUsed / billing.aiLimit >= 0.8 &&
+    !softDismissed &&
+    !isBoundaryHidden("lumi-soft-pulse");
   const [flash, setFlash] = useState(false);
+
 
   useEffect(() => {
     const onUp = () => {
