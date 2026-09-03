@@ -74,18 +74,18 @@ function PrivacyScreen() {
     <div className="cascade space-y-4">
       <header>
         <p className="label-xs text-ink-3">Luvion</p>
-        <h1 className="screen-title mt-1 text-[28px] leading-tight text-ink">Privacy</h1>
+        <h1 className="t-screen mt-1 text-ink">Privacy</h1>
       </header>
 
-      <p className="px-1 text-[14px] leading-relaxed text-ink-2">
+      <p className="px-1 t-body font-normal text-ink-2">
         This page describes what the app stores and what you can do about it. It is a working
         placeholder structure and should be reviewed by the operator before launch.
       </p>
 
       {SECTIONS.map((section) => (
         <section key={section.title} className="card p-4" aria-label={section.title}>
-          <h2 className="text-base font-extrabold text-ink">{section.title}</h2>
-          <ul className="mt-2 space-y-2 text-[14px] leading-relaxed text-ink-2">
+          <h2 className="t-title text-ink">{section.title}</h2>
+          <ul className="mt-2 space-y-2 t-body font-normal text-ink-2">
             {section.body.map((line) => (
               <li key={line}>{line}</li>
             ))}
@@ -93,7 +93,7 @@ function PrivacyScreen() {
         </section>
       ))}
 
-      <p className="px-1 text-[13px] text-ink-2">
+      <p className="px-1 t-aux text-ink-2">
         <Link to="/terms" style={{ color: "var(--blue-ink)" }}>
           Terms
         </Link>{" "}

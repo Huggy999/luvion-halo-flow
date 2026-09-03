@@ -18,12 +18,12 @@ export function HaloSheet({
 
   return (
     <Sheet open={open} onClose={onClose} title="The halo">
-      <p className="text-[14px] leading-relaxed text-ink-2">
+      <p className="t-body font-normal text-ink-2">
         Close at least one task on a day and the day counts. Days that follow each other build the
         halo. The halo, the streak and the focus timer are free on every plan. One missed day a
         month is covered automatically.
       </p>
-      <p className="num mt-3 text-[15px] font-bold text-ink">{streakLabel(streak)}</p>
+      <p className="num mt-3 t-body font-bold text-ink">{streakLabel(streak)}</p>
 
       <ul className="mt-3 divide-y divide-line">
         {HALO_LEVELS.map((lv) => {
@@ -36,12 +36,12 @@ export function HaloSheet({
                 aria-hidden="true"
               />
               <span className="min-w-0">
-                <span className="block text-[15px] font-bold text-ink">
+                <span className="block t-body font-bold text-ink">
                   {lv.name} · {lv.max === null ? `${lv.min}+ days` : `days ${lv.min}–${lv.max}`}
                   {active ? " · you are here" : ""}
                 </span>
-                <span className="block text-[13px] text-ink-2">{lv.what}</span>
-                <span className="block text-[12px] text-ink-3">{lv.ring}</span>
+                <span className="block t-aux text-ink-2">{lv.what}</span>
+                <span className="block t-aux text-ink-3">{lv.ring}</span>
               </span>
             </li>
           );
@@ -53,7 +53,7 @@ export function HaloSheet({
           <p className="label-xs text-ink-3">Your halo log</p>
           <ul className="mt-2 space-y-1">
             {entries.map((e) => (
-              <li key={`${e.day}-${e.level}`} className="text-[14px] text-ink-2">
+              <li key={`${e.day}-${e.level}`} className="t-body font-normal text-ink-2">
                 Day {e.day} — reached {e.level}
               </li>
             ))}

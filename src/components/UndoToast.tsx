@@ -51,7 +51,7 @@ export function UndoToast() {
         onFocus={() => setPaused(true)}
         onBlur={() => setPaused(false)}
       >
-        <p className="text-[14px] text-ink">{offer.message}</p>
+        <p className="t-body text-ink">{offer.message}</p>
         <button
           type="button"
           onClick={() => {

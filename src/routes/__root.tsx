@@ -25,13 +25,13 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-6">
       <div className="max-w-xs text-center">
-        <h1 className="screen-title text-3xl text-ink">Page not found</h1>
+        <h1 className="t-screen text-ink">Page not found</h1>
         <p className="mt-2 text-sm text-ink-2">
           This address does not exist or the section moved. Go back to Pulse.
         </p>
         <Link
           to="/"
-          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn bg-blue-btn px-5 text-sm font-bold text-white"
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn ring-on-solid bg-blue-btn px-5 text-sm font-bold text-white"
         >
           Go to Pulse
         </Link>
@@ -49,7 +49,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-6">
       <div className="max-w-xs text-center">
-        <h1 className="screen-title text-2xl text-ink">The data did not load</h1>
+        <h1 className="t-screen text-ink">The data did not load</h1>
         <p className="mt-2 text-sm text-ink-2">
           Cause: {error.message || "no response from the server"}. Try again.
         </p>
@@ -58,7 +58,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             router.invalidate();
             reset();
           }}
-          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn bg-blue-btn px-5 text-sm font-bold text-white"
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-btn ring-on-solid bg-blue-btn px-5 text-sm font-bold text-white"
         >
           Try again
         </button>
@@ -173,7 +173,7 @@ function TabBar() {
                     aria-hidden="true"
                   />
                   <span
-                    className="relative text-[11px] font-bold"
+                    className="relative label-xs font-bold"
                     style={{ color: active ? "var(--blue-ink)" : "var(--ink-3)" }}
                   >
                     {tab.label}

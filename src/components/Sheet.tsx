@@ -82,7 +82,7 @@ export function Sheet({
         style={{ paddingBottom: "calc(20px + env(safe-area-inset-bottom))" }}
       >
         <div className="mx-auto mb-3 h-1 w-10 rounded-chip bg-line-2" />
-        <h2 className="mb-4 text-lg font-extrabold text-ink">{title}</h2>
+        <h2 className="mb-4 t-title text-ink">{title}</h2>
         {children}
       </div>
     </div>
