@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText } from "lucide-react";
 import { Sheet } from "@/components/Sheet";
 import { TaskRow } from "@/components/TaskRow";
+import { TaskSheet } from "@/components/TaskSheet";
 import { DocEditor } from "@/components/DocEditor";
 import { BoundaryCard } from "@/components/BoundaryCard";
 import { LIMITS, TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
@@ -12,6 +13,7 @@ import {
   type BoardColumn,
   PRIORITY_LABEL,
   type Priority,
+  type Task,
   useDocMutations,
   useDocs,
   useHubs,
@@ -56,6 +58,7 @@ function HubScreen() {
   const [isToday, setIsToday] = useState(false);
   const [error, setError] = useState("");
   const [openDocId, setOpenDocId] = useState<string | null>(null);
+  const [detailTask, setDetailTask] = useState<Task | null>(null);
   const [boardBoundary, setBoardBoundary] = useState(false);
   const { billing } = useBilling();
 
@@ -328,6 +331,8 @@ function HubScreen() {
           </section>
         )
       ) : null}
+
+      <TaskSheet task={detailTask} onClose={() => setDetailTask(null)} />
 
       <Sheet open={openTask} onClose={() => setOpenTask(false)} title="New task">
         <div className="space-y-3">
