@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText } from "lucide-react";
 import { Sheet } from "@/components/Sheet";
 import { TaskRow } from "@/components/TaskRow";
+import { TaskSheet } from "@/components/TaskSheet";
 import { DocEditor } from "@/components/DocEditor";
 import { BoundaryCard } from "@/components/BoundaryCard";
 import { LIMITS, TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
@@ -12,6 +13,7 @@ import {
   type BoardColumn,
   PRIORITY_LABEL,
   type Priority,
+  type Task,
   useDocMutations,
   useDocs,
   useHubs,
@@ -56,6 +58,7 @@ function HubScreen() {
   const [isToday, setIsToday] = useState(false);
   const [error, setError] = useState("");
   const [openDocId, setOpenDocId] = useState<string | null>(null);
+  const [detailTask, setDetailTask] = useState<Task | null>(null);
   const [boardBoundary, setBoardBoundary] = useState(false);
   const { billing } = useBilling();
 
@@ -166,15 +169,30 @@ function HubScreen() {
           </div>
           <div className="mt-1 divide-y divide-line">
             {hubTasks.length === 0 ? (
-              <p className="py-4 text-sm text-ink-2">No tasks yet.</p>
+              <div className="py-4">
+                <p className="text-sm text-ink-2">No tasks yet in this hub.</p>
+                <button
+                  type="button"
+                  onClick={() => setOpenTask(true)}
+                  className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+                >
+                  New task
+                </button>
+              </div>
             ) : (
               hubTasks.map((t) => (
-                <TaskRow key={t.id} task={t} onToggle={() => completeTask.mutate(t)} />
+                <TaskRow
+                  key={t.id}
+                  task={t}
+                  onToggle={() => completeTask.mutate(t)}
+                  onOpen={() => setDetailTask(t)}
+                />
               ))
             )}
           </div>
         </section>
       ) : null}
+
 
       {segment === "board" ? (
         <section aria-label="Task board">
@@ -266,8 +284,21 @@ function HubScreen() {
             </div>
             <ul className="mt-2 divide-y divide-line">
               {hubDocs.length === 0 ? (
-                <li className="py-4 text-sm text-ink-2">No docs yet.</li>
+                <li className="py-4">
+                  <p className="text-sm text-ink-2">No docs yet in this hub.</p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const created = await createDoc.mutateAsync(hub.id);
+                      setOpenDocId(created.id);
+                    }}
+                    className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
+                  >
+                    New doc
+                  </button>
+                </li>
               ) : null}
+
               {hubDocs.map((d) => (
                 <li key={d.id} className="flex items-center gap-2 py-2">
                   <button
@@ -300,6 +331,8 @@ function HubScreen() {
           </section>
         )
       ) : null}
+
+      <TaskSheet task={detailTask} onClose={() => setDetailTask(null)} />
 
       <Sheet open={openTask} onClose={() => setOpenTask(false)} title="New task">
         <div className="space-y-3">

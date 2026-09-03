@@ -108,19 +108,29 @@ function LumiScreen() {
       </header>
 
       {billing.signedIn ? (
-        <p className="px-1 text-[13px] text-ink-2">
-          Lumi requests: {billing.aiUsed} of {billing.aiLimit} this month on{" "}
-          {TIER_LABEL[billing.tier]}
+        <p className="num px-1 text-[13px] text-ink-2">
+          {billing.aiUsed} of {billing.aiLimit} this month · {TIER_LABEL[billing.tier]}
         </p>
       ) : (
-        <p className="card p-4 text-[14px] leading-relaxed text-ink-2">
-          Lumi needs an account: requests are counted on the server and belong to you. Tasks, the
-          board, docs, the halo and the focus timer work without signing in.{" "}
-          <Link to="/auth" style={{ color: "var(--blue-ink)" }}>
-            Sign in
-          </Link>
-        </p>
+        <div className="card p-4">
+          <p className="label-xs text-ink-3">Example</p>
+          <p className="mt-2 text-[15px] font-bold text-ink">
+            What matters most to close today
+          </p>
+          <p className="mt-2 text-[15px] leading-relaxed text-ink-2">
+            Two of your three slots are open. Prepare the team meeting is marked Important and sits
+            in Work, so start there. The other slot holds a task with one focus session left.
+          </p>
+          <p className="mt-3 text-[14px] leading-relaxed text-ink-2">
+            Lumi needs an account: requests are counted on the server and belong to you. Tasks, the
+            board, docs, the halo and the focus timer work without signing in.{" "}
+            <Link to="/auth" style={{ color: "var(--blue-ink)" }}>
+              Sign in
+            </Link>
+          </p>
+        </div>
       )}
+
 
       {softWarning ? (
         <BoundaryCard

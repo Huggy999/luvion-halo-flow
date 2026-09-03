@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DayRouteImport } from './routes/day'
 import { Route as HubsRouteImport } from './routes/hubs'
 import { Route as LumiRouteImport } from './routes/lumi'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -44,6 +45,11 @@ const HubsRoute = HubsRouteImport.update({
 const LumiRoute = LumiRouteImport.update({
   id: '/lumi',
   path: '/lumi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/day': typeof DayRoute
   '/hubs': typeof HubsRouteWithChildren
   '/lumi': typeof LumiRoute
+  '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/day': typeof DayRoute
   '/lumi': typeof LumiRoute
+  '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/day': typeof DayRoute
   '/hubs': typeof HubsRouteWithChildren
   '/lumi': typeof LumiRoute
+  '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/day'
     | '/hubs'
     | '/lumi'
+    | '/onboarding'
     | '/pricing'
     | '/privacy'
     | '/profile'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/day'
     | '/lumi'
+    | '/onboarding'
     | '/pricing'
     | '/privacy'
     | '/profile'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/day'
     | '/hubs'
     | '/lumi'
+    | '/onboarding'
     | '/pricing'
     | '/privacy'
     | '/profile'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   DayRoute: typeof DayRoute
   HubsRoute: typeof HubsRouteWithChildren
   LumiRoute: typeof LumiRoute
+  OnboardingRoute: typeof OnboardingRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       path: '/lumi'
       fullPath: '/lumi'
       preLoaderRoute: typeof LumiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -269,6 +289,7 @@ const rootRouteChildren: RootRouteChildren = {
   DayRoute: DayRoute,
   HubsRoute: HubsRouteWithChildren,
   LumiRoute: LumiRoute,
+  OnboardingRoute: OnboardingRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,

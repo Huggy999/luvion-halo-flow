@@ -14,7 +14,10 @@ import { Activity, Boxes, CalendarCheck, Sparkles, User } from "lucide-react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LiveRegion } from "../components/LiveRegion";
+import { CreateMenu } from "../components/CreateMenu";
+import { InstallHint } from "../components/InstallHint";
 import { useAppState } from "../lib/app";
+
 
 function NotFoundComponent() {
   return (
@@ -70,6 +73,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
+      { name: "theme-color", content: "#027EFC" },
+
       { title: "Luvion — structure with a halo" },
       {
         name: "description",
@@ -91,7 +96,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700&family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
+
     ],
   }),
   shellComponent: RootShell,
@@ -189,26 +197,43 @@ function ThemeSync() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const screenKey = pathname.split("/").slice(0, 3).join("/");
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeSync />
       <LiveRegion />
-      <div id="app-shell" className="min-h-dvh bg-bg">
-        <div className="mx-auto w-full max-w-[430px] bg-bg">
-          <main
-            key={screenKey}
-            className="px-4 pt-6"
-            style={{ paddingBottom: "calc(104px + env(safe-area-inset-bottom))" }}
-          >
-            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-            <Outlet />
-          </main>
-        </div>
-        <TabBar />
-      </div>
+      <AppFrame />
     </QueryClientProvider>
   );
 }
+
+function AppFrame() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const screenKey = pathname.split("/").slice(0, 3).join("/");
+  const { data: state } = useAppState();
+  const welcome = state !== undefined && !state.onboarded && pathname === "/";
+  const chrome = !welcome && pathname !== "/onboarding" && pathname !== "/auth";
+
+  return (
+    <div id="app-shell" className="min-h-dvh bg-bg">
+      <div className="mx-auto w-full max-w-[430px] bg-bg">
+        <main
+          key={screenKey}
+          className="px-4 pt-6"
+          style={{ paddingBottom: "calc(104px + env(safe-area-inset-bottom))" }}
+        >
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </main>
+      </div>
+      {chrome ? (
+        <>
+          <CreateMenu />
+          <InstallHint />
+          <TabBar />
+        </>
+      ) : null}
+    </div>
+  );
+}
+
