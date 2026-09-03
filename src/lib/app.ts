@@ -552,7 +552,7 @@ export function useTaskMutations() {
     return { snapshot };
   };
 
-  const rollback = (ctx: { snapshot?: Task[] } | undefined) => {
+  const rollback = (ctx: { snapshot: Task[] | undefined } | undefined) => {
     if (ctx?.snapshot) qc.setQueryData(["tasks"], ctx.snapshot);
   };
 
