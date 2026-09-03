@@ -20,7 +20,7 @@ export function DataError({ error, onRetry, what }: Props) {
   }, [what, reason]);
 
   return (
-    <section className="card p-4" role="alert">
+    <section className="card p-4">
       <h2 className="text-base font-extrabold text-ink">Couldn't load {what}</h2>
       <p className="mt-1 text-[13px] text-ink-2">{reason}</p>
       <p className="mt-1 text-[13px] text-ink-3">
