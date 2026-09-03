@@ -4,10 +4,10 @@ import type { Block, Doc } from "@/lib/app";
 import { useDocMutations } from "@/lib/app";
 
 const TYPES: { key: Block["type"]; label: string }[] = [
-  { key: "heading", label: "Заголовок" },
-  { key: "paragraph", label: "Абзац" },
-  { key: "check", label: "Чек-лист" },
-  { key: "callout", label: "Выноска" },
+  { key: "heading", label: "Heading" },
+  { key: "paragraph", label: "Text" },
+  { key: "check", label: "Checklist" },
+  { key: "callout", label: "Callout" },
 ];
 
 function newBlock(type: Block["type"] = "paragraph"): Block {
@@ -82,7 +82,7 @@ export function DocEditor({ doc, onBack }: { doc: Doc; onBack: () => void }) {
       <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
         <button
           type="button"
-          aria-label="Вернуться к списку документов"
+          aria-label="Back to the doc list"
           onClick={onBack}
           className="grid h-11 w-11 place-items-center rounded-btn border border-line-2 text-ink-2"
         >
@@ -91,11 +91,11 @@ export function DocEditor({ doc, onBack }: { doc: Doc; onBack: () => void }) {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          aria-label="Название документа"
+          aria-label="Doc title"
           className="min-w-0 min-h-11 rounded-btn border border-line-2 bg-bg px-3 font-extrabold text-ink"
         />
         <span className="num shrink-0 text-[11px] text-ink-3">
-          {saved ? "Сохранено" : "Сохранение"}
+          {saved ? "Saved" : "Saving"}
         </span>
       </div>
 
@@ -117,7 +117,7 @@ export function DocEditor({ doc, onBack }: { doc: Doc; onBack: () => void }) {
                 type="button"
                 role="checkbox"
                 aria-checked={!!block.checked}
-                aria-label={`Отметить пункт ${block.text || "без текста"}`}
+                aria-label={`Check the item ${block.text || "without text"}`}
                 onClick={() => patch(block.id, { checked: !block.checked })}
                 className="tap-44 grid h-6 w-6 shrink-0 place-items-center rounded-[8px] border-2"
                 style={{
@@ -143,11 +143,11 @@ export function DocEditor({ doc, onBack }: { doc: Doc; onBack: () => void }) {
                 inputs.current[block.id] = el;
               }}
               value={block.text}
-              aria-label={`Блок ${i + 1}`}
+              aria-label={`Block ${i + 1}`}
               onFocus={() => setFocusId(block.id)}
               onChange={(e) => patch(block.id, { text: e.target.value })}
               onKeyDown={(e) => onKeyDown(e, i)}
-              placeholder={block.type === "heading" ? "Заголовок" : "Текст"}
+              placeholder={block.type === "heading" ? "Heading" : "Text"}
               className={`min-h-11 w-full bg-transparent outline-none ${styleFor(block.type)} ${
                 block.checked ? "line-through" : ""
               }`}
@@ -158,8 +158,8 @@ export function DocEditor({ doc, onBack }: { doc: Doc; onBack: () => void }) {
 
       <div className="card p-3">
         <div className="flex items-center justify-between">
-          <p className="label-xs text-ink-3">Тип блока</p>
-          <p className="num text-[11px] text-ink-3">{words} слов</p>
+          <p className="label-xs text-ink-3">Block type</p>
+          <p className="num text-[11px] text-ink-3">{words} words</p>
         </div>
         <div className="mt-2 grid grid-cols-4 gap-2">
           {TYPES.map((t) => {
