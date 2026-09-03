@@ -1,23 +1,27 @@
 import { Sheet } from "@/components/Sheet";
-import { HALO_LEVELS, haloLevel, streakLabel } from "@/lib/app";
+import { HALO_LEVELS, haloLevel, streakLabel, type HaloLogEntry } from "@/lib/app";
 
 /** The full halo scale and what the streak is for. Opened by tapping the halo card. */
 export function HaloSheet({
   open,
   onClose,
   streak,
+  log = [],
 }: {
   open: boolean;
   onClose: () => void;
   streak: number;
+  log?: HaloLogEntry[];
 }) {
   const current = haloLevel(Math.max(streak, 1)).name;
+  const entries = [...log].sort((a, b) => a.day - b.day);
 
   return (
     <Sheet open={open} onClose={onClose} title="The halo">
       <p className="text-[14px] leading-relaxed text-ink-2">
         Close at least one task on a day and the day counts. Days that follow each other build the
-        halo. The halo, the streak and the focus timer are free on every plan.
+        halo. The halo, the streak and the focus timer are free on every plan. One missed day a
+        month is covered automatically.
       </p>
       <p className="num mt-3 text-[15px] font-bold text-ink">{streakLabel(streak)}</p>
 
@@ -37,11 +41,26 @@ export function HaloSheet({
                   {active ? " · you are here" : ""}
                 </span>
                 <span className="block text-[13px] text-ink-2">{lv.what}</span>
+                <span className="block text-[12px] text-ink-3">{lv.ring}</span>
               </span>
             </li>
           );
         })}
       </ul>
+
+      {entries.length > 0 ? (
+        <div className="mt-4">
+          <p className="label-xs text-ink-3">Your halo log</p>
+          <ul className="mt-2 space-y-1">
+            {entries.map((e) => (
+              <li key={`${e.day}-${e.level}`} className="text-[14px] text-ink-2">
+                Day {e.day} — reached {e.level}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
 
       <button
         type="button"
