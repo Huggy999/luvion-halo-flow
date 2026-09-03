@@ -11,6 +11,8 @@ import {
   useTaskMutations,
   useTasks,
 } from "@/lib/app";
+import { BoundaryCard } from "@/components/BoundaryCard";
+import { isBoundaryHidden, useBilling } from "@/lib/billing";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -269,6 +271,16 @@ function PulseScreen() {
           )}
         </div>
       </section>
+
+      {softWarning ? (
+        <BoundaryCard
+          id="lumi-soft-pulse"
+          left={`Осталось ${billing.aiLimit - billing.aiUsed} запросов к Луми из ${billing.aiLimit} в этом месяце.`}
+          stops="ответы и черновики от Луми"
+          continues="поиск по вашим документам и задачам, серия, нимб и фокус-таймер"
+          onDismiss={() => setSoftDismissed(true)}
+        />
+      ) : null}
 
       <Link
         to="/lumi"
