@@ -318,7 +318,23 @@ export function onAnnounce(l: Listener) {
   return () => listeners.delete(l);
 }
 
+/* ---------- undo offers ---------- */
+
+export type UndoOffer = { message: string; onUndo: () => void };
+type UndoListener = (o: UndoOffer) => void;
+const undoListeners = new Set<UndoListener>();
+
+export function offerUndo(o: UndoOffer) {
+  undoListeners.forEach((l) => l(o));
+}
+
+export function onUndoOffer(l: UndoListener) {
+  undoListeners.add(l);
+  return () => undoListeners.delete(l);
+}
+
 export const STREAK_EVENT = "luvion:streak-up";
+
 
 /* ---------- queries ---------- */
 
