@@ -80,6 +80,8 @@
   --bg: #f2f6fd;
   --line: #e4ecf8;
   --line-2: #d2dff1;
+  --sunk: #edf2fb;
+  --line-card: #d8e3f3;
   --shadow-soft: 0 8px 28px -14px rgba(10, 18, 35, 0.28);
   --shadow-float: 0 12px 34px -12px rgba(10, 18, 35, 0.3);
 }
@@ -92,6 +94,8 @@
   --ink-3: #8a8474;
   --line: #1a1f2a;
   --line-2: #262d3b;
+  --sunk: #11151e;
+  --line-card: #242c3a;
   --blue: #3d9aff;
   --blue-btn: #1f6fd0;
   --blue-ink: #8dc4ff;
