@@ -279,21 +279,16 @@ function PulseScreen() {
 
       <section className="card p-4" aria-label="Today at a glance">
         <div className="flex items-center justify-between gap-3">
-          <p className="num text-xl font-bold text-ink">{focusDone} of 3 today</p>
-        </div>
-        <p className="mt-1 text-[13px] text-ink-2">
-          {countedToday ? "Today counted" : "Today not counted yet"}
-        </p>
-      </section>
-
-      <section className="card p-4" aria-label="In focus today">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-ink">In focus today</h2>
-          <Link to="/day" className="text-[13px] font-bold" style={{ color: "var(--blue-ink)" }}>
+          <h2 className="t-title text-ink">In focus today</h2>
+          <Link to="/day" className="t-aux font-bold" style={{ color: "var(--blue-ink)" }}>
             Open Today
           </Link>
         </div>
-        <ul className="mt-1 divide-y divide-line">
+        <p className="num mt-2 t-section text-ink">{focusDone} of 3 today</p>
+        <p className="mt-1 t-aux text-ink-2">
+          {countedToday ? "Today counted" : "Today not counted yet"}
+        </p>
+        <ul className="surface-sunk mt-3 divide-y divide-line px-3">
           {focus.length === 0 ? (
             <li className="py-4 text-sm text-ink-2">
               Nothing is picked for today. Tasks are picked on the Today screen.
@@ -310,14 +305,14 @@ function PulseScreen() {
                   />
                   <span className="min-w-0 flex-1">
                     <span
-                      className={`block truncate text-[15px] font-medium ${
+                      className={`block truncate t-body ${
                         t.is_done ? "strike text-ink-3" : "text-ink"
                       }`}
                     >
                       {t.title}
                     </span>
                     {hub ? (
-                      <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-ink-2">
+                      <span className="mt-0.5 flex items-center gap-1.5 label-xs text-ink-2">
                         <span
                           className="h-2 w-2 rounded-chip"
                           style={{ background: hubColor(hub.color) }}
