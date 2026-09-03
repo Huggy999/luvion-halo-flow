@@ -2,6 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Lumi } from "@/components/Lumi";
+import { Button } from "@/components/Button";
+import { Switch } from "@/components/Switch";
 import { DataError } from "@/components/DataError";
 import { ProfileSkeleton } from "@/components/skeletons";
 import { useDelayedFlag } from "@/hooks/useDelayedFlag";
@@ -59,20 +61,7 @@ function Toggle({
         <p className="t-body font-bold text-ink">{label}</p>
         <p className="t-aux text-ink-2">{hint}</p>
       </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        aria-label={label}
-        onClick={() => onChange(!checked)}
-        className="relative h-11 w-16 shrink-0 rounded-chip border border-line-2 px-1"
-        style={{ background: checked ? "var(--blue-btn)" : "var(--bg)" }}
-      >
-        <span
-          className="block h-7 w-7 rounded-chip bg-paper transition-transform"
-          style={{ transform: checked ? "translateX(28px)" : "translateX(0)" }}
-        />
-      </button>
+      <Switch checked={checked} onCheckedChange={onChange} aria-label={label} />
     </div>
   );
 }
@@ -157,7 +146,7 @@ function ProfileScreen() {
           </div>
           <Link
             to="/pricing"
-            className="grid min-h-11 shrink-0 place-items-center rounded-btn border border-line-2 px-3 t-aux font-bold"
+            className="grid min-h-11 shrink-0 place-items-center rounded-btn border border-[var(--line-ctl)] px-3 t-aux font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
             Plans
@@ -168,8 +157,9 @@ function ProfileScreen() {
         </p>
         <div className="mt-3">
           {billing.signedIn ? (
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              block
               onClick={async () => {
                 await qc.cancelQueries();
                 qc.clear();
@@ -177,15 +167,13 @@ function ProfileScreen() {
                 announce("Signed out");
                 navigate({ to: "/auth", replace: true });
               }}
-              className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
-              style={{ color: "var(--blue-ink)" }}
             >
               Sign out
-            </button>
+            </Button>
           ) : (
             <Link
               to="/auth"
-              className="grid min-h-11 w-full place-items-center rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
+              className="grid min-h-11 w-full place-items-center rounded-btn bg-[var(--blue-btn)] text-[14px] font-bold text-white hover:bg-[color-mix(in_srgb,var(--blue-btn)_86%,black)]"
             >
               Sign in or create an account
             </Link>
@@ -198,30 +186,21 @@ function ProfileScreen() {
         <p className="mt-1 t-aux text-ink-2">
           Downloads your hubs, tasks and docs. Works on every plan, including an expired subscription. The data stays yours.
         </p>
-        <button
-          type="button"
+        <Button
+          variant="primary"
+          block
+          className="mt-3"
           onClick={() => exportJson(hubs, tasks, docs)}
-          className="mt-3 min-h-11 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
         >
           Download JSON
-        </button>
+        </Button>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => exportMarkdown(hubs, tasks, docs)}
-            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
-            style={{ color: "var(--blue-ink)" }}
-          >
+          <Button variant="secondary" onClick={() => exportMarkdown(hubs, tasks, docs)}>
             Markdown
-          </button>
-          <button
-            type="button"
-            onClick={() => exportCsv(hubs, tasks)}
-            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold"
-            style={{ color: "var(--blue-ink)" }}
-          >
+          </Button>
+          <Button variant="secondary" onClick={() => exportCsv(hubs, tasks)}>
             CSV
-          </button>
+          </Button>
         </div>
       </section>
 
@@ -281,14 +260,9 @@ function ProfileScreen() {
             {error}
           </p>
         ) : null}
-        <button
-          type="button"
-          onClick={() => setConfirm(true)}
-          className="mt-3 min-h-11 w-full rounded-btn border px-4 text-sm font-bold"
-          style={{ borderColor: "var(--coral)", color: "var(--coral-tx)" }}
-        >
+        <Button variant="danger" block className="mt-3" onClick={() => setConfirm(true)}>
           Reset data
-        </button>
+        </Button>
       </section>
 
       <section className="card p-4" aria-label="Legal">
@@ -299,14 +273,14 @@ function ProfileScreen() {
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Link
             to="/privacy"
-            className="grid min-h-11 place-items-center rounded-btn border border-line-2 text-sm font-bold"
+            className="grid min-h-11 place-items-center rounded-btn border border-[var(--line-ctl)] text-sm font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
             Privacy
           </Link>
           <Link
             to="/terms"
-            className="grid min-h-11 place-items-center rounded-btn border border-line-2 text-sm font-bold"
+            className="grid min-h-11 place-items-center rounded-btn border border-[var(--line-ctl)] text-sm font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
             Terms
@@ -321,14 +295,9 @@ function ProfileScreen() {
             Removes the account, the plan and the Lumi counter. Export your data first if you want
             a copy.
           </p>
-          <button
-            type="button"
-            onClick={() => setConfirmDelete(true)}
-            className="mt-3 min-h-11 w-full rounded-btn border px-4 text-sm font-bold"
-            style={{ borderColor: "var(--coral)", color: "var(--coral-tx)" }}
-          >
+          <Button variant="danger" block className="mt-3" onClick={() => setConfirmDelete(true)}>
             Delete account
-          </button>
+          </Button>
         </section>
       ) : null}
 
@@ -347,16 +316,12 @@ function ProfileScreen() {
           </p>
         ) : null}
         <div className="mt-5 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => setConfirmDelete(false)}
-            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold text-ink-2"
-          >
+          <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
             Keep account
-          </button>
-          <button
-            type="button"
-            disabled={busy}
+          </Button>
+          <Button
+            variant="danger"
+            loading={busy}
             onClick={async () => {
               setBusy(true);
               setError("");
@@ -379,11 +344,9 @@ function ProfileScreen() {
                 setBusy(false);
               }
             }}
-            className="min-h-11 rounded-btn text-sm font-bold text-white"
-            style={{ background: "var(--coral)" }}
           >
-            {busy ? "Deleting" : "Delete account"}
-          </button>
+            Delete account
+          </Button>
         </div>
       </Sheet>
 
@@ -392,16 +355,12 @@ function ProfileScreen() {
           This cannot be undone. Hubs, tasks, docs and chat history will be removed.
         </p>
         <div className="mt-5 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => setConfirm(false)}
-            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold text-ink-2"
-          >
+          <Button variant="ghost" onClick={() => setConfirm(false)}>
             Cancel
-          </button>
-          <button
-            type="button"
-            disabled={busy}
+          </Button>
+          <Button
+            variant="danger"
+            loading={busy}
             onClick={async () => {
               setBusy(true);
               setError("");
@@ -418,11 +377,9 @@ function ProfileScreen() {
                 setBusy(false);
               }
             }}
-            className="min-h-11 rounded-btn text-sm font-bold text-white"
-            style={{ background: "var(--coral)" }}
           >
-            {busy ? "Removing" : "Reset"}
-          </button>
+            Reset
+          </Button>
         </div>
       </Sheet>
     </div>

@@ -1,3 +1,4 @@
+import { Button } from "@/components/Button";
 import { Sheet } from "@/components/Sheet";
 import { HALO_LEVELS, haloLevel, streakLabel, type HaloLogEntry } from "@/lib/app";
 
@@ -62,14 +63,9 @@ export function HaloSheet({
       ) : null}
 
 
-      <button
-        type="button"
-        onClick={onClose}
-        className="mt-3 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
-        style={{ color: "var(--blue-ink)" }}
-      >
+      <Button variant="secondary" size="md" block className="mt-3" onClick={onClose}>
         Close
-      </button>
+      </Button>
     </Sheet>
   );
 }

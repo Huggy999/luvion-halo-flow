@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, MoreHorizontal, SkipForward, Check } from "lucide-react";
+import { Button } from "@/components/Button";
 import { Lumi } from "@/components/Lumi";
 import { HaloRing } from "@/components/HaloRing";
 import { DataError } from "@/components/DataError";
@@ -178,29 +179,24 @@ function DayScreen() {
 
         {activeTask ? (
           <div className="mt-5 flex items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => setRunning((r) => !r)}
-              className="ring-on-solid inline-flex min-h-11 items-center gap-2 rounded-btn bg-blue-btn px-5 text-sm font-bold text-white"
-            >
+            <Button variant="primary" onClick={() => setRunning((r) => !r)}>
               {running ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
               {running ? "Pause" : left === FOCUS_SECONDS ? "Start focus" : "Resume"}
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="secondary"
               onClick={() => {
                 setRunning(false);
                 setLeft(FOCUS_SECONDS);
                 setActiveId(null);
                 announce("Session skipped");
               }}
-              className="inline-flex min-h-11 items-center gap-2 rounded-btn border border-line-2 px-4 text-sm font-bold text-ink"
             >
               <SkipForward size={18} aria-hidden="true" />
               Skip
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="secondary"
               onClick={() => {
                 setRunning(false);
                 completeTask.mutate(activeTask);
@@ -208,12 +204,11 @@ function DayScreen() {
                 setActiveId(null);
                 setLeft(FOCUS_SECONDS);
               }}
-              className="inline-flex min-h-11 items-center gap-2 rounded-btn border border-line-2 px-4 text-sm font-bold"
               style={{ color: "var(--mint-tx)" }}
             >
               <Check size={18} aria-hidden="true" />
               Complete
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="mt-5 space-y-2">
@@ -221,16 +216,12 @@ function DayScreen() {
               A session runs on one task. Pick one of the three slots of today.
             </p>
             {focusOpen.length === 0 ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setPickForFocus(false);
-                  setPoolOpen(true);
-                }}
-                className="ring-on-solid min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
-              >
+              <Button variant="primary" block onClick={() => {
+                setPickForFocus(false);
+                setPoolOpen(true);
+              }}>
                 Pick from your tasks
-              </button>
+              </Button>
             ) : (
               focusOpen.map((t, i) => (
                 <button
@@ -240,7 +231,7 @@ function DayScreen() {
                     setActiveId(t.id);
                     setLeft(FOCUS_SECONDS);
                   }}
-                  className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
+                  className="min-h-11 w-full rounded-btn border border-[var(--line-ctl)] px-3 text-left t-body text-ink"
                 >
                   {i + 1}. {t.title}
                 </button>
@@ -311,7 +302,7 @@ function DayScreen() {
                     type="button"
                     aria-label={`More actions for ${task.title}`}
                     onClick={() => setMenuTask(task)}
-                    className="grid h-11 w-11 shrink-0 place-items-center rounded-btn text-ink-3"
+                    className="grid h-11 w-11 shrink-0 place-items-center rounded-btn border border-[var(--line-ctl)] text-ink-3"
                   >
                     <MoreHorizontal size={18} aria-hidden="true" />
                   </button>
@@ -368,7 +359,7 @@ function DayScreen() {
                 <button
                   type="button"
                   onClick={() => pick(t)}
-                  className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
+                  className="min-h-11 w-full rounded-btn border border-[var(--line-ctl)] px-3 text-left t-body text-ink"
                 >
                   {t.title}
                 </button>
@@ -384,8 +375,10 @@ function DayScreen() {
         title={activeTask ? `Session done. Close "${activeTask.title}"` : "Session done"}
       >
         <div className="space-y-2">
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="lg"
+            block
             onClick={() => {
               if (activeTask) completeTask.mutate(activeTask);
               setActiveId(null);
@@ -393,28 +386,24 @@ function DayScreen() {
               setSession((s) => (s >= 4 ? 1 : s + 1));
               setDoneOpen(false);
             }}
-            className="ring-on-solid min-h-12 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
             Close task
-          </button>
-          <button
-            type="button"
-            onClick={nextSession}
-            className="min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink"
-          >
+          </Button>
+          <Button variant="secondary" size="lg" block onClick={nextSession}>
             One more session
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="secondary"
+            size="lg"
+            block
             onClick={() => {
               setLeft(FOCUS_SECONDS);
               setDoneOpen(false);
               setBreakOpen(true);
             }}
-            className="min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink"
           >
             Take a break
-          </button>
+          </Button>
         </div>
       </Sheet>
 
@@ -424,13 +413,9 @@ function DayScreen() {
             ? "Four sessions are done. A longer break of fifteen minutes fits well here."
             : "Step away for five minutes. The timer waits at twenty five minutes."}
         </p>
-        <button
-          type="button"
-          onClick={() => setBreakOpen(false)}
-          className="mt-3 min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink"
-        >
+        <Button variant="secondary" size="lg" block className="mt-3" onClick={() => setBreakOpen(false)}>
           Back to Today
-        </button>
+        </Button>
       </Sheet>
 
       <Sheet
@@ -438,8 +423,9 @@ function DayScreen() {
         onClose={() => setMenuTask(null)}
         title={menuTask?.title ?? "Task"}
       >
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          block
           onClick={() => {
             if (menuTask) {
               setActiveId(menuTask.id);
@@ -447,13 +433,13 @@ function DayScreen() {
             }
             setMenuTask(null);
           }}
-          className="min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
-          style={{ color: "var(--blue-ink)" }}
         >
           Focus on this task
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="secondary"
+          block
+          className="mt-2"
           onClick={() => {
             if (menuTask) {
               const t = menuTask;
@@ -465,18 +451,12 @@ function DayScreen() {
             }
             setMenuTask(null);
           }}
-          className="mt-2 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold"
-          style={{ color: "var(--blue-ink)" }}
         >
           Remove from today
-        </button>
-        <button
-          type="button"
-          onClick={() => setMenuTask(null)}
-          className="mt-2 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold text-ink-2"
-        >
+        </Button>
+        <Button variant="ghost" block className="mt-2" onClick={() => setMenuTask(null)}>
           Cancel
-        </button>
+        </Button>
       </Sheet>
 
       <TaskSheet task={detailTask} onClose={() => setDetailTask(null)} />
@@ -501,20 +481,16 @@ function DayScreen() {
                     patchTask.mutate({ id: swapCandidate.id, patch: { is_today: true } });
                   setSwapCandidate(null);
                 }}
-                className="min-h-11 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
+                className="min-h-11 w-full rounded-btn border border-[var(--line-ctl)] px-3 text-left t-body text-ink"
               >
                 Replace {t.title}
               </button>
             </li>
           ))}
         </ul>
-        <button
-          type="button"
-          onClick={() => setSwapCandidate(null)}
-          className="mt-3 min-h-11 w-full rounded-btn border border-line-2 text-sm font-bold text-ink-2"
-        >
+        <Button variant="ghost" block className="mt-3" onClick={() => setSwapCandidate(null)}>
           Keep today as it is
-        </button>
+        </Button>
       </Sheet>
     </div>
   );

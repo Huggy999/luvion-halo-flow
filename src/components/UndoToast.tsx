@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/Button";
 import { announce, onUndoOffer, type UndoOffer } from "@/lib/app";
 
 /**
@@ -52,17 +53,17 @@ export function UndoToast() {
         onBlur={() => setPaused(false)}
       >
         <p className="t-body text-ink">{offer.message}</p>
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          size="md"
+          className="shrink-0 px-4"
           onClick={() => {
             offer.onUndo();
             setOffer(null);
           }}
-          className="min-h-11 shrink-0 rounded-btn border border-line-2 px-4 text-sm font-bold"
-          style={{ color: "var(--blue-ink)" }}
         >
           Undo
-        </button>
+        </Button>
       </div>
     </div>
   );

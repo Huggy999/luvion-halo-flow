@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/Button";
 import {
   firstSessionDone,
   installPromptShown,
@@ -55,23 +56,19 @@ export function InstallHint() {
           readable offline.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="md"
             onClick={async () => {
               if (deferred) await deferred.prompt();
               close();
             }}
-            className="min-h-11 rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
             Add to home screen
-          </button>
-          <button
-            type="button"
-            onClick={close}
-            className="min-h-11 rounded-btn border border-line-2 text-sm font-bold text-ink"
-          >
+          </Button>
+          <Button variant="secondary" size="md" onClick={close}>
             Not now
-          </button>
+          </Button>
         </div>
       </div>
     </div>

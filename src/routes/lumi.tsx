@@ -4,6 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { Lumi } from "@/components/Lumi";
+import { Button } from "@/components/Button";
+import { Field } from "@/components/Field";
 import { DataError } from "@/components/DataError";
 import { LumiSkeleton } from "@/components/skeletons";
 import { useDelayedFlag } from "@/hooks/useDelayedFlag";
@@ -235,7 +237,7 @@ function LumiScreen() {
             key={c}
             type="button"
             onClick={() => send(c)}
-            className="min-h-11 shrink-0 rounded-chip border border-line-2 bg-paper px-4 t-aux font-bold"
+            className="min-h-11 shrink-0 rounded-chip border border-[var(--line-ctl)] bg-paper px-4 t-aux font-bold"
             style={{ color: "var(--blue-ink)" }}
           >
             {c}
@@ -248,23 +250,26 @@ function LumiScreen() {
           e.preventDefault();
           send(text);
         }}
-        className="sticky bottom-0 grid grid-cols-[minmax(0,1fr)_auto] gap-2"
+        className="sticky bottom-0 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2"
       >
-        <input
+        <Field
+          id="lumi-question"
+          label="Question for Lumi"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          aria-label="Question for Lumi"
           placeholder="Ask about your work"
-          className="min-h-12 w-full rounded-btn border border-line-2 bg-paper px-4 text-ink"
+          className="mb-0"
         />
-        <button
+        <Button
           type="submit"
+          variant="primary"
+          size="lg"
           aria-label="Send question"
           disabled={thinking}
-          className="grid h-12 w-12 place-items-center rounded-btn ring-on-solid bg-blue-btn text-white disabled:opacity-60"
+          className="h-12 w-12 shrink-0 px-0"
         >
           <Send size={18} aria-hidden="true" />
-        </button>
+        </Button>
       </form>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import { Field } from "@/components/Field";
 import type { Block, Doc } from "@/lib/app";
 import { useDocMutations } from "@/lib/app";
 
@@ -84,15 +85,17 @@ export function DocEditor({ doc, onBack }: { doc: Doc; onBack: () => void }) {
           type="button"
           aria-label="Back to the doc list"
           onClick={onBack}
-          className="grid h-11 w-11 place-items-center rounded-btn border border-line-2 text-ink-2"
+          className="grid h-11 w-11 place-items-center rounded-btn border border-[var(--line-ctl)] text-ink-2"
         >
           <ArrowLeft size={18} aria-hidden="true" />
         </button>
-        <input
+        <Field
+          id="doc-title"
+          label="Doc title"
+          className="min-w-0"
+          fieldClassName="min-h-11 font-extrabold"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          aria-label="Doc title"
-          className="min-w-0 min-h-11 rounded-btn border border-line-2 bg-bg px-3 font-extrabold text-ink"
         />
         <span className="num shrink-0 text-[11px] text-ink-3">
           {saved ? "Saved" : "Saving"}

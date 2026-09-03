@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Lumi } from "@/components/Lumi";
+import { Field } from "@/components/Field";
+import { Button } from "@/components/Button";
 import {
   HUB_TEMPLATES,
   announce,
@@ -148,16 +150,14 @@ function OnboardingScreen() {
           <h1 className="t-screen text-ink">
             What should Lumi call you
           </h1>
-          <label className="block">
-            <span className="label-xs text-ink-3">Your name</span>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus
-              className="mt-1 min-h-12 w-full rounded-btn border border-line-2 bg-paper px-3 text-ink"
-              placeholder="For example, Alex"
-            />
-          </label>
+          <Field
+            id="onboarding-name"
+            label="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+            placeholder="For example, Alex"
+          />
         </section>
       ) : null}
 
@@ -240,12 +240,9 @@ function OnboardingScreen() {
               placeholder="or write your own"
               className="min-h-11 w-full rounded-btn border border-line-2 bg-paper px-3 text-ink"
             />
-            <button
-              type="submit"
-              className="min-h-11 rounded-btn border border-line-2 px-4 text-sm font-bold text-ink"
-            >
+            <Button variant="secondary" size="md" type="submit">
               Add
-            </button>
+            </Button>
           </form>
           {picked.filter((p) => !templates.some((t) => t.tasks.includes(p))).length > 0 ? (
             <ul className="space-y-2">
@@ -290,34 +287,18 @@ function OnboardingScreen() {
 
       <div className="space-y-2">
         {step < STEPS ? (
-          <button
-            type="button"
-            onClick={next}
-            className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white"
-          >
+          <Button variant="primary" size="lg" block onClick={next}>
             Continue
-          </button>
+          </Button>
         ) : (
-          <button
-            type="button"
-            onClick={finish}
-            disabled={saving}
-            className="min-h-12 w-full rounded-btn ring-on-solid bg-blue-btn text-sm font-bold text-white disabled:opacity-60"
-          >
+          <Button variant="primary" size="lg" block onClick={finish} disabled={saving}>
             {saving ? "Setting things up" : "Start your first session"}
-          </button>
+          </Button>
         )}
         {step > 1 ? (
-          <button
-            type="button"
-            onClick={() => {
-              setError("");
-              setStep((s) => s - 1);
-            }}
-            className="min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink"
-          >
+          <Button variant="secondary" size="lg" block onClick={() => { setError(""); setStep((s) => s - 1); }}>
             Back
-          </button>
+          </Button>
         ) : null}
       </div>
     </div>

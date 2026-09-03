@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lumi } from "@/components/Lumi";
+import { Button } from "@/components/Button";
 import { HaloRing } from "@/components/HaloRing";
 import { HaloSheet } from "@/components/HaloSheet";
 import {
@@ -108,7 +109,7 @@ function Welcome() {
       <div className="space-y-3">
         <Link
           to="/onboarding"
-          className="ring-on-solid flex min-h-12 w-full items-center justify-center rounded-btn bg-blue-btn text-sm font-bold text-white"
+          className="flex min-h-12 w-full items-center justify-center rounded-btn bg-[var(--blue-btn)] text-[14px] font-bold text-white hover:bg-[color-mix(in_srgb,var(--blue-btn)_86%,black)]"
         >
           Get started
         </Link>
@@ -199,13 +200,13 @@ function PulseScreen() {
       {state?.freeze_notice ? (
         <section className="card p-4" aria-live="polite">
           <p className="t-body text-ink">Your halo held. One pause left this month.</p>
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={() => updateState.mutate({ freeze_notice: false })}
-            className="mt-2 min-h-11 rounded-btn border border-line-2 px-4 t-aux font-bold text-ink"
+            className="mt-2 text-ink"
           >
             Got it
-          </button>
+          </Button>
         </section>
       ) : null}
 

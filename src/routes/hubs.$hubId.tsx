@@ -1,6 +1,9 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText } from "lucide-react";
+import { Button } from "@/components/Button";
+import { Switch } from "@/components/Switch";
+import { Field } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
 import { DataError } from "@/components/DataError";
 import { BoardSkeleton, HubDetailSkeleton } from "@/components/skeletons";
@@ -140,7 +143,7 @@ function HubScreen() {
         <Link
           to="/hubs"
           aria-label="Back to the hub list"
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-btn border border-line-2 text-ink-2"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-btn border border-[var(--line-ctl)] text-ink-2"
         >
           <ArrowLeft size={18} aria-hidden="true" />
         </Link>
@@ -208,26 +211,22 @@ function HubScreen() {
         <section className="card p-4" aria-label="Hub tasks">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
             <h2 className="truncate t-title text-ink">Tasks</h2>
-            <button
-              type="button"
+            <Button
+              variant="primary"
               aria-label="Add task"
               onClick={() => setOpenTask(true)}
-              className="ring-on-solid grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
+              className="h-11 w-11 shrink-0 px-0"
             >
               <Plus size={18} aria-hidden="true" />
-            </button>
+            </Button>
           </div>
           <div className="surface-sunk mt-1 divide-y divide-line px-3">
             {hubTasks.length === 0 ? (
               <div className="py-4">
                 <p className="t-body font-normal text-ink-2">No tasks yet in this hub.</p>
-                <button
-                  type="button"
-                  onClick={() => setOpenTask(true)}
-                  className="ring-on-solid mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
-                >
+                <Button variant="primary" block className="mt-3" onClick={() => setOpenTask(true)}>
                   New task
-                </button>
+                </Button>
               </div>
             ) : (
               hubTasks.map((t) => (
@@ -294,7 +293,7 @@ function HubScreen() {
                                 onClick={() =>
                                   moveToColumn(t, COLUMNS[idx - 1]!.key as BoardColumn)
                                 }
-                                className="grid h-11 w-11 place-items-center rounded-btn border border-line-2 disabled:opacity-40"
+                                className="grid h-11 w-11 place-items-center rounded-btn border border-[var(--line-ctl)] disabled:opacity-40"
                                 style={{ color: "var(--blue-ink)" }}
                               >
                                 <ChevronLeft size={16} aria-hidden="true" />
@@ -306,7 +305,7 @@ function HubScreen() {
                                 onClick={() =>
                                   moveToColumn(t, COLUMNS[idx + 1]!.key as BoardColumn)
                                 }
-                                className="grid h-11 w-11 place-items-center rounded-btn border border-line-2 disabled:opacity-40"
+                                className="grid h-11 w-11 place-items-center rounded-btn border border-[var(--line-ctl)] disabled:opacity-40"
                                 style={{ color: "var(--blue-ink)" }}
                               >
                                 <ChevronRight size={16} aria-hidden="true" />
@@ -331,26 +330,22 @@ function HubScreen() {
           <section className="card p-4" aria-label="Hub docs">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
               <h2 className="truncate t-title text-ink">Docs</h2>
-              <button
-                type="button"
+              <Button
+                variant="primary"
                 aria-label="Create doc"
                 onClick={() => setOpenDocPicker(true)}
-                className="ring-on-solid grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
+                className="h-11 w-11 shrink-0 px-0"
               >
                 <Plus size={18} aria-hidden="true" />
-              </button>
+              </Button>
             </div>
             <ul className="surface-sunk mt-2 divide-y divide-line px-3">
               {hubDocs.length === 0 ? (
                 <li className="py-4">
                   <p className="t-body font-normal text-ink-2">No docs yet in this hub.</p>
-                  <button
-                    type="button"
-                    onClick={() => setOpenDocPicker(true)}
-                    className="ring-on-solid mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
-                  >
+                  <Button variant="primary" block className="mt-3" onClick={() => setOpenDocPicker(true)}>
                     New doc
-                  </button>
+                  </Button>
                 </li>
               ) : null}
 
@@ -371,15 +366,14 @@ function HubScreen() {
                       </span>
                     </span>
                   </button>
-                  <button
-                    type="button"
+                  <Button
+                    variant="danger"
                     aria-label={`Delete doc ${d.title}`}
                     onClick={() => removeDoc.mutate(d.id)}
-                    className="min-h-11 px-2 t-aux font-bold"
-                    style={{ color: "var(--coral-tx)" }}
+                    className="px-2"
                   >
                     Delete
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ul>
@@ -402,20 +396,16 @@ function HubScreen() {
                 <button
                   type="button"
                   onClick={() => swapIntoDoing(t)}
-                  className="min-h-12 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
+                  className="min-h-12 w-full rounded-btn border border-[var(--line-ctl)] px-3 text-left t-body text-ink"
                 >
                   Move {t.title} back
                 </button>
               </li>
             ))}
           </ul>
-          <button
-            type="button"
-            onClick={() => setWipCandidate(null)}
-            className="min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink-2"
-          >
+          <Button variant="ghost" size="lg" block onClick={() => setWipCandidate(null)}>
             Keep the board as it is
-          </button>
+          </Button>
         </div>
       </Sheet>
 
@@ -439,7 +429,7 @@ function HubScreen() {
                   setOpenDocId(created.id);
                   announce(`${tpl.name} created`);
                 }}
-                className="min-h-16 w-full rounded-btn border border-line-2 px-3 py-2 text-left"
+                className="min-h-16 w-full rounded-btn border border-[var(--line-ctl)] px-3 py-2 text-left"
               >
                 <span className="block t-body font-bold text-ink">{tpl.name}</span>
                 <span className="block t-aux text-ink-2">{tpl.description}</span>
@@ -453,15 +443,13 @@ function HubScreen() {
 
       <Sheet open={openTask} onClose={() => setOpenTask(false)} title="New task">
         <div className="space-y-3">
-          <label className="block">
-            <span className="label-xs text-ink-3">Title</span>
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="mt-1 min-h-11 w-full rounded-btn border border-line-2 bg-bg px-3 text-ink"
-              placeholder="What needs doing"
-            />
-          </label>
+          <Field
+            id="new-task-title"
+            label="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="What needs doing"
+          />
           <fieldset>
             <legend className="label-xs text-ink-3">Priority</legend>
             <div className="mt-2 grid grid-cols-3 gap-2">
@@ -484,28 +472,16 @@ function HubScreen() {
           </fieldset>
           <div className="flex items-center justify-between gap-4">
             <span className="t-body font-bold text-ink">Add to today</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={isToday}
-              aria-label="Add to today"
-              onClick={() => setIsToday((v) => !v)}
-              className="relative h-11 w-16 shrink-0 rounded-chip border border-line-2 px-1"
-              style={{ background: isToday ? "var(--blue-btn)" : "var(--bg)" }}
-            >
-              <span
-                className="block h-7 w-7 rounded-chip bg-paper transition-transform"
-                style={{ transform: isToday ? "translateX(28px)" : "translateX(0)" }}
-              />
-            </button>
+            <Switch checked={isToday} onCheckedChange={setIsToday} aria-label="Add to today" />
           </div>
           {error ? (
             <p className="t-aux" style={{ color: "var(--coral-tx)" }}>
               {error}
             </p>
           ) : null}
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            block
             onClick={async () => {
               if (!title.trim()) {
                 setError("The title is empty. Enter a task title.");
@@ -526,10 +502,9 @@ function HubScreen() {
                 setError(`Couldn't create the task — ${(e as Error).message}. Try again.`);
               }
             }}
-            className="ring-on-solid min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
           >
             Add task
-          </button>
+          </Button>
         </div>
       </Sheet>
     </div>
