@@ -613,13 +613,26 @@ export function useDocMutations() {
   const refresh = () => qc.invalidateQueries({ queryKey: ["docs"] });
 
   const createDoc = useMutation({
-    mutationFn: async (hub_id: string) => {
+    mutationFn: async ({
+      hub_id,
+      template = "blank",
+    }: {
+      hub_id: string;
+      template?: DocTemplateKey;
+    }) => {
+      const tpl = DOC_TEMPLATES.find((t) => t.key === template) ?? DOC_TEMPLATES[0]!;
+      const blocks: Block[] = tpl.blocks.map((b) => ({
+        id: crypto.randomUUID(),
+        type: b.type,
+        text: b.text,
+        ...(b.type === "check" ? { checked: false } : {}),
+      }));
       const { data, error } = await supabase
         .from("documents")
         .insert({
           hub_id,
-          title: "Untitled doc",
-          blocks: [{ id: crypto.randomUUID(), type: "paragraph", text: "" }],
+          title: tpl.key === "blank" ? "Untitled doc" : tpl.name,
+          blocks,
         })
         .select()
         .single();
