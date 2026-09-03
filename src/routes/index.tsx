@@ -97,11 +97,11 @@ function Welcome() {
     <div className="cascade flex min-h-[80vh] flex-col justify-center gap-6 text-center">
       <Lumi variant="glow" size={128} className="mx-auto" label="Lumi" draw interactive />
       <div>
-        <h1 className="screen-title text-[32px] leading-tight text-ink">Luvion</h1>
-        <p className="mt-2 text-[17px] font-bold" style={{ color: "var(--halo-tx)" }}>
+        <h1 className="t-screen text-ink">Luvion</h1>
+        <p className="mt-2 t-title" style={{ color: "var(--halo-tx)" }}>
           Less chaos. More structure.
         </p>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
+        <p className="mt-3 t-body text-ink-2">
           Three tasks a day, the hubs they belong to and a focus timer that keeps the day moving.
         </p>
       </div>
@@ -112,7 +112,7 @@ function Welcome() {
         >
           Get started
         </Link>
-        <Link to="/auth" className="block text-[14px] text-ink-2">
+        <Link to="/auth" className="block t-body font-normal text-ink-2">
           I already have an account
         </Link>
       </div>
