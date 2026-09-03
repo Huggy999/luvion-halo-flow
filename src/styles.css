@@ -115,6 +115,11 @@
     border-color: var(--line);
   }
 
+  :focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+
   html,
   body {
     background-color: var(--bg);
@@ -140,10 +145,36 @@
   }
 }
 
-@utility screen-title {
-  font-family: var(--font-display);
-  font-weight: 300;
+/* ---------- Шкала кегля ---------- */
+
+@utility t-hero {
+  font: 700 42px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+@utility t-screen {
+  font: 300 30px/1.08 var(--font-display);
   letter-spacing: -0.01em;
+}
+
+@utility t-section {
+  font: 800 20px/1.25 var(--font-sans);
+}
+
+@utility t-title {
+  font: 800 16px/1.35 var(--font-sans);
+}
+
+@utility t-body {
+  font: 500 15px/1.55 var(--font-sans);
+}
+
+@utility t-aux {
+  font: 400 13px/1.5 var(--font-sans);
+}
+
+@utility ring-on-solid {
+  outline-color: var(--paper);
 }
 
 @utility num {
