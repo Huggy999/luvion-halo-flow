@@ -14,7 +14,6 @@ import {
   type Tier,
 } from "@/lib/billing";
 import { checkSubscription, createCheckout, customerPortal } from "@/lib/billing.functions";
-import { Button } from "@/components/Button";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
