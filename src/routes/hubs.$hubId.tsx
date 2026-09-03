@@ -64,12 +64,32 @@ function HubScreen() {
   const [openDocId, setOpenDocId] = useState<string | null>(null);
   const [detailTask, setDetailTask] = useState<Task | null>(null);
   const [boardBoundary, setBoardBoundary] = useState(false);
+  const [wipCandidate, setWipCandidate] = useState<Task | null>(null);
+  const [openDocPicker, setOpenDocPicker] = useState(false);
   const { billing } = useBilling();
 
   const hub = hubs.find((h) => h.id === hubId);
   const hubTasks = tasks.filter((t) => t.hub_id === hubId);
   const hubDocs = docs.filter((d) => d.hub_id === hubId);
   const openDoc = hubDocs.find((d) => d.id === openDocId);
+  const doingTasks = hubTasks.filter((t) => t.board_column === "doing");
+
+  const moveToColumn = (task: Task, column: BoardColumn) => {
+    if (column === "doing" && doingTasks.length >= WIP_LIMIT) {
+      setWipCandidate(task);
+      return;
+    }
+    moveTask.mutate({ task, column });
+  };
+
+  const swapIntoDoing = async (outgoing: Task) => {
+    const incoming = wipCandidate;
+    if (!incoming) return;
+    await moveTask.mutateAsync({ task: outgoing, column: "backlog" });
+    await moveTask.mutateAsync({ task: incoming, column: "doing" });
+    setWipCandidate(null);
+    announce(`${incoming.title} started, ${outgoing.title} moved back to Backlog`);
+  };
   const boardLimit = LIMITS[billing.tier].boards;
   const boardAllowed =
     boardLimit === null || hubs.slice(0, boardLimit).some((h) => h.id === hubId);
@@ -209,8 +229,25 @@ function HubScreen() {
                   <div className="card h-full p-3">
                     <div className="flex items-center justify-between">
                       <h2 className="text-[15px] font-extrabold text-ink">{col.label}</h2>
-                      <span className="num text-[12px] text-ink-3">{items.length}</span>
+                      {col.key === "doing" ? (
+                        <span
+                          className="num text-[12px]"
+                          style={{
+                            color:
+                              items.length >= WIP_LIMIT ? "var(--halo-tx)" : "var(--ink-3)",
+                          }}
+                        >
+                          {items.length} / {WIP_LIMIT}
+                        </span>
+                      ) : (
+                        <span className="num text-[12px] text-ink-3">{items.length}</span>
+                      )}
                     </div>
+                    {col.key === "doing" && items.length >= WIP_LIMIT ? (
+                      <p className="mt-1 text-[13px] text-ink-2">
+                        Three at a time. A fourth card takes the place of one of these.
+                      </p>
+                    ) : null}
                     <ul className="mt-3 space-y-2">
                       {items.length === 0 ? (
                         <li className="text-[13px] text-ink-3">Empty</li>
@@ -229,10 +266,7 @@ function HubScreen() {
                                 aria-label={`Move ${t.title} one column left`}
                                 disabled={idx === 0}
                                 onClick={() =>
-                                  moveTask.mutate({
-                                    task: t,
-                                    column: COLUMNS[idx - 1]!.key as BoardColumn,
-                                  })
+                                  moveToColumn(t, COLUMNS[idx - 1]!.key as BoardColumn)
                                 }
                                 className="grid h-11 w-11 place-items-center rounded-btn border border-line-2 disabled:opacity-40"
                                 style={{ color: "var(--blue-ink)" }}
@@ -244,10 +278,7 @@ function HubScreen() {
                                 aria-label={`Move ${t.title} one column right`}
                                 disabled={idx === COLUMNS.length - 1}
                                 onClick={() =>
-                                  moveTask.mutate({
-                                    task: t,
-                                    column: COLUMNS[idx + 1]!.key as BoardColumn,
-                                  })
+                                  moveToColumn(t, COLUMNS[idx + 1]!.key as BoardColumn)
                                 }
                                 className="grid h-11 w-11 place-items-center rounded-btn border border-line-2 disabled:opacity-40"
                                 style={{ color: "var(--blue-ink)" }}
@@ -277,10 +308,7 @@ function HubScreen() {
               <button
                 type="button"
                 aria-label="Create doc"
-                onClick={async () => {
-                  const created = await createDoc.mutateAsync(hub.id);
-                  setOpenDocId(created.id);
-                }}
+                onClick={() => setOpenDocPicker(true)}
                 className="grid h-11 w-11 shrink-0 place-items-center rounded-btn bg-blue-btn text-white"
               >
                 <Plus size={18} aria-hidden="true" />
@@ -292,10 +320,7 @@ function HubScreen() {
                   <p className="text-sm text-ink-2">No docs yet in this hub.</p>
                   <button
                     type="button"
-                    onClick={async () => {
-                      const created = await createDoc.mutateAsync(hub.id);
-                      setOpenDocId(created.id);
-                    }}
+                    onClick={() => setOpenDocPicker(true)}
                     className="mt-3 min-h-11 w-full rounded-btn bg-blue-btn text-sm font-bold text-white"
                   >
                     New doc
@@ -335,6 +360,68 @@ function HubScreen() {
           </section>
         )
       ) : null}
+
+      <Sheet
+        open={wipCandidate !== null}
+        onClose={() => setWipCandidate(null)}
+        title="Three cards are already in progress"
+      >
+        <div className="space-y-3">
+          <p className="text-sm text-ink-2">
+            To start {wipCandidate?.title}, pick the card that goes back to Backlog.
+          </p>
+          <ul className="space-y-2">
+            {doingTasks.map((t) => (
+              <li key={t.id}>
+                <button
+                  type="button"
+                  onClick={() => swapIntoDoing(t)}
+                  className="min-h-12 w-full rounded-btn border border-line-2 px-3 text-left text-[15px] text-ink"
+                >
+                  Move {t.title} back
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => setWipCandidate(null)}
+            className="min-h-12 w-full rounded-btn border border-line-2 text-sm font-bold text-ink-2"
+          >
+            Keep the board as it is
+          </button>
+        </div>
+      </Sheet>
+
+      <Sheet
+        open={openDocPicker}
+        onClose={() => setOpenDocPicker(false)}
+        title="New document"
+      >
+        <ul className="space-y-2">
+          {DOC_TEMPLATES.map((tpl) => (
+            <li key={tpl.key}>
+              <button
+                type="button"
+                onClick={async () => {
+                  const created = await createDoc.mutateAsync({
+                    hub_id: hub.id,
+                    template: tpl.key as DocTemplateKey,
+                  });
+                  setOpenDocPicker(false);
+                  setSegment("docs");
+                  setOpenDocId(created.id);
+                  announce(`${tpl.name} created`);
+                }}
+                className="min-h-16 w-full rounded-btn border border-line-2 px-3 py-2 text-left"
+              >
+                <span className="block text-[15px] font-bold text-ink">{tpl.name}</span>
+                <span className="block text-[12px] text-ink-2">{tpl.description}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </Sheet>
 
       <TaskSheet task={detailTask} onClose={() => setDetailTask(null)} />
 
