@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Lumi } from "@/components/Lumi";
+import { Field } from "@/components/Field";
+import { Button } from "@/components/Button";
 import {
   HUB_TEMPLATES,
   announce,
@@ -148,16 +150,14 @@ function OnboardingScreen() {
           <h1 className="t-screen text-ink">
             What should Lumi call you
           </h1>
-          <label className="block">
-            <span className="label-xs text-ink-3">Your name</span>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus
-              className="mt-1 min-h-12 w-full rounded-btn border border-line-2 bg-paper px-3 text-ink"
-              placeholder="For example, Alex"
-            />
-          </label>
+          <Field
+            id="onboarding-name"
+            label="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+            placeholder="For example, Alex"
+          />
         </section>
       ) : null}
 
