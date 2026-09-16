@@ -238,7 +238,7 @@ function OnboardingScreen() {
               onChange={(e) => setOwn(e.target.value)}
               aria-label="Write your own task"
               placeholder="or write your own"
-              className="min-h-11 w-full rounded-btn border border-line-2 bg-paper px-3 text-ink"
+              className="min-h-11 w-full rounded-btn border border-[var(--line-ctl)] bg-paper px-3 text-ink"
             />
             <Button variant="secondary" size="md" type="submit">
               Add
