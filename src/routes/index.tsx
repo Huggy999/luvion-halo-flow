@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { ArrowUpRight, Flame, Target } from "lucide-react";
 import { Lumi } from "@/components/Lumi";
 import { Button } from "@/components/Button";
 import { HaloRing } from "@/components/HaloRing";
@@ -212,7 +213,7 @@ function PulseScreen() {
 
 
       <section
-        className="halo-stage premium-card card relative overflow-hidden"
+        className="halo-stage celestial-pulse premium-card card relative overflow-hidden"
         aria-label="Halo and streak"
       >
         <Celebration streak={streak} />
@@ -220,10 +221,12 @@ function PulseScreen() {
           type="button"
           onClick={() => setHaloOpen(true)}
           aria-label="Open the halo levels"
-          className="block w-full p-5 text-left transition-transform duration-200 active:scale-[0.985]"
+          className="celestial-pulse-trigger block w-full p-5 text-left transition-transform duration-200 active:scale-[0.985]"
         >
-          <div className="grid grid-cols-[112px_minmax(0,1fr)] items-center gap-4">
-            <div>
+          <div className="celestial-pulse-grid grid grid-cols-[128px_minmax(0,1fr)] items-center gap-4">
+            <div className="celestial-orb-wrap">
+              <span className="celestial-orbit celestial-orbit-a" aria-hidden="true" />
+              <span className="celestial-orbit celestial-orbit-b" aria-hidden="true" />
               <HaloRing skin={haloSkin(streak)} progress={progress} size={112}>
                 <Lumi
                   variant={streak > 0 ? "glow" : "sleep"}
@@ -260,7 +263,9 @@ function PulseScreen() {
                       ? `${level.next - streak} more days to ${nextName}`
                       : "Highest halo level"}
               </p>
-              <p className="mt-1.5 t-aux text-ink-3">Tap to see all five levels</p>
+              <p className="mt-2 inline-flex items-center gap-1 t-aux font-bold text-blue-ink">
+                Explore levels <ArrowUpRight size={14} aria-hidden="true" />
+              </p>
             </div>
           </div>
         </button>
@@ -272,6 +277,29 @@ function PulseScreen() {
         streak={streak}
         log={state?.halo_log ?? []}
       />
+
+      <section className="metric-grid grid grid-cols-2 gap-3" aria-label="Daily progress">
+        <div className="metric-tile premium-card card p-4">
+          <span className="icon-orb h-9 w-9 rounded-[12px]" aria-hidden="true">
+            <Target size={17} />
+          </span>
+          <p className="mt-3 t-aux text-ink-2">Daily focus</p>
+          <p className="num mt-0.5 t-section text-ink">{focusDone} of 3</p>
+          <span className="progress-rail mt-3 block h-1.5 rounded-chip">
+            <span className="progress-fill block h-full rounded-chip" style={{ width: `${(focusDone / 3) * 100}%` }} />
+          </span>
+        </div>
+        <div className="metric-tile premium-card card p-4">
+          <span className="icon-orb icon-orb-halo h-9 w-9 rounded-[12px]" aria-hidden="true">
+            <Flame size={17} />
+          </span>
+          <p className="mt-3 t-aux text-ink-2">Current streak</p>
+          <p className="num mt-0.5 t-section text-ink">{streak} {streak === 1 ? "day" : "days"}</p>
+          <div className="streak-pips mt-3 flex gap-1.5" aria-hidden="true">
+            {Array.from({ length: 5 }).map((_, i) => <span key={i} className={i < Math.min(streak, 5) ? "is-lit" : ""} />)}
+          </div>
+        </div>
+      </section>
 
 
       <section className="premium-card card p-4" aria-label="Today at a glance">

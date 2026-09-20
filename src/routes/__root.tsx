@@ -94,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700&family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap",
       },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
@@ -234,7 +234,7 @@ function AppFrame() {
       <div className="app-viewport mx-auto w-full max-w-[430px]">
         <main
           key={screenKey}
-          className="app-main px-4 pt-6"
+          className="app-main motion-page px-4 pt-6"
           style={{ paddingBottom: "calc(104px + env(safe-area-inset-bottom))" }}
         >
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

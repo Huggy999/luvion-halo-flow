@@ -22,7 +22,7 @@ export function TaskCheck({
         if (!checked) setJustChecked(true);
         onToggle();
       }}
-      className="tap-44 grid h-7 w-7 shrink-0 place-items-center rounded-[9px] border-2 transition-colors"
+      className="task-check tap-44 grid h-7 w-7 shrink-0 place-items-center rounded-[9px] border-2 transition-colors"
       style={{
         borderColor: checked ? "var(--mint)" : "var(--line-2)",
         background: checked ? "var(--mint)" : "transparent",
@@ -59,7 +59,7 @@ export function TaskRow({
   right?: React.ReactNode | undefined;
 }) {
   return (
-    <div className="task-glass flex items-center gap-3 rounded-tile px-2 py-2.5">
+    <div className="task-glass interactive-row flex items-center gap-3 rounded-tile px-2 py-2.5">
       <TaskCheck
         checked={task.is_done}
         onToggle={onToggle}

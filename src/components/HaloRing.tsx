@@ -24,7 +24,7 @@ export function HaloRing({
   const width = skin === "spark" ? 4 : 6;
 
   return (
-    <div className="relative drop-shadow-[0_0_22px_color-mix(in_oklab,var(--halo)_38%,transparent)]" style={{ height: size, width: size }}>
+    <div className="halo-ring relative drop-shadow-[0_0_22px_color-mix(in_oklab,var(--halo)_38%,transparent)]" style={{ height: size, width: size }}>
       <svg
         viewBox="0 0 100 100"
         className="absolute inset-0 h-full w-full -rotate-90"
@@ -45,7 +45,7 @@ export function HaloRing({
             strokeWidth={width}
             strokeLinecap="round"
             strokeDasharray="0.5 10"
-            className={breathe ? "halo-breathe" : ""}
+            className={breathe ? "halo-progress halo-breathe" : "halo-progress"}
           />
         ) : (
           <circle
@@ -58,7 +58,7 @@ export function HaloRing({
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={circumference * (1 - Math.min(1, Math.max(0, progress)))}
-            className={breathe ? "halo-breathe" : ""}
+            className={breathe ? "halo-progress halo-breathe" : "halo-progress"}
           />
         )}
 
