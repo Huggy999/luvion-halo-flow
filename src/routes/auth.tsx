@@ -76,35 +76,34 @@ function AuthScreen() {
   };
 
   return (
-    <div className="cascade space-y-4">
-      <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
-        <Lumi variant="glow" size={56} className="shrink-0" breathe />
-        <div className="min-w-0">
-          <p className="label-xs text-ink-3">Luvion</p>
-          <h1 className="t-screen text-ink">
-            {mode === "in" ? "Sign in" : "Create account"}
-          </h1>
+    <div className="auth-airy cascade flex min-h-[calc(100dvh-3rem)] flex-col items-center">
+      <header className="auth-brand flex flex-col items-center text-center">
+        <div className="auth-lumi-wrap">
+          <Lumi variant="glow" size={68} breathe interactive label="Lumi" />
         </div>
+        <p className="label-xs mt-3 text-ink-3">Luvion</p>
+        <h1 className="mt-7 t-screen text-ink">
+          {mode === "in" ? "Welcome back" : "Create your space"}
+        </h1>
+        <p className="mt-2 t-aux text-ink-2">
+          {mode === "in" ? "Enter your details to continue" : "Start with a simple, focused workspace"}
+        </p>
       </header>
 
-      <section className="card p-4">
-        <p className="t-body font-normal text-ink-2">
-          Less chaos. More structure. An account keeps your plan and Lumi requests with you. The
-          halo, the streak and the focus timer are free on every plan.
-        </p>
-
-        <div className="mt-4 space-y-3">
+      <section className="auth-form mt-10 w-full">
+        <div className="space-y-5">
           <Field
             id="auth-email"
-            label="Email"
+            label="Email address"
             type="email"
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@example.com"
+            className="auth-field"
           />
-          <div>
-            <span className="relative block">
+          <div className="relative">
+            <span className="block">
               <Field
                 id="auth-password"
                 label="Password"
@@ -116,24 +115,23 @@ function AuthScreen() {
                 hint="At least six characters. Nothing else is required."
                 error={error || undefined}
                 fieldClassName="pr-20"
+                className="auth-field"
               />
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-pressed={showPassword}
-                className="absolute right-1 top-[26px] min-h-11 rounded-btn px-3 t-aux font-bold"
-                style={{ color: "var(--blue-ink)" }}
+                className="absolute right-1 top-[25px] px-3 t-aux text-blue-ink"
               >
                 {showPassword ? "Hide" : "Show"}
-              </button>
+              </Button>
             </span>
           </div>
-
         </div>
 
         {note ? <p className="mt-3 t-aux text-ink-2">{note}</p> : null}
 
-        <Button variant="primary" size="lg" block loading={busy} onClick={submit} className="mt-4">
+        <Button variant="primary" size="lg" block loading={busy} onClick={submit} className="auth-submit mt-6">
           {mode === "in" ? "Sign in" : "Create account"}
         </Button>
 
@@ -145,15 +143,21 @@ function AuthScreen() {
             setError("");
             setNote("");
           }}
-          className="mt-2"
+          className="mt-3"
         >
           {mode === "in" ? "I don\u2019t have an account yet" : "I already have an account"}
         </Button>
       </section>
 
-      <p className="px-1 t-aux text-ink-2">
-        The app also opens without an account: tasks, the board, docs, the halo and the timer all
-        work. <Link to="/" style={{ color: "var(--blue-ink)" }}>Back to Pulse</Link>
+      <div className="auth-divider mt-8 flex w-full items-center gap-4" aria-hidden="true">
+        <span className="h-px flex-1 bg-line" />
+        <span className="label-xs text-ink-3">Or</span>
+        <span className="h-px flex-1 bg-line" />
+      </div>
+
+      <p className="mt-7 px-2 text-center t-aux text-ink-2">
+        Continue without an account. Your tasks, board, docs, halo and timer still work.
+        <Link to="/" className="ml-1 font-bold text-blue-ink">Back to Pulse</Link>
       </p>
     </div>
   );
