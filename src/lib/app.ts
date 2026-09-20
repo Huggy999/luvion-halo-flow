@@ -740,7 +740,8 @@ export function useTaskMutations() {
   /** Puts a deleted task back exactly as it was, id and created_at included. */
   const restoreTask = useMutation({
     mutationFn: async (task: Task) => {
-      const { error } = await supabase.from("tasks").insert(task as never);
+      const uid = await requireUserId();
+      const { error } = await supabase.from("tasks").insert({ ...task, user_id: uid } as never);
       if (error) throw error;
     },
     onMutate: (task) =>
@@ -769,7 +770,12 @@ export function useHubMutations() {
 
   const createHub = useMutation({
     mutationFn: async (input: { name: string; description: string; color: string }) => {
-      const { data, error } = await supabase.from("hubs").insert(input).select().single();
+      const uid = await requireUserId();
+      const { data, error } = await supabase
+        .from("hubs")
+        .insert({ ...input, user_id: uid })
+        .select()
+        .single();
       if (error) throw error;
       return data as Hub;
     },
@@ -807,12 +813,14 @@ export function useDocMutations() {
         text: b.text,
         ...(b.type === "check" ? { checked: false } : {}),
       }));
+      const uid = await requireUserId();
       const { data, error } = await supabase
         .from("documents")
         .insert({
           hub_id,
           title: tpl.key === "blank" ? "Untitled doc" : tpl.name,
           blocks,
+          user_id: uid,
         })
         .select()
         .single();
@@ -852,13 +860,15 @@ export function useDocMutations() {
   return { createDoc, saveDoc, removeDoc };
 }
 
+/** Clears everything that belongs to the signed-in account. Demo content is untouched. */
 export async function resetAllData() {
-  await supabase.from("chat_messages").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  await supabase.from("documents").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  await supabase.from("tasks").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  await supabase.from("hubs").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  const uid = await requireUserId();
+  await supabase.from("chat_messages").delete().eq("user_id", uid);
+  await supabase.from("documents").delete().eq("user_id", uid);
+  await supabase.from("tasks").delete().eq("user_id", uid);
+  await supabase.from("hubs").delete().eq("user_id", uid);
   await supabase
     .from("app_state")
-    .update({ streak: 0, best_streak: 0, last_streak_date: null })
-    .eq("id", "main");
+    .update({ streak: 0, best_streak: 0, last_streak_date: null, halo_log: [] })
+    .eq("id", uid);
 }
