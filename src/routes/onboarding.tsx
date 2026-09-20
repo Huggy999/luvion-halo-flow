@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import { Lumi } from "@/components/Lumi";
 import { Field } from "@/components/Field";
 import { Button } from "@/components/Button";
+import { LumiScene } from "@/components/LumiScene";
+import { BriefcaseBusiness, Heart, Layers3, Sparkles } from "lucide-react";
 import {
   HUB_TEMPLATES,
   announce,
@@ -31,6 +33,7 @@ export const Route = createFileRoute("/onboarding")({
 });
 
 const STEPS = 4;
+const AREA_ICONS = [BriefcaseBusiness, Heart, Layers3, Sparkles];
 
 function OnboardingScreen() {
   const navigate = useNavigate();
@@ -127,11 +130,14 @@ function OnboardingScreen() {
   };
 
   return (
-    <div className="cascade space-y-5">
+    <div className="onboarding-shell cascade space-y-5">
       <div>
-        <p className="label-xs text-ink-3">Step {step} of {STEPS}</p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="section-kicker label-xs text-ink-3">Step {step} of {STEPS}</p>
+          <p className="num t-aux text-ink-3">{Math.round((step / STEPS) * 100)}%</p>
+        </div>
         <div
-          className="mt-2 h-1.5 w-full rounded-chip bg-line"
+          className="progress-rail mt-3 h-1.5 w-full rounded-chip"
           role="progressbar"
           aria-valuemin={1}
           aria-valuemax={STEPS}
@@ -139,14 +145,15 @@ function OnboardingScreen() {
           aria-label="Setup progress"
         >
           <span
-            className="block h-full rounded-chip transition-all"
-            style={{ width: `${(step / STEPS) * 100}%`, background: "var(--blue)" }}
+            className="progress-fill block h-full rounded-chip transition-all duration-500"
+            style={{ width: `${(step / STEPS) * 100}%` }}
           />
         </div>
       </div>
 
       {step === 1 ? (
         <section className="space-y-3">
+          <div className="onboarding-stage"><LumiScene compact interactive /></div>
           <h1 className="t-screen text-ink">
             What should Lumi call you
           </h1>
@@ -170,17 +177,20 @@ function OnboardingScreen() {
             Choose one to three. Each one becomes a hub with its tasks, board and docs.
           </p>
           <ul className="grid grid-cols-2 gap-2">
-            {HUB_TEMPLATES.map((t) => {
+            {HUB_TEMPLATES.map((t, index) => {
               const on = areas.includes(t.name);
+              const Icon = AREA_ICONS[index % AREA_ICONS.length];
               return (
                 <li key={t.name}>
                   <button
                     type="button"
                     aria-pressed={on}
                     onClick={() => toggleArea(t.name)}
-                    className="min-h-16 w-full rounded-tile border px-3 py-2 text-left"
-                    style={{ borderColor: on ? "var(--ink)" : "var(--line-2)" }}
+                    className="choice-tile interactive-row min-h-24 w-full rounded-tile border border-line-2 px-3 py-3 text-left"
                   >
+                    <span className="icon-orb mb-3 h-9 w-9 rounded-[12px]" aria-hidden="true">
+                      {Icon ? <Icon size={17} /> : null}
+                    </span>
                     <span className="block t-body font-bold text-ink">{t.name}</span>
                     <span className="block t-aux text-ink-2">{t.description}</span>
                   </button>
@@ -212,8 +222,7 @@ function OnboardingScreen() {
                         type="button"
                         aria-pressed={on}
                         onClick={() => togglePick(title)}
-                        className="min-h-11 w-full rounded-btn border px-3 text-left t-body text-ink"
-                        style={{ borderColor: on ? "var(--ink)" : "var(--line-2)" }}
+                        className="choice-tile interactive-row min-h-12 w-full rounded-btn border border-line-2 px-3 text-left t-body text-ink"
                       >
                         {title}
                       </button>
@@ -268,7 +277,7 @@ function OnboardingScreen() {
 
       {step === 4 ? (
         <section className="space-y-3 text-center">
-          <Lumi variant="glow" size={96} className="mx-auto" />
+          <div className="onboarding-stage"><LumiScene interactive /></div>
           <h1 className="t-screen text-ink">
             Start your first session
           </h1>

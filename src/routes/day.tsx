@@ -156,12 +156,12 @@ function DayScreen() {
 
   return (
     <div className="cascade space-y-4">
-      <header>
-        <p className="label-xs text-ink-3">Focus · Session {session} of 4</p>
+      <header className="page-header">
+        <p className="section-kicker label-xs text-ink-3">Focus · Session {session} of 4</p>
         <h1 className="t-screen mt-1 text-ink">Today</h1>
       </header>
 
-      <section className="card p-5" aria-label="Focus timer">
+      <section className="timer-stage premium-card card p-5" aria-label="Focus timer">
         <div className="mx-auto w-56">
           <HaloRing skin={haloSkin(streak)} progress={progress} size={224} breathe={running}>
             <div className="flex flex-col items-center justify-center gap-1">

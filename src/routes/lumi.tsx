@@ -118,7 +118,7 @@ function LumiScreen() {
 
   return (
     <div className="cascade space-y-4">
-      <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
+      <header className="page-header grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
         <Lumi
           variant={thinking ? "think" : glow ? "glow" : "idle"}
           size={52}
@@ -128,7 +128,7 @@ function LumiScreen() {
         />
 
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">
+          <p className="section-kicker label-xs text-ink-3">
             {thinking ? "Thinking" : "Ready to help"}
           </p>
           <h1 className="t-screen text-ink">Lumi</h1>
@@ -182,10 +182,10 @@ function LumiScreen() {
           m.role === "user" ? (
             <div key={m.id} className="text-right">
               <p className="label-xs text-ink-3">You</p>
-              <p className="mt-1 t-body font-bold text-ink">{m.content}</p>
+              <p className="chat-bubble-user mt-1 text-left t-body font-bold text-ink">{m.content}</p>
             </div>
           ) : (
-            <div key={m.id}>
+            <div key={m.id} className="chat-bubble-lumi">
               <p className="label-xs" style={{ color: "var(--ink-2)" }}>
                 Lumi
               </p>
