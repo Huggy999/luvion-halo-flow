@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Lumi } from "@/components/Lumi";
 import { Field } from "@/components/Field";
 import { Button } from "@/components/Button";
 import { LumiScene } from "@/components/LumiScene";
@@ -152,7 +151,7 @@ function OnboardingScreen() {
       </div>
 
       {step === 1 ? (
-        <section className="space-y-3">
+        <section key="step-1" className="fade-in space-y-3">
           <div className="onboarding-stage"><LumiScene compact interactive /></div>
           <h1 className="t-screen text-ink">
             What should Lumi call you
@@ -169,7 +168,7 @@ function OnboardingScreen() {
       ) : null}
 
       {step === 2 ? (
-        <section className="space-y-3">
+        <section key="step-2" className="fade-in space-y-3">
           <h1 className="t-screen text-ink">
             Which areas do you work in
           </h1>
@@ -203,7 +202,7 @@ function OnboardingScreen() {
       ) : null}
 
       {step === 3 ? (
-        <section className="space-y-4">
+        <section key="step-3" className="fade-in space-y-4">
           <h1 className="t-screen text-ink">
             Three tasks for today
           </h1>
@@ -276,7 +275,7 @@ function OnboardingScreen() {
       ) : null}
 
       {step === 4 ? (
-        <section className="space-y-3 text-center">
+        <section key="step-4" className="fade-in space-y-3 text-center">
           <div className="onboarding-stage"><LumiScene interactive /></div>
           <h1 className="t-screen text-ink">
             Start your first session
