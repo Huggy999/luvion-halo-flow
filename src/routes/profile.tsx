@@ -109,12 +109,12 @@ function ProfileScreen() {
 
   return (
     <div className="cascade space-y-4">
-      <header>
-        <p className="label-xs text-ink-3">Your space</p>
+      <header className="page-header">
+        <p className="section-kicker label-xs text-ink-3">Your space</p>
         <h1 className="t-screen mt-1 text-ink">Profile</h1>
       </header>
 
-      <section className="card p-5" aria-label="Halo level">
+      <section className="halo-stage premium-card card overflow-hidden p-5" aria-label="Halo level">
         <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4">
           <Lumi variant="glow" size={68} className="shrink-0" breathe />
           <div className="min-w-0">

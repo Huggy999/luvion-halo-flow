@@ -190,8 +190,8 @@ function PulseScreen() {
 
   return (
     <div className="cascade space-y-4">
-      <header>
-        <p className="label-xs text-ink-3">{dateLabel}</p>
+      <header className="page-header">
+        <p className="section-kicker label-xs text-ink-3">{dateLabel}</p>
         <h1 className="t-screen mt-1 text-ink">
           {state?.display_name ? `Pulse · ${state.display_name}` : "Pulse"}
         </h1>
@@ -341,7 +341,7 @@ function PulseScreen() {
 
       <Link
         to="/lumi"
-        className="premium-card card block p-4"
+        className="premium-card card block overflow-hidden p-4"
       >
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <div className="min-w-0">

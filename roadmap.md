@@ -9,3 +9,4 @@
 7. PWA: manifest + service worker (offline shell + last tasks), install prompt after first session.
 8. Dark Obsidian premium redesign: global surfaces, navigation, Pulse centerpiece, and interaction polish.
 9. Refine the bright Obsidian direction using the complete supplied inspiration set: Awwwards, Godly, Motion Sites, InspoMCP, UI Skills, Refero, Impeccable, taste-skill, Mobbin, 60fps.design, Sepia, Dribbble, ux-ui-agent-skills, and ComfyUI.
+10. Extend the selected airy premium direction across the complete app: motion, typography, iconography, Lumi, onboarding, gamification, and illustrations.

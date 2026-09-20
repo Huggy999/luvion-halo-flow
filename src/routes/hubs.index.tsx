@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { ArrowUpRight, Plus } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
@@ -78,9 +78,9 @@ function HubsScreen() {
 
   return (
     <div className="cascade space-y-4">
-      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+      <header className="page-header grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">Areas · {tasks.length} tasks in all</p>
+          <p className="section-kicker label-xs text-ink-3">Areas · {tasks.length} tasks in all</p>
           <h1 className="t-screen mt-1 text-ink">Hubs</h1>
         </div>
 
@@ -146,7 +146,7 @@ function HubsScreen() {
               key={hub.id}
               to="/hubs/$hubId"
               params={{ hubId: hub.id }}
-              className="card block p-4"
+              className="premium-card card block p-4"
             >
               <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
                 <span
@@ -169,13 +169,14 @@ function HubsScreen() {
 
                   </span>
                 </span>
-                <span className="num shrink-0 t-aux text-ink-3">
-                  {done}/{list.length}
+                <span className="flex shrink-0 items-center gap-2">
+                  <span className="num t-aux text-ink-3">{done}/{list.length}</span>
+                  <ArrowUpRight size={16} className="text-ink-3" aria-hidden="true" />
                 </span>
               </div>
-              <span className="mt-3 block h-1.5 w-full rounded-chip bg-line">
+              <span className="progress-rail mt-3 block h-1.5 w-full rounded-chip">
                 <span
-                  className="block h-full rounded-chip"
+                  className="progress-fill block h-full rounded-chip"
                   style={{ width: `${ratio * 100}%`, background: hubColor(hub.color) }}
                 />
               </span>

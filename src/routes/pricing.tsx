@@ -63,10 +63,10 @@ function PricingScreen() {
 
   return (
     <div className="cascade space-y-4">
-      <header className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
+      <header className="page-header grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
         <Lumi variant="idle" size={52} className="shrink-0" />
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">Current plan · {TIER_LABEL[billing.tier]}</p>
+          <p className="section-kicker label-xs text-ink-3">Current plan · {TIER_LABEL[billing.tier]}</p>
           <h1 className="t-screen text-ink">Plans</h1>
         </div>
       </header>
@@ -98,7 +98,7 @@ function PricingScreen() {
             <section
               key={plan.key}
               aria-label={`${plan.name} plan`}
-              className="card p-4"
+              className="premium-card card p-4"
               style={
                 current
                   ? { borderColor: "var(--blue)", boxShadow: "var(--shadow-float)" }

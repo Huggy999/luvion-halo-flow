@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { FilePlus2, FolderPlus, ListPlus, Plus } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
@@ -63,13 +63,16 @@ export function CreateMenu() {
 
       <Sheet open={mode === "menu"} onClose={close} title="Create">
         <div className="space-y-2">
-          <Button variant="secondary" size="lg" block onClick={() => setMode("task")}>
+          <Button variant="secondary" size="lg" block className="justify-start" onClick={() => setMode("task")}>
+            <ListPlus size={18} aria-hidden="true" />
             New task
           </Button>
-          <Button variant="secondary" size="lg" block onClick={() => setMode("hub")}>
+          <Button variant="secondary" size="lg" block className="justify-start" onClick={() => setMode("hub")}>
+            <FolderPlus size={18} aria-hidden="true" />
             New hub
           </Button>
-          <Button variant="secondary" size="lg" block onClick={() => setMode("doc")}>
+          <Button variant="secondary" size="lg" block className="justify-start" onClick={() => setMode("doc")}>
+            <FilePlus2 size={18} aria-hidden="true" />
             New doc
           </Button>
         </div>

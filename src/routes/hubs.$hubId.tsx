@@ -139,7 +139,7 @@ function HubScreen() {
 
   return (
     <div className="cascade space-y-4">
-      <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
+      <header className="page-header grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
         <Link
           to="/hubs"
           aria-label="Back to the hub list"
@@ -148,7 +148,7 @@ function HubScreen() {
           <ArrowLeft size={18} aria-hidden="true" />
         </Link>
         <div className="min-w-0">
-          <p className="label-xs text-ink-3">Hub</p>
+          <p className="section-kicker label-xs text-ink-3">Hub</p>
           <h1 className="t-screen truncate text-ink">{hub.name}</h1>
         </div>
         <span
@@ -161,7 +161,7 @@ function HubScreen() {
       <div
         role="tablist"
         aria-label="Hub sections"
-        className="grid grid-cols-3 gap-1 rounded-btn border border-line bg-paper p-1"
+        className="surface-card grid grid-cols-3 gap-1 rounded-btn border border-line p-1"
       >
         {(
           [
@@ -208,7 +208,7 @@ function HubScreen() {
 
 
       {segment === "tasks" ? (
-        <section className="card p-4" aria-label="Hub tasks">
+        <section className="premium-card card p-4" aria-label="Hub tasks">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
             <h2 className="truncate t-title text-ink">Tasks</h2>
             <Button
@@ -280,7 +280,7 @@ function HubScreen() {
                       {items.map((t) => (
                         <li
                           key={t.id}
-                          className="rounded-tile border border-line bg-bg p-3"
+                          className="interactive-row rounded-tile border border-line bg-bg p-3"
                         >
                           <p className="t-body text-ink">{t.title}</p>
                           <div className="mt-2 flex items-center justify-between">
@@ -327,7 +327,7 @@ function HubScreen() {
         openDoc ? (
           <DocEditor doc={openDoc} onBack={() => setOpenDocId(null)} />
         ) : (
-          <section className="card p-4" aria-label="Hub docs">
+          <section className="premium-card card p-4" aria-label="Hub docs">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
               <h2 className="truncate t-title text-ink">Docs</h2>
               <Button
