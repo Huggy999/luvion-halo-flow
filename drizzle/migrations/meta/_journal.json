@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789946940968,
+      "tag": "0000_scope_data_to_owner_with_readonly_demo",
+      "breakpoints": true
+    }
+  ]
+}
