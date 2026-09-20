@@ -10,7 +10,15 @@ import { DataError } from "@/components/DataError";
 import { LumiSkeleton } from "@/components/skeletons";
 import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { supabase } from "@/integrations/supabase/client";
-import { PRIORITY_LABEL, announce, hubColor, useChat, useHubs, useTasks } from "@/lib/app";
+import {
+  PRIORITY_LABEL,
+  announce,
+  currentUserId,
+  hubColor,
+  useChat,
+  useHubs,
+  useTasks,
+} from "@/lib/app";
 import { askLumi } from "@/lib/lumi.functions";
 import { BoundaryCard } from "@/components/BoundaryCard";
 import { TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
