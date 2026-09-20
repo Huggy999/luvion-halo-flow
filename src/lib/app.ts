@@ -389,6 +389,8 @@ export function useHubs() {
   return useQuery({
     queryKey: ["hubs"],
     queryFn: async (): Promise<Hub[]> => {
+      const uid = await currentUserId();
+      if (!uid) return [];
       const { data, error } = await supabase
         .from("hubs")
         .select("*")
@@ -403,6 +405,8 @@ export function useTasks() {
   return useQuery({
     queryKey: ["tasks"],
     queryFn: async (): Promise<Task[]> => {
+      const uid = await currentUserId();
+      if (!uid) return [];
       const { data, error } = await supabase
         .from("tasks")
         .select("*")
@@ -417,6 +421,8 @@ export function useDocs() {
   return useQuery({
     queryKey: ["docs"],
     queryFn: async (): Promise<Doc[]> => {
+      const uid = await currentUserId();
+      if (!uid) return [];
       const { data, error } = await supabase
         .from("documents")
         .select("*")
@@ -427,21 +433,13 @@ export function useDocs() {
   });
 }
 
-/** The settings row of the signed-in account, or the shared demo row for a visitor. */
+/** The settings row of the signed-in account, or read-only defaults for a visitor. */
 export function useAppState() {
   return useQuery({
     queryKey: ["app_state"],
     queryFn: async (): Promise<AppState> => {
       const uid = await currentUserId();
-      if (!uid) {
-        const { data, error } = await supabase
-          .from("app_state")
-          .select("*")
-          .is("user_id", null)
-          .maybeSingle();
-        if (error) throw error;
-        return (data as unknown as AppState) ?? DEMO_STATE;
-      }
+      if (!uid) return DEMO_STATE;
       const { data, error } = await supabase
         .from("app_state")
         .select("*")
