@@ -409,25 +409,35 @@ export function useDocs() {
   });
 }
 
+/** The settings row of the signed-in account, or the shared demo row for a visitor. */
 export function useAppState() {
   return useQuery({
     queryKey: ["app_state"],
     queryFn: async (): Promise<AppState> => {
+      const uid = await currentUserId();
+      if (!uid) {
+        const { data, error } = await supabase
+          .from("app_state")
+          .select("*")
+          .is("user_id", null)
+          .maybeSingle();
+        if (error) throw error;
+        return (data as unknown as AppState) ?? DEMO_STATE;
+      }
       const { data, error } = await supabase
         .from("app_state")
         .select("*")
-        .eq("id", "main")
+        .eq("id", uid)
         .maybeSingle();
       if (error) throw error;
       if (data) return data as unknown as AppState;
       const created = await supabase
         .from("app_state")
-        .insert({ id: "main" })
+        .insert({ id: uid, user_id: uid })
         .select()
         .single();
       if (created.error) throw created.error;
       return created.data as unknown as AppState;
-
     },
   });
 }
@@ -436,6 +446,8 @@ export function useChat() {
   return useQuery({
     queryKey: ["chat"],
     queryFn: async (): Promise<ChatMessage[]> => {
+      const uid = await currentUserId();
+      if (!uid) return [];
       const { data, error } = await supabase
         .from("chat_messages")
         .select("*")
