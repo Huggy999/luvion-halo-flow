@@ -15,6 +15,13 @@
       "when": 1789947206348,
       "tag": "0001_require_owner_on_all_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789947304021,
+      "tag": "0002_drop_legacy_anon_select_policies",
+      "breakpoints": true
     }
   ]
 }
