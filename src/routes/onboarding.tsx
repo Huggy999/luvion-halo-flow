@@ -39,6 +39,13 @@ function OnboardingScreen() {
   const { createHub } = useHubMutations();
   const { createTask } = useTaskMutations();
   const updateState = useUpdateState();
+  const { user, ready } = useSessionUser();
+
+  // Setup writes real data, so it needs an account.
+  useEffect(() => {
+    if (ready && !user) navigate({ to: "/auth" });
+  }, [ready, user, navigate]);
+
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
