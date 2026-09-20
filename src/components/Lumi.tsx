@@ -99,6 +99,11 @@ export function Lumi({
         ? { role: "img", "aria-label": label }
         : { "aria-hidden": true, focusable: false })}
     >
+      <g className="lumi-stars" aria-hidden="true">
+        <circle className="lumi-star lumi-star-1" cx="15" cy="27" r="2" fill="var(--glow)" />
+        <circle className="lumi-star lumi-star-2" cx="86" cy="38" r="1.6" fill="var(--glow-2)" />
+        <circle className="lumi-star lumi-star-3" cx="82" cy="82" r="1.3" fill="var(--halo)" />
+      </g>
       <g className="lumi-body">
         <g className="halo-lift">
           <g className="halo-orbit">

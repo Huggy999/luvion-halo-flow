@@ -161,8 +161,8 @@ function DayScreen() {
         <h1 className="t-screen mt-1 text-ink">Today</h1>
       </header>
 
-      <section className="timer-stage premium-card card p-5" aria-label="Focus timer">
-        <div className="mx-auto w-56">
+      <section className={`timer-stage premium-card card p-5 ${running ? "is-running" : ""}`} aria-label="Focus timer">
+        <div className="timer-orb mx-auto w-56">
           <HaloRing skin={haloSkin(streak)} progress={progress} size={224} breathe={running}>
             <div className="flex flex-col items-center justify-center gap-1">
               <Lumi variant={running ? "glow" : "sleep"} size={70} breathe={running} />

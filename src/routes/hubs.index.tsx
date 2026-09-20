@@ -146,7 +146,7 @@ function HubsScreen() {
               key={hub.id}
               to="/hubs/$hubId"
               params={{ hubId: hub.id }}
-              className="premium-card card block p-4"
+              className="hub-card premium-card card block p-4"
             >
               <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
                 <span

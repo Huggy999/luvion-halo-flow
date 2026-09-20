@@ -53,7 +53,7 @@ export function CreateMenu() {
             variant="primary"
             aria-label="Create something new"
             onClick={() => setMode("menu")}
-            className="shadow-float pointer-events-auto absolute bottom-0 right-0 h-14 w-14 px-0"
+            className="create-fab shadow-float pointer-events-auto absolute bottom-0 right-0 h-14 w-14 px-0"
             style={{ boxShadow: "var(--shadow-float)" }}
           >
             <Plus size={24} aria-hidden="true" />

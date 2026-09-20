@@ -70,7 +70,7 @@ export function Sheet({
         type="button"
         aria-label="Close sheet"
         onClick={onClose}
-        className="fade-in absolute inset-0 bg-ink/45"
+        className="sheet-backdrop fade-in absolute inset-0 bg-ink/45"
       />
       <div
         ref={panelRef}
@@ -81,7 +81,7 @@ export function Sheet({
         className="sheet-in surface-float shadow-float relative w-full max-w-[430px] rounded-t-[26px] border px-5 pt-4 outline-none"
         style={{ paddingBottom: "calc(20px + env(safe-area-inset-bottom))" }}
       >
-        <div className="mx-auto mb-3 h-1 w-10 rounded-chip bg-line-2" />
+        <div className="sheet-handle mx-auto mb-3 h-1 w-10 rounded-chip bg-line-2" />
         <h2 className="mb-4 t-title text-ink">{title}</h2>
         {children}
       </div>

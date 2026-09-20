@@ -11,3 +11,4 @@
 9. Refine the bright Obsidian direction using the complete supplied inspiration set: Awwwards, Godly, Motion Sites, InspoMCP, UI Skills, Refero, Impeccable, taste-skill, Mobbin, 60fps.design, Sepia, Dribbble, ux-ui-agent-skills, and ComfyUI.
 10. Extend the selected airy premium direction across the complete app: motion, typography, iconography, Lumi, onboarding, gamification, and illustrations.
 11. Shift the complete product to a bright luminous theme while preserving premium depth, motion, contrast, and the optional dark setting.
+12. Apply the selected Celestial Glass & Lumi direction across the full app with a coherent library of 100 purposeful animation and interaction details, elevated typography, iconography, onboarding, gamification, and illustration.
