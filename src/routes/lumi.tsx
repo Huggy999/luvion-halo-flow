@@ -117,7 +117,7 @@ function LumiScreen() {
     );
 
   return (
-    <div className="cascade space-y-4">
+    <div className={`lumi-screen cascade space-y-4 ${thinking ? "is-thinking" : ""}`}>
       <header className="page-header grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
         <Lumi
           variant={thinking ? "think" : glow ? "glow" : "idle"}
@@ -221,7 +221,7 @@ function LumiScreen() {
         )}
 
         {thinking ? (
-          <p className="t-body text-ink-2">Lumi is looking through your tasks</p>
+          <p className="lumi-thinking t-body text-ink-2"><span aria-hidden="true" />Lumi is looking through your tasks</p>
         ) : null}
         {error ? (
           <p className="t-aux" style={{ color: "var(--coral-tx)" }}>

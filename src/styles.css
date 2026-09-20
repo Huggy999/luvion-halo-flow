@@ -545,6 +545,63 @@
 .lumi:hover .lumi-star-2 { animation: star-drift-b 2.1s ease-in-out infinite; }
 .lumi:hover .lumi-star-3 { animation: star-drift-c 2.4s ease-in-out infinite; }
 
+.celestial-field { transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease, box-shadow 220ms ease; }
+.celestial-field:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 color-mix(in oklab, var(--paper) 84%, transparent); }
+.celestial-field:focus-visible { transform: translateY(-2px); border-color: var(--glow); box-shadow: 0 0 0 4px color-mix(in oklab, var(--glow) 13%, transparent), 0 14px 28px -22px var(--glow); }
+.celestial-field[aria-invalid="true"] { animation: field-error 360ms ease; }
+
+.celestial-switch span { transition: background-color 260ms ease, border-color 260ms ease, box-shadow 260ms ease; }
+.celestial-switch:hover > span { box-shadow: 0 0 0 5px color-mix(in oklab, var(--blue) 9%, transparent); }
+.celestial-switch[aria-checked="true"] > span { box-shadow: 0 8px 20px -12px var(--mint), 0 0 0 5px color-mix(in oklab, var(--mint) 10%, transparent); }
+.celestial-switch:active > span > span { scale: 1.12 0.88; }
+
+.sheet-backdrop { backdrop-filter: blur(7px) saturate(110%); }
+.sheet-handle { animation: sheet-handle-in 480ms 180ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.sheet-in > *:not(.sheet-handle) { animation: sheet-content-in 440ms 120ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.create-fab { animation: fab-breathe 3.4s ease-in-out infinite; }
+.create-fab svg { transition: transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.create-fab:hover svg { transform: rotate(90deg) scale(1.08); }
+.create-fab:active svg { transform: rotate(135deg) scale(0.92); }
+
+.timer-orb { position: relative; transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1); }
+.timer-stage.is-running .timer-orb { animation: timer-breathe 4s ease-in-out infinite; }
+.timer-stage.is-running { border-color: color-mix(in oklab, var(--glow) 44%, var(--line-card)); box-shadow: 0 28px 68px -34px color-mix(in oklab, var(--glow) 54%, transparent); }
+.timer-stage.is-running::before { animation: timer-frame 4s ease-in-out infinite; }
+
+.hub-card { overflow: hidden; }
+.hub-card > div > span:first-child { transition: transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 320ms ease; }
+.hub-card:hover > div > span:first-child { transform: rotate(-5deg) scale(1.08); box-shadow: 0 14px 28px -18px currentColor; }
+.hub-card svg { transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.hub-card:hover svg { transform: translate(3px, -3px) rotate(5deg); }
+
+.onboarding-panel { animation: onboarding-panel-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: 50% 16%; }
+.onboarding-stage { isolation: isolate; }
+.onboarding-stage::after { content: ""; position: absolute; inset: 12% 18%; z-index: -1; border-radius: 999px; background: radial-gradient(circle, color-mix(in oklab, var(--glow-2) 18%, transparent), transparent 70%); animation: onboarding-aura 5s ease-in-out infinite; }
+.onboarding-step-4 .lumi-scene { animation: finish-scene 780ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+.lumi-thinking { display: inline-flex; align-items: center; gap: 0.55rem; }
+.lumi-thinking span { width: 0.55rem; height: 0.55rem; border-radius: 999px; background: var(--glow-2); box-shadow: 0 0 14px var(--glow-2); animation: thinking-dot 1.1s ease-in-out infinite; }
+.lumi-screen.is-thinking .page-header .lumi { filter: drop-shadow(0 10px 24px color-mix(in oklab, var(--glow-2) 32%, transparent)); }
+
+.interactive-row svg,
+.celestial-control svg,
+.tab-link svg { transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1), color 220ms ease; }
+.interactive-row:hover svg { transform: scale(1.12) rotate(4deg); }
+.celestial-control:hover svg { transform: scale(1.08); }
+.celestial-control:active svg { transform: scale(0.88); }
+
+@keyframes field-error { 20% { transform: translateX(-3px); } 45% { transform: translateX(3px); } 70% { transform: translateX(-2px); } }
+@keyframes sheet-handle-in { from { transform: scaleX(0.25); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+@keyframes sheet-content-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fab-breathe { 0%, 100% { box-shadow: 0 14px 32px -14px var(--blue); } 50% { box-shadow: 0 18px 42px -10px color-mix(in oklab, var(--glow-2) 62%, transparent); } }
+@keyframes timer-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.018); } }
+@keyframes timer-frame { 0%, 100% { opacity: 0.45; transform: scale(0.985); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes onboarding-panel-in { from { opacity: 0; transform: translateX(12px) scale(0.985); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes onboarding-aura { 0%, 100% { transform: scale(0.88); opacity: 0.55; } 50% { transform: scale(1.14); opacity: 1; } }
+@keyframes finish-scene { from { opacity: 0; transform: scale(0.76) rotate(-7deg); } 70% { transform: scale(1.04) rotate(1deg); } to { opacity: 1; transform: none; } }
+@keyframes thinking-dot { 0%, 100% { transform: scale(0.72); opacity: 0.5; } 50% { transform: scale(1.28); opacity: 1; } }
+
 @keyframes celestial-page-in { from { opacity: 0; transform: translateY(12px) scale(0.992); } to { opacity: 1; transform: none; } }
 @keyframes celestial-card-in { from { opacity: 0; transform: translateY(16px) rotateX(5deg) scale(0.98); } to { opacity: 1; transform: none; } }
 @keyframes celestial-aurora { from { transform: translateX(-4%) scale(0.96); opacity: 0.68; } to { transform: translateX(4%) scale(1.08); opacity: 1; } }
@@ -1204,7 +1261,17 @@
   }
   .lumi-scene-orbit,
   .lumi-scene-icon,
-  .progress-fill::after { animation: none !important; }
+  .progress-fill::after,
+  .app-viewport::before,
+  .celestial-orbit,
+  .create-fab,
+  .timer-orb,
+  .onboarding-stage::before,
+  .onboarding-stage::after,
+  .timer-stage::after,
+  .lumi-star,
+  .section-kicker::before,
+  .page-header::after { animation: none !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

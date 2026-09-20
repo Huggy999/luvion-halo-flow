@@ -28,7 +28,7 @@ export function Switch({
       disabled={disabled}
       onClick={() => onCheckedChange(!checked)}
       className={cn(
-        "grid h-11 w-[52px] shrink-0 place-items-center rounded-chip bg-transparent disabled:cursor-not-allowed",
+        "celestial-switch grid h-11 w-[52px] shrink-0 place-items-center rounded-chip bg-transparent disabled:cursor-not-allowed",
         className,
       )}
       {...aria}
