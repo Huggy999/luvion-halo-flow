@@ -10,7 +10,7 @@
  */
 
 @theme inline {
-  --font-display: "Unbounded", system-ui, sans-serif;
+  --font-display: "Outfit", system-ui, sans-serif;
   --font-sans: "Manrope", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
@@ -238,6 +238,7 @@
     linear-gradient(180deg, color-mix(in oklab, var(--glow) 8%, var(--bg)), var(--bg) 30%),
     var(--bg);
   box-shadow: 0 0 0 1px var(--shell-edge), var(--shadow-float);
+  overflow-x: clip;
 }
 
 .app-viewport::after {
@@ -264,11 +265,16 @@
   translate: -50% 0;
   background: radial-gradient(ellipse, color-mix(in oklab, var(--glow-2) 22%, transparent), transparent 68%);
   pointer-events: none;
+  animation: celestial-aurora 14s ease-in-out infinite alternate;
 }
 
 .app-main {
   position: relative;
   z-index: 1;
+}
+
+.motion-page {
+  animation: celestial-page-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .surface-sunk {
@@ -295,6 +301,20 @@
   isolation: isolate;
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 260ms ease, box-shadow 260ms ease;
 }
+
+.premium-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 18%, color-mix(in oklab, var(--paper) 74%, transparent) 48%, transparent 76%);
+  translate: -120% 0;
+  transition: translate 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.premium-card:hover::before { translate: 120% 0; }
 
 .page-header {
   position: relative;
@@ -334,7 +354,12 @@
   background: linear-gradient(145deg, color-mix(in oklab, var(--glow) 15%, var(--paper)), color-mix(in oklab, var(--glow-2) 10%, var(--paper)));
   color: var(--blue-ink);
   box-shadow: inset 0 1px 0 color-mix(in oklab, var(--ink) 12%, transparent), 0 12px 28px -18px var(--glow);
+  transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 280ms ease;
 }
+
+.premium-card:hover .icon-orb,
+.interactive-row:hover .icon-orb { transform: translateY(-2px) rotate(5deg) scale(1.06); }
+.icon-orb-halo { color: var(--halo-tx); border-color: color-mix(in oklab, var(--halo) 34%, var(--line-card)); background: color-mix(in oklab, var(--halo) 13%, var(--paper)); }
 
 .interactive-row {
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, background-color 220ms ease;
@@ -358,6 +383,8 @@
   position: relative;
   background: linear-gradient(90deg, var(--blue-btn), var(--glow), var(--glow-2));
   box-shadow: 0 0 16px color-mix(in oklab, var(--glow) 65%, transparent);
+  transform-origin: left center;
+  animation: progress-arrive 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .progress-fill::after {
@@ -423,6 +450,121 @@
 .lumi-scene-icon-2 { right: 0.35rem; top: 50%; translate: 0 -50%; animation-delay: -1s; }
 .lumi-scene-icon-3 { bottom: 0.4rem; left: 50%; translate: -50% 0; animation-delay: -2s; }
 .lumi-scene-icon-4 { left: 0.35rem; top: 50%; translate: 0 -50%; animation-delay: -3s; }
+
+/* ---------- Celestial Glass motion system ---------- */
+
+.celestial-pulse {
+  min-height: 12.5rem;
+  border-color: color-mix(in oklab, var(--glow-2) 24%, var(--line-card));
+  box-shadow: 0 26px 65px -38px color-mix(in oklab, var(--glow-2) 52%, transparent), inset 0 1px 0 color-mix(in oklab, var(--paper) 90%, transparent);
+}
+
+.celestial-pulse::after {
+  opacity: 0.58;
+  background: linear-gradient(125deg, color-mix(in oklab, var(--glow) 17%, transparent), transparent 38%, color-mix(in oklab, var(--glow-2) 13%, transparent));
+}
+
+.celestial-pulse-trigger { position: relative; z-index: 2; }
+.celestial-pulse-grid { min-height: 10.2rem; }
+.celestial-orb-wrap { position: relative; display: grid; place-items: center; min-height: 9.5rem; }
+.celestial-orb-wrap > .halo-ring { position: relative; z-index: 2; }
+
+.celestial-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--glow-2) 24%, transparent);
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+.celestial-orbit-a { width: 8.7rem; height: 8.7rem; animation: celestial-pulse-ring 4.8s ease-in-out infinite; }
+.celestial-orbit-b { width: 7.7rem; height: 7.7rem; border-color: color-mix(in oklab, var(--glow) 30%, transparent); animation: celestial-pulse-ring 3.6s ease-in-out -1.2s infinite reverse; }
+.halo-ring { transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 420ms ease; }
+.celestial-pulse:hover .halo-ring { transform: scale(1.035); filter: drop-shadow(0 14px 26px color-mix(in oklab, var(--glow-2) 24%, transparent)); }
+.halo-progress { transition: stroke-dashoffset 720ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+.metric-grid { perspective: 900px; }
+.metric-tile:nth-child(1) { animation: celestial-card-in 540ms 180ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.metric-tile:nth-child(2) { animation: celestial-card-in 540ms 240ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.streak-pips span { width: 0.62rem; height: 0.62rem; border-radius: 999px; background: var(--line-2); transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 260ms ease, box-shadow 260ms ease; }
+.streak-pips span.is-lit { background: var(--halo); box-shadow: 0 0 12px color-mix(in oklab, var(--halo) 58%, transparent); animation: pip-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.streak-pips span:nth-child(2) { animation-delay: 70ms; }
+.streak-pips span:nth-child(3) { animation-delay: 140ms; }
+.streak-pips span:nth-child(4) { animation-delay: 210ms; }
+.streak-pips span:nth-child(5) { animation-delay: 280ms; }
+
+.celestial-control { position: relative; overflow: hidden; isolation: isolate; }
+.celestial-control::after { content: ""; position: absolute; inset: -60% auto -60% -30%; width: 24%; rotate: 18deg; background: color-mix(in oklab, var(--paper) 52%, transparent); filter: blur(7px); translate: -220% 0; transition: translate 580ms ease; pointer-events: none; }
+.celestial-control:hover::after { translate: 650% 0; }
+.celestial-primary { background-image: linear-gradient(120deg, var(--blue-btn), color-mix(in oklab, var(--blue-btn) 78%, var(--glow-2))); }
+.celestial-primary:hover { transform: translateY(-1px); }
+.celestial-primary:active { transform: scale(0.97) translateY(0); }
+
+.task-check { transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease; }
+.task-check:hover { transform: scale(1.1); border-color: var(--mint); }
+.task-check[aria-checked="true"] { box-shadow: 0 0 0 5px color-mix(in oklab, var(--mint) 12%, transparent), 0 8px 18px -10px var(--mint); animation: check-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+.page-header h1 { text-shadow: 0 10px 32px color-mix(in oklab, var(--glow-2) 14%, transparent); }
+.page-header::after { animation: header-ray 2.8s ease-in-out infinite; }
+.section-kicker::before { animation: kicker-pulse 2.4s ease-in-out infinite; }
+.tab-dock { box-shadow: 0 20px 52px -26px color-mix(in oklab, var(--blue) 35%, transparent), inset 0 1px 0 color-mix(in oklab, var(--paper) 88%, transparent) !important; }
+.tab-link[aria-current="page"] svg { animation: nav-icon-arrive 460ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.tab-link[aria-current="page"] .bloom { box-shadow: 0 8px 22px -12px color-mix(in oklab, var(--blue) 70%, transparent); }
+
+.card > h2,
+.surface-card > h2 { transition: color 220ms ease, transform 220ms ease; }
+.card:hover > h2,
+.surface-card:hover > h2 { color: var(--blue-ink); transform: translateX(2px); }
+
+.choice-tile { transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 240ms ease, border-color 240ms ease, background-color 240ms ease; }
+.choice-tile[aria-pressed="true"] { animation: choice-select 420ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.choice-tile[aria-pressed="true"] .icon-orb { animation: icon-celebrate 520ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.onboarding-stage::before,
+.timer-stage::after { content: ""; position: absolute; width: 13rem; height: 13rem; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--glow-2) 20%, transparent); animation: celestial-pulse-ring 5s ease-in-out infinite; pointer-events: none; }
+
+.auth-lumi-wrap { animation: celestial-float 5s ease-in-out infinite; }
+.auth-form { animation: celestial-card-in 620ms 160ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.auth-field input { transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background-color 220ms ease; }
+.auth-field input:hover { transform: translateY(-1px); background: color-mix(in oklab, var(--paper) 64%, var(--sunk)); }
+.auth-field input:focus-visible { transform: translateY(-2px); }
+
+.chat-bubble-lumi { animation: message-lumi-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.chat-bubble-user { animation: message-user-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both; transition: transform 220ms ease, box-shadow 220ms ease; }
+.chat-bubble-user:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -22px var(--blue); }
+
+.sheet-in { box-shadow: 0 -22px 70px -32px color-mix(in oklab, var(--glow-2) 48%, transparent); }
+.skeleton { background-image: linear-gradient(100deg, transparent 15%, color-mix(in oklab, var(--paper) 72%, transparent) 48%, transparent 82%); background-size: 220% 100%; animation: skeleton-shimmer 1.5s ease-in-out infinite; }
+
+.lumi-stars { opacity: 0.72; }
+.lumi-star { transform-box: fill-box; transform-origin: center; animation: star-twinkle 2.6s ease-in-out infinite; }
+.lumi-star-2 { animation-delay: -0.8s; }
+.lumi-star-3 { animation-delay: -1.6s; }
+.lumi:hover .lumi-star-1 { animation: star-drift-a 1.8s ease-in-out infinite; }
+.lumi:hover .lumi-star-2 { animation: star-drift-b 2.1s ease-in-out infinite; }
+.lumi:hover .lumi-star-3 { animation: star-drift-c 2.4s ease-in-out infinite; }
+
+@keyframes celestial-page-in { from { opacity: 0; transform: translateY(12px) scale(0.992); } to { opacity: 1; transform: none; } }
+@keyframes celestial-card-in { from { opacity: 0; transform: translateY(16px) rotateX(5deg) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes celestial-aurora { from { transform: translateX(-4%) scale(0.96); opacity: 0.68; } to { transform: translateX(4%) scale(1.08); opacity: 1; } }
+@keyframes celestial-pulse-ring { 0%, 100% { scale: 0.96; opacity: 0.52; } 50% { scale: 1.06; opacity: 0.2; } }
+@keyframes celestial-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-7px) rotate(1.5deg); } }
+@keyframes progress-arrive { from { scale: 0 1; } to { scale: 1 1; } }
+@keyframes pip-pop { 0% { transform: scale(0.45); } 70% { transform: scale(1.28); } 100% { transform: scale(1); } }
+@keyframes check-pop { 0% { transform: scale(0.72); } 65% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes header-ray { 0%, 100% { opacity: 0.45; transform: scaleX(0.7); } 50% { opacity: 1; transform: scaleX(1); } }
+@keyframes kicker-pulse { 0%, 100% { transform: scale(0.78); opacity: 0.65; } 50% { transform: scale(1.18); opacity: 1; } }
+@keyframes nav-icon-arrive { 0% { transform: translateY(5px) scale(0.78); } 70% { transform: translateY(-2px) scale(1.13); } 100% { transform: none; } }
+@keyframes choice-select { 0% { transform: scale(0.97); } 65% { transform: scale(1.018); } 100% { transform: scale(1); } }
+@keyframes icon-celebrate { 0% { transform: rotate(0) scale(0.8); } 55% { transform: rotate(10deg) scale(1.15); } 100% { transform: none; } }
+@keyframes message-lumi-in { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+@keyframes message-user-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+@keyframes skeleton-shimmer { from { background-position: 180% 0; } to { background-position: -80% 0; } }
+@keyframes star-twinkle { 0%, 100% { transform: scale(0.68); opacity: 0.34; } 50% { transform: scale(1.24); opacity: 1; } }
+@keyframes star-drift-a { 50% { transform: translate(-3px, -4px) scale(1.3); } }
+@keyframes star-drift-b { 50% { transform: translate(4px, -2px) scale(1.2); } }
+@keyframes star-drift-c { 50% { transform: translate(3px, 4px) scale(1.26); } }
 
 .chat-bubble-lumi { border-left: 2px solid var(--glow); padding-left: 1rem; }
 .chat-bubble-user { display: inline-block; max-width: 86%; padding: 0.7rem 0.9rem; border-radius: 16px 16px 4px 16px; background: color-mix(in oklab, var(--blue-btn) 18%, var(--paper)); border: 1px solid color-mix(in oklab, var(--glow) 25%, var(--line)); }
