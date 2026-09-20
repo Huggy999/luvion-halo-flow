@@ -1,16 +1,26 @@
 {
-  "name": "Luvion",
+  "name": "Luvion — structure with a halo",
   "short_name": "Luvion",
   "description": "Less chaos. More structure. Hubs, three tasks a day and a focus timer.",
   "start_url": "/",
   "id": "/",
   "scope": "/",
   "display": "standalone",
-  "theme_color": "#027EFC",
-  "background_color": "#027EFC",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities"],
+  "theme_color": "#0878ed",
+  "background_color": "#f5f8ff",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Today", "short_name": "Today", "url": "/day" },
+    { "name": "Hubs", "short_name": "Hubs", "url": "/hubs" },
+    { "name": "Lumi", "short_name": "Lumi", "url": "/lumi" }
   ]
 }

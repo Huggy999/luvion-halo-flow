@@ -73,7 +73,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { name: "theme-color", content: "#027EFC" },
+      {
+        name: "theme-color",
+        content: "#f5f8ff",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        name: "theme-color",
+        content: "#10131b",
+        media: "(prefers-color-scheme: dark)",
+      },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "Luvion" },
+      {
+        name: "apple-mobile-web-app-status-bar-style",
+        content: "default",
+      },
+      { name: "format-detection", content: "telephone=no" },
+      { name: "application-name", content: "Luvion" },
 
       { title: "Luvion — structure with a halo" },
       {
@@ -98,7 +116,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/icon-192.png" },
+      { rel: "apple-touch-icon", sizes: "192x192", href: "/icon-192.png" },
+      { rel: "apple-touch-icon", sizes: "512x512", href: "/icon-512.png" },
 
     ],
   }),
