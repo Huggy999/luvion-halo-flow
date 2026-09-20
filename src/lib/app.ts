@@ -89,6 +89,24 @@ export type AppState = {
   freeze_notice: boolean;
 };
 
+/** Fallback settings for a visitor reading the demo space. Never written to. */
+export const DEMO_STATE: AppState = {
+  id: "demo",
+  streak: 0,
+  best_streak: 0,
+  last_streak_date: null,
+  theme: "light",
+  lumi_enabled: true,
+  streaks_enabled: true,
+  onboarded: true,
+  display_name: "Guest",
+  halo_log: [],
+  freeze_month: "",
+  freeze_notice: false,
+};
+
+
+
 export type ChatMessage = {
   id: string;
   role: "user" | "lumi";
