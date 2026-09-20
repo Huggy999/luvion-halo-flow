@@ -540,7 +540,7 @@ async function registerStreakDay(): Promise<boolean> {
       halo_log: nextLog,
       updated_at: new Date().toISOString(),
     } as never)
-    .eq("id", "main");
+    .eq("id", uid);
   return !upErr;
 }
 
