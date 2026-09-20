@@ -3,6 +3,34 @@ import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { haptic } from "@/lib/haptics";
 
+/* ---------- ownership ---------- */
+
+/** The signed-in account id, or null for a visitor reading the demo space. */
+export async function currentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser();
+  return data.user?.id ?? null;
+}
+
+/** Every write belongs to an account. Visitors read the demo and cannot change it. */
+async function requireUserId(): Promise<string> {
+  const id = await currentUserId();
+  if (!id) throw new Error("you are signed out. Sign in to keep your own space");
+  return id;
+}
+
+/** Swaps the cached data when somebody signs in or out. */
+export function useAuthCacheSync() {
+  const qc = useQueryClient();
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      void qc.invalidateQueries();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [qc]);
+}
+
+
+
 
 export type Hub = {
   id: string;
@@ -60,6 +88,24 @@ export type AppState = {
   freeze_month: string;
   freeze_notice: boolean;
 };
+
+/** Fallback settings for a visitor reading the demo space. Never written to. */
+export const DEMO_STATE: AppState = {
+  id: "demo",
+  streak: 0,
+  best_streak: 0,
+  last_streak_date: null,
+  theme: "light",
+  lumi_enabled: true,
+  streaks_enabled: true,
+  onboarded: true,
+  display_name: "Guest",
+  halo_log: [],
+  freeze_month: "",
+  freeze_notice: false,
+};
+
+
 
 export type ChatMessage = {
   id: string;
@@ -343,6 +389,8 @@ export function useHubs() {
   return useQuery({
     queryKey: ["hubs"],
     queryFn: async (): Promise<Hub[]> => {
+      const uid = await currentUserId();
+      if (!uid) return [];
       const { data, error } = await supabase
         .from("hubs")
         .select("*")
@@ -357,6 +405,8 @@ export function useTasks() {
   return useQuery({
     queryKey: ["tasks"],
     queryFn: async (): Promise<Task[]> => {
+      const uid = await currentUserId();
+      if (!uid) return [];
       const { data, error } = await supabase
         .from("tasks")
         .select("*")
@@ -371,6 +421,8 @@ export function useDocs() {
   return useQuery({
     queryKey: ["docs"],
     queryFn: async (): Promise<Doc[]> => {
+      const uid = await currentUserId();
+      if (!uid) return [];
       const { data, error } = await supabase
         .from("documents")
         .select("*")
@@ -381,25 +433,27 @@ export function useDocs() {
   });
 }
 
+/** The settings row of the signed-in account, or read-only defaults for a visitor. */
 export function useAppState() {
   return useQuery({
     queryKey: ["app_state"],
     queryFn: async (): Promise<AppState> => {
+      const uid = await currentUserId();
+      if (!uid) return DEMO_STATE;
       const { data, error } = await supabase
         .from("app_state")
         .select("*")
-        .eq("id", "main")
+        .eq("id", uid)
         .maybeSingle();
       if (error) throw error;
       if (data) return data as unknown as AppState;
       const created = await supabase
         .from("app_state")
-        .insert({ id: "main" })
+        .insert({ id: uid, user_id: uid })
         .select()
         .single();
       if (created.error) throw created.error;
       return created.data as unknown as AppState;
-
     },
   });
 }
@@ -408,6 +462,8 @@ export function useChat() {
   return useQuery({
     queryKey: ["chat"],
     queryFn: async (): Promise<ChatMessage[]> => {
+      const uid = await currentUserId();
+      if (!uid) return [];
       const { data, error } = await supabase
         .from("chat_messages")
         .select("*")
@@ -429,10 +485,11 @@ export function useUpdateState() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (patch: Partial<AppState>) => {
+      const uid = await requireUserId();
       const { error } = await supabase
         .from("app_state")
         .update({ ...patch, updated_at: new Date().toISOString() } as never)
-        .eq("id", "main");
+        .eq("id", uid);
       if (error) throw error;
     },
     onMutate: async (patch) => {
@@ -452,10 +509,12 @@ export function useUpdateState() {
 
 /** Counts one halo day for the first task closed on a calendar day. */
 async function registerStreakDay(): Promise<boolean> {
+  const uid = await currentUserId();
+  if (!uid) return false;
   const { data, error } = await supabase
     .from("app_state")
     .select("*")
-    .eq("id", "main")
+    .eq("id", uid)
     .single();
   if (error || !data) return false;
   const state = data as unknown as AppState;
@@ -479,7 +538,7 @@ async function registerStreakDay(): Promise<boolean> {
       halo_log: nextLog,
       updated_at: new Date().toISOString(),
     } as never)
-    .eq("id", "main");
+    .eq("id", uid);
   return !upErr;
 }
 
@@ -501,6 +560,8 @@ export function useHaloGuard() {
     if (state.freeze_month === monthKey(today)) return;
     applied.current = true;
     void (async () => {
+      const uid = await currentUserId();
+      if (!uid) return;
       await supabase
         .from("app_state")
         .update({
@@ -509,7 +570,7 @@ export function useHaloGuard() {
           freeze_notice: true,
           updated_at: new Date().toISOString(),
         } as never)
-        .eq("id", "main");
+        .eq("id", uid);
       await qc.invalidateQueries({ queryKey: ["app_state"] });
     })();
   }, [state, qc]);
@@ -531,12 +592,14 @@ export function useTaskMutations() {
       is_today?: boolean;
       focus_sessions?: number;
     }) => {
+      const uid = await requireUserId();
       const { error } = await supabase.from("tasks").insert({
         title: input.title,
         hub_id: input.hub_id,
         priority: input.priority,
         is_today: input.is_today ?? false,
         focus_sessions: input.focus_sessions ?? 1,
+        user_id: uid,
       });
       if (error) throw error;
     },
@@ -675,7 +738,8 @@ export function useTaskMutations() {
   /** Puts a deleted task back exactly as it was, id and created_at included. */
   const restoreTask = useMutation({
     mutationFn: async (task: Task) => {
-      const { error } = await supabase.from("tasks").insert(task as never);
+      const uid = await requireUserId();
+      const { error } = await supabase.from("tasks").insert({ ...task, user_id: uid } as never);
       if (error) throw error;
     },
     onMutate: (task) =>
@@ -704,7 +768,12 @@ export function useHubMutations() {
 
   const createHub = useMutation({
     mutationFn: async (input: { name: string; description: string; color: string }) => {
-      const { data, error } = await supabase.from("hubs").insert(input).select().single();
+      const uid = await requireUserId();
+      const { data, error } = await supabase
+        .from("hubs")
+        .insert({ ...input, user_id: uid })
+        .select()
+        .single();
       if (error) throw error;
       return data as Hub;
     },
@@ -742,12 +811,14 @@ export function useDocMutations() {
         text: b.text,
         ...(b.type === "check" ? { checked: false } : {}),
       }));
+      const uid = await requireUserId();
       const { data, error } = await supabase
         .from("documents")
         .insert({
           hub_id,
           title: tpl.key === "blank" ? "Untitled doc" : tpl.name,
           blocks,
+          user_id: uid,
         })
         .select()
         .single();
@@ -787,13 +858,15 @@ export function useDocMutations() {
   return { createDoc, saveDoc, removeDoc };
 }
 
+/** Clears everything that belongs to the signed-in account. Demo content is untouched. */
 export async function resetAllData() {
-  await supabase.from("chat_messages").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  await supabase.from("documents").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  await supabase.from("tasks").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  await supabase.from("hubs").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  const uid = await requireUserId();
+  await supabase.from("chat_messages").delete().eq("user_id", uid);
+  await supabase.from("documents").delete().eq("user_id", uid);
+  await supabase.from("tasks").delete().eq("user_id", uid);
+  await supabase.from("hubs").delete().eq("user_id", uid);
   await supabase
     .from("app_state")
-    .update({ streak: 0, best_streak: 0, last_streak_date: null })
-    .eq("id", "main");
+    .update({ streak: 0, best_streak: 0, last_streak_date: null, halo_log: [] })
+    .eq("id", uid);
 }

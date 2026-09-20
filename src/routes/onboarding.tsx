@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Field } from "@/components/Field";
 import { Button } from "@/components/Button";
 import { LumiScene } from "@/components/LumiScene";
@@ -11,6 +11,7 @@ import {
   useTaskMutations,
   useUpdateState,
 } from "@/lib/app";
+import { useSessionUser } from "@/lib/billing";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -39,6 +40,13 @@ function OnboardingScreen() {
   const { createHub } = useHubMutations();
   const { createTask } = useTaskMutations();
   const updateState = useUpdateState();
+  const { user, ready } = useSessionUser();
+
+  // Setup writes real data, so it needs an account.
+  useEffect(() => {
+    if (ready && !user) navigate({ to: "/auth" });
+  }, [ready, user, navigate]);
+
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");

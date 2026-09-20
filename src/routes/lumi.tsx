@@ -10,7 +10,15 @@ import { DataError } from "@/components/DataError";
 import { LumiSkeleton } from "@/components/skeletons";
 import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { supabase } from "@/integrations/supabase/client";
-import { PRIORITY_LABEL, announce, hubColor, useChat, useHubs, useTasks } from "@/lib/app";
+import {
+  PRIORITY_LABEL,
+  announce,
+  currentUserId,
+  hubColor,
+  useChat,
+  useHubs,
+  useTasks,
+} from "@/lib/app";
 import { askLumi } from "@/lib/lumi.functions";
 import { BoundaryCard } from "@/components/BoundaryCard";
 import { TIER_LABEL, isBoundaryHidden, useBilling } from "@/lib/billing";
@@ -76,10 +84,14 @@ function LumiScreen() {
     setError("");
     setThinking(true);
     try {
-      await supabase.from("chat_messages").insert({ role: "user", content: q });
+      const owner = await currentUserId();
+      if (!owner) throw new Error("the session ended. Sign in again");
+      await supabase.from("chat_messages").insert({ role: "user", content: q, user_id: owner });
       await qc.invalidateQueries({ queryKey: ["chat"] });
       const res = await ask({ data: { question: q } });
-      await supabase.from("chat_messages").insert({ role: "lumi", content: res.text });
+      await supabase
+        .from("chat_messages")
+        .insert({ role: "lumi", content: res.text, user_id: owner });
       await refetch();
       await qc.invalidateQueries({ queryKey: ["chat"] });
       setGlow(true);

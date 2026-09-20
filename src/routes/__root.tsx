@@ -18,7 +18,8 @@ import { LiveRegion } from "../components/LiveRegion";
 import { CreateMenu } from "../components/CreateMenu";
 import { InstallHint } from "../components/InstallHint";
 import { UndoToast } from "../components/UndoToast";
-import { STREAK_EVENT, useAppState } from "../lib/app";
+import { STREAK_EVENT, useAppState, useAuthCacheSync } from "../lib/app";
+import { DemoNotice } from "../components/DemoNotice";
 import { haptic } from "../lib/haptics";
 
 
@@ -245,6 +246,7 @@ function AppFrame() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const screenKey = pathname.split("/").slice(0, 3).join("/");
   const { data: state } = useAppState();
+  useAuthCacheSync();
   const welcome = state !== undefined && !state.onboarded && pathname === "/";
   const chrome = !welcome && pathname !== "/onboarding" && pathname !== "/auth";
 
@@ -256,6 +258,7 @@ function AppFrame() {
           className="app-main motion-page px-4 pt-6"
           style={{ paddingBottom: "calc(104px + env(safe-area-inset-bottom))" }}
         >
+          {chrome ? <DemoNotice /> : null}
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>
