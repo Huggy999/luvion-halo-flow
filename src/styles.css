@@ -162,9 +162,45 @@
   }
 }
 
-/* ---------- Obsidian application shell ---------- */
+/* ---------- Luminous application shell ---------- */
 
 .luvion-shell {
+  --bg: #f5f8ff;
+  --paper: #ffffff;
+  --ink: #10172a;
+  --ink-2: #46536b;
+  --ink-3: #6d7890;
+  --line: #e3eaf5;
+  --line-2: #d4deed;
+  --line-ctl: #8294ae;
+  --sunk: #edf3fb;
+  --line-card: #dce5f2;
+  --blue: #0786ff;
+  --blue-btn: #0878ed;
+  --blue-ink: #075fca;
+  --halo: #ffbd38;
+  --halo-tx: #8a5a00;
+  --mint: #19c797;
+  --mint-tx: #087959;
+  --coral: #ff6557;
+  --coral-tx: #bd392f;
+  --lilac: #886ff2;
+  --glow: #30cbe8;
+  --glow-2: #9c82ff;
+  --shell: #eaf2ff;
+  --shell-edge: #cbd9ec;
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --surface-glass-strong: rgba(255, 255, 255, 0.92);
+  --shadow-soft: 0 18px 48px -30px rgba(35, 72, 128, 0.32);
+  --shadow-float: 0 24px 70px -30px rgba(35, 72, 128, 0.38);
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 15% -8%, color-mix(in oklab, var(--glow) 32%, transparent), transparent 28rem),
+    radial-gradient(circle at 85% 4%, color-mix(in oklab, var(--glow-2) 24%, transparent), transparent 32rem),
+    var(--shell);
+}
+
+.dark .luvion-shell {
   --bg: #10131b;
   --paper: #171c27;
   --ink: #fbfcff;
@@ -193,11 +229,6 @@
   --surface-glass-strong: rgba(255, 255, 255, 0.13);
   --shadow-soft: 0 18px 50px -28px rgba(0, 0, 0, 0.95);
   --shadow-float: 0 24px 70px -24px rgba(0, 0, 0, 0.95);
-  min-height: 100dvh;
-  background:
-    radial-gradient(circle at 15% -8%, color-mix(in oklab, var(--glow) 22%, transparent), transparent 28rem),
-    radial-gradient(circle at 85% 4%, color-mix(in oklab, var(--glow-2) 24%, transparent), transparent 32rem),
-    var(--shell);
 }
 
 .app-viewport {
@@ -206,7 +237,7 @@
   background:
     linear-gradient(180deg, color-mix(in oklab, var(--glow) 8%, var(--bg)), var(--bg) 30%),
     var(--bg);
-  box-shadow: 0 0 0 1px var(--shell-edge), 0 30px 100px rgba(0, 0, 0, 0.66);
+  box-shadow: 0 0 0 1px var(--shell-edge), var(--shadow-float);
 }
 
 .app-viewport::after {
@@ -231,7 +262,7 @@
   width: min(31rem, 115vw);
   height: 19rem;
   translate: -50% 0;
-  background: radial-gradient(ellipse, color-mix(in oklab, var(--glow-2) 28%, transparent), transparent 68%);
+  background: radial-gradient(ellipse, color-mix(in oklab, var(--glow-2) 22%, transparent), transparent 68%);
   pointer-events: none;
 }
 
@@ -248,7 +279,7 @@
 .surface-card,
 .card {
   background:
-    linear-gradient(145deg, color-mix(in oklab, var(--glow) 5%, var(--surface-glass-strong)), var(--surface-glass));
+    linear-gradient(145deg, color-mix(in oklab, var(--glow) 4%, var(--surface-glass-strong)), var(--surface-glass));
   border-color: var(--line-card);
   backdrop-filter: blur(20px) saturate(130%);
 }
@@ -424,9 +455,9 @@
 
 .halo-stage {
   background:
-    radial-gradient(circle at 30% 20%, color-mix(in oklab, var(--glow) 25%, transparent), transparent 36%),
-    radial-gradient(circle at 78% 12%, color-mix(in oklab, var(--glow-2) 30%, transparent), transparent 42%),
-    linear-gradient(155deg, color-mix(in oklab, var(--paper) 86%, var(--glow-2)), color-mix(in oklab, var(--paper) 94%, var(--glow)));
+    radial-gradient(circle at 30% 20%, color-mix(in oklab, var(--glow) 28%, transparent), transparent 36%),
+    radial-gradient(circle at 78% 12%, color-mix(in oklab, var(--glow-2) 24%, transparent), transparent 42%),
+    linear-gradient(155deg, color-mix(in oklab, var(--paper) 91%, var(--glow-2)), color-mix(in oklab, var(--paper) 94%, var(--glow)));
 }
 
 .halo-stage::before {
@@ -452,7 +483,7 @@
 }
 
 .tab-dock {
-  background: color-mix(in oklab, var(--paper) 92%, transparent);
+  background: color-mix(in oklab, var(--paper) 90%, transparent);
   border-color: color-mix(in oklab, var(--glow) 24%, var(--line-ctl));
   backdrop-filter: blur(26px) saturate(170%);
 }
