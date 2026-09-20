@@ -487,10 +487,11 @@ export function useUpdateState() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (patch: Partial<AppState>) => {
+      const uid = await requireUserId();
       const { error } = await supabase
         .from("app_state")
         .update({ ...patch, updated_at: new Date().toISOString() } as never)
-        .eq("id", "main");
+        .eq("id", uid);
       if (error) throw error;
     },
     onMutate: async (patch) => {
@@ -510,10 +511,12 @@ export function useUpdateState() {
 
 /** Counts one halo day for the first task closed on a calendar day. */
 async function registerStreakDay(): Promise<boolean> {
+  const uid = await currentUserId();
+  if (!uid) return false;
   const { data, error } = await supabase
     .from("app_state")
     .select("*")
-    .eq("id", "main")
+    .eq("id", uid)
     .single();
   if (error || !data) return false;
   const state = data as unknown as AppState;
