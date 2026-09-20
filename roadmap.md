@@ -7,3 +7,4 @@
 5. Streak consequences: level ring skins, halo log, one freeze per month.
 6. Lumi counter on the Lumi screen, guest example dialog, chat history persists.
 7. PWA: manifest + service worker (offline shell + last tasks), install prompt after first session.
+8. Dark Obsidian premium redesign: global surfaces, navigation, Pulse centerpiece, and interaction polish.

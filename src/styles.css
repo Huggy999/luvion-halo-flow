@@ -39,6 +39,8 @@
   --color-line: var(--line);
   --color-line-2: var(--line-2);
   --color-line-ctl: var(--line-ctl);
+  --color-glow: var(--glow);
+  --color-glow-2: var(--glow-2);
 
   /* совместимость с shadcn-примитивами */
   --color-background: var(--bg);
@@ -86,6 +88,12 @@
   --line-card: #d8e3f3;
   --shadow-soft: 0 8px 28px -14px rgba(10, 18, 35, 0.28);
   --shadow-float: 0 12px 34px -12px rgba(10, 18, 35, 0.3);
+  --glow: #40d9ff;
+  --glow-2: #9a7cff;
+  --shell: #020305;
+  --shell-edge: #171922;
+  --surface-glass: rgba(255, 255, 255, 0.045);
+  --surface-glass-strong: rgba(255, 255, 255, 0.075);
 }
 
 .dark {
@@ -111,6 +119,12 @@
   --lilac: #a596ff;
   --shadow-soft: 0 8px 28px -14px rgba(0, 0, 0, 0.8);
   --shadow-float: 0 12px 34px -12px rgba(0, 0, 0, 0.85);
+  --glow: #58ddff;
+  --glow-2: #aa8cff;
+  --shell: #020305;
+  --shell-edge: #171922;
+  --surface-glass: rgba(255, 255, 255, 0.045);
+  --surface-glass-strong: rgba(255, 255, 255, 0.075);
 }
 
 @layer base {
@@ -125,7 +139,7 @@
 
   html,
   body {
-    background-color: var(--bg);
+    background-color: var(--shell);
     color: var(--ink);
     font-family: var(--font-sans);
     -webkit-text-size-adjust: 100%;
@@ -146,6 +160,165 @@
   button {
     font-family: inherit;
   }
+}
+
+/* ---------- Obsidian application shell ---------- */
+
+.luvion-shell {
+  --bg: #08090d;
+  --paper: #0d0f15;
+  --ink: #f5f7fb;
+  --ink-2: #aeb5c4;
+  --ink-3: #7f8798;
+  --line: #20232d;
+  --line-2: #2c303d;
+  --line-ctl: #656d7e;
+  --sunk: #07080c;
+  --line-card: #272a35;
+  --blue: #3cd4ff;
+  --blue-btn: #168fc2;
+  --blue-ink: #7ee5ff;
+  --halo: #ffc85a;
+  --halo-tx: #ffd984;
+  --mint: #3bd6a4;
+  --mint-tx: #7be9c6;
+  --coral: #ff7567;
+  --coral-tx: #ffafa6;
+  --lilac: #a78bfa;
+  --shadow-soft: 0 18px 50px -28px rgba(0, 0, 0, 0.95);
+  --shadow-float: 0 24px 70px -24px rgba(0, 0, 0, 0.95);
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 50% -10%, color-mix(in oklab, var(--glow-2) 13%, transparent), transparent 34rem),
+    var(--shell);
+}
+
+.app-viewport {
+  position: relative;
+  min-height: 100dvh;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--glow) 2.5%, var(--bg)), var(--bg) 28%),
+    var(--bg);
+  box-shadow: 0 0 0 1px var(--shell-edge), 0 30px 100px rgba(0, 0, 0, 0.66);
+}
+
+.app-viewport::before {
+  content: "";
+  position: fixed;
+  z-index: 0;
+  top: -9rem;
+  left: 50%;
+  width: min(31rem, 115vw);
+  height: 19rem;
+  translate: -50% 0;
+  background: radial-gradient(ellipse, color-mix(in oklab, var(--glow-2) 15%, transparent), transparent 68%);
+  pointer-events: none;
+}
+
+.app-main {
+  position: relative;
+  z-index: 1;
+}
+
+.surface-sunk {
+  background: color-mix(in oklab, var(--sunk) 92%, transparent);
+  border: 1px solid var(--line);
+}
+
+.surface-card,
+.card {
+  background: linear-gradient(145deg, var(--surface-glass-strong), var(--surface-glass));
+  border-color: var(--line-card);
+  backdrop-filter: blur(20px) saturate(130%);
+}
+
+.surface-float {
+  background: color-mix(in oklab, var(--paper) 88%, transparent);
+  border-color: color-mix(in oklab, var(--line-ctl) 50%, transparent);
+  backdrop-filter: blur(24px) saturate(140%);
+}
+
+.premium-card {
+  position: relative;
+  isolation: isolate;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 260ms ease, box-shadow 260ms ease;
+}
+
+.premium-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(120deg, color-mix(in oklab, var(--glow) 7%, transparent), transparent 40%);
+  opacity: 0;
+  transition: opacity 260ms ease;
+  pointer-events: none;
+}
+
+.premium-card:hover {
+  border-color: color-mix(in oklab, var(--glow) 30%, var(--line-card));
+  box-shadow: 0 22px 56px -34px color-mix(in oklab, var(--glow) 38%, transparent);
+  transform: translateY(-2px);
+}
+
+.premium-card:hover::after {
+  opacity: 1;
+}
+
+.premium-card:active {
+  transform: scale(0.985);
+}
+
+.halo-stage {
+  background:
+    radial-gradient(circle at 30% 20%, color-mix(in oklab, var(--glow) 12%, transparent), transparent 34%),
+    radial-gradient(circle at 78% 12%, color-mix(in oklab, var(--glow-2) 16%, transparent), transparent 40%),
+    linear-gradient(155deg, color-mix(in oklab, var(--paper) 95%, var(--glow-2)), var(--paper));
+}
+
+.halo-stage::before {
+  content: "";
+  position: absolute;
+  width: 12rem;
+  height: 12rem;
+  left: -3.5rem;
+  top: -4.5rem;
+  border: 1px solid color-mix(in oklab, var(--glow) 20%, transparent);
+  border-radius: 999px;
+  animation: obsidian-orbit 11s linear infinite;
+  pointer-events: none;
+}
+
+.task-glass {
+  transition: background-color 200ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.task-glass:hover {
+  background: color-mix(in oklab, var(--glow) 6%, var(--sunk));
+  transform: translateX(3px);
+}
+
+.tab-dock {
+  background: color-mix(in oklab, var(--paper) 88%, transparent);
+  border-color: color-mix(in oklab, var(--line-ctl) 42%, transparent);
+  backdrop-filter: blur(26px) saturate(145%);
+}
+
+.tab-link {
+  transition: color 200ms ease, transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tab-link:hover {
+  transform: translateY(-2px);
+}
+
+.tab-link:active {
+  transform: scale(0.92);
+}
+
+@keyframes obsidian-orbit {
+  to { transform: rotate(360deg); }
 }
 
 /* ---------- Шкала кегля ---------- */

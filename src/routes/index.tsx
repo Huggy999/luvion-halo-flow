@@ -212,11 +212,7 @@ function PulseScreen() {
 
 
       <section
-        className="card relative overflow-hidden"
-        style={{
-          background:
-            "linear-gradient(150deg, color-mix(in oklab, var(--halo) 22%, var(--paper)), var(--paper))",
-        }}
+        className="halo-stage premium-card card relative overflow-hidden"
         aria-label="Halo and streak"
       >
         <Celebration streak={streak} />
@@ -224,7 +220,7 @@ function PulseScreen() {
           type="button"
           onClick={() => setHaloOpen(true)}
           aria-label="Open the halo levels"
-          className="block w-full p-5 text-left"
+          className="block w-full p-5 text-left transition-transform duration-200 active:scale-[0.985]"
         >
           <div className="grid grid-cols-[112px_minmax(0,1fr)] items-center gap-4">
             <div>
@@ -278,7 +274,7 @@ function PulseScreen() {
       />
 
 
-      <section className="card p-4" aria-label="Today at a glance">
+      <section className="premium-card card p-4" aria-label="Today at a glance">
         <div className="flex items-center justify-between gap-3">
           <h2 className="t-title text-ink">In focus today</h2>
           <Link to="/day" className="t-aux font-bold" style={{ color: "var(--blue-ink)" }}>
@@ -298,7 +294,7 @@ function PulseScreen() {
             focus.map((t) => {
               const hub = hubs.find((h) => h.id === t.hub_id);
               return (
-                <li key={t.id} className="flex items-center gap-3 py-2.5">
+                <li key={t.id} className="task-glass flex items-center gap-3 rounded-tile px-2 py-2.5">
                   <span
                     className="h-2.5 w-2.5 shrink-0 rounded-chip"
                     style={{ background: t.is_done ? "var(--mint)" : "var(--line-2)" }}
@@ -345,11 +341,7 @@ function PulseScreen() {
 
       <Link
         to="/lumi"
-        className="card block p-4"
-        style={{
-          background:
-            "linear-gradient(140deg, color-mix(in oklab, var(--lilac) 20%, var(--paper)), var(--paper))",
-        }}
+        className="premium-card card block p-4"
       >
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <div className="min-w-0">
