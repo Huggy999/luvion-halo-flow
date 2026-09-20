@@ -562,6 +562,8 @@ export function useHaloGuard() {
     if (state.freeze_month === monthKey(today)) return;
     applied.current = true;
     void (async () => {
+      const uid = await currentUserId();
+      if (!uid) return;
       await supabase
         .from("app_state")
         .update({
@@ -570,7 +572,7 @@ export function useHaloGuard() {
           freeze_notice: true,
           updated_at: new Date().toISOString(),
         } as never)
-        .eq("id", "main");
+        .eq("id", uid);
       await qc.invalidateQueries({ queryKey: ["app_state"] });
     })();
   }, [state, qc]);
