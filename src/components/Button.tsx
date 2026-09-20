@@ -12,11 +12,11 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-btn text-[14px] font-bold leading-none transition-colors select-none";
+  "inline-flex items-center justify-center gap-2 rounded-btn text-[14px] font-bold leading-none transition-[color,background-color,border-color,transform,box-shadow] duration-200 select-none active:scale-[0.97]";
 
 const variants: Record<Variant, string> = {
   primary:
-    "ring-on-solid bg-[var(--blue-btn)] text-white hover:bg-[color-mix(in_srgb,var(--blue-btn)_86%,black)]",
+    "ring-on-solid bg-[var(--blue-btn)] text-white shadow-[0_12px_30px_-16px_var(--blue)] hover:bg-[color-mix(in_srgb,var(--blue-btn)_86%,black)] hover:shadow-[0_16px_36px_-16px_var(--blue)]",
   secondary:
     "border border-[var(--line-ctl)] bg-transparent text-blue-ink hover:bg-[color-mix(in_srgb,var(--blue-ink)_8%,transparent)]",
   ghost:

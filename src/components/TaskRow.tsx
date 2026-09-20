@@ -59,7 +59,7 @@ export function TaskRow({
   right?: React.ReactNode | undefined;
 }) {
   return (
-    <div className="flex items-center gap-3 py-2.5">
+    <div className="task-glass flex items-center gap-3 rounded-tile px-2 py-2.5">
       <TaskCheck
         checked={task.is_done}
         onToggle={onToggle}
@@ -72,7 +72,7 @@ export function TaskRow({
               type="button"
               onClick={onOpen}
               aria-label={`Open ${task.title}`}
-              className={`block max-w-full truncate py-1 text-left text-[15px] font-medium ${
+               className={`block max-w-full truncate py-1 text-left t-body ${
                 task.is_done ? "strike text-ink-3" : "text-ink"
               }`}
             >
@@ -80,7 +80,7 @@ export function TaskRow({
             </button>
           ) : (
             <span
-              className={`block truncate text-[15px] font-medium ${
+               className={`block truncate t-body ${
                 task.is_done ? "strike text-ink-3" : "text-ink"
               }`}
             >
@@ -91,7 +91,7 @@ export function TaskRow({
 
         <div className="mt-0.5 flex items-center gap-2">
           {hub ? (
-            <span className="flex items-center gap-1.5 text-[11px] text-ink-2">
+             <span className="flex items-center gap-1.5 label-xs text-ink-2">
               <span
                 className="h-2 w-2 rounded-chip"
                 style={{ background: hubColor(hub.color) }}

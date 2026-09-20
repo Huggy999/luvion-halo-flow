@@ -138,7 +138,7 @@ function TabBar() {
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center"
     >
       <div
-        className="shadow-float pointer-events-auto mx-3 mb-3 w-full max-w-[406px] rounded-[22px] border border-line bg-paper/95 px-1.5 py-1.5 backdrop-blur"
+        className="tab-dock shadow-float pointer-events-auto mx-3 mb-3 w-full max-w-[406px] rounded-[22px] border px-1.5 py-1.5"
         style={{
           boxShadow: "var(--shadow-float)",
           marginBottom: "calc(12px + env(safe-area-inset-bottom))",
@@ -153,13 +153,13 @@ function TabBar() {
               <li key={tab.to}>
                 <Link
                   to={tab.to}
-                  className="relative flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-[16px] px-1 py-1.5"
+                  className="tab-link relative flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-[16px] px-1 py-1.5"
                   aria-current={active ? "page" : undefined}
                 >
                   {active ? (
                     <span
                       className="bloom absolute inset-0 rounded-[16px]"
-                      style={{ background: "color-mix(in oklab, var(--blue) 12%, transparent)" }}
+                       style={{ background: "color-mix(in oklab, var(--blue) 13%, transparent)", boxShadow: "inset 0 0 0 1px color-mix(in oklab, var(--blue) 18%, transparent)" }}
                       aria-hidden="true"
                     />
                   ) : null}
@@ -230,11 +230,11 @@ function AppFrame() {
   const chrome = !welcome && pathname !== "/onboarding" && pathname !== "/auth";
 
   return (
-    <div id="app-shell" className="min-h-dvh bg-bg">
-      <div className="mx-auto w-full max-w-[430px] bg-bg">
+    <div id="app-shell" className="luvion-shell min-h-dvh">
+      <div className="app-viewport mx-auto w-full max-w-[430px]">
         <main
           key={screenKey}
-          className="px-4 pt-6"
+          className="app-main px-4 pt-6"
           style={{ paddingBottom: "calc(104px + env(safe-area-inset-bottom))" }}
         >
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

@@ -18,7 +18,7 @@ export type TextareaFieldProps = Common &
 
 function shell(error?: string) {
   return cn(
-    "w-full rounded-btn border bg-bg px-3 py-2 text-ink placeholder:text-ink-3",
+    "w-full rounded-btn border bg-[color-mix(in_oklab,var(--sunk)_88%,transparent)] px-3 py-2 text-ink placeholder:text-ink-3 transition-[border-color,background-color,box-shadow] duration-200 hover:bg-[color-mix(in_oklab,var(--sunk)_72%,var(--paper))]",
     error ? "border-[var(--coral)]" : "border-[var(--line-ctl)]",
   );
 }

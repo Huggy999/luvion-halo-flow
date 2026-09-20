@@ -24,7 +24,7 @@ export function HaloRing({
   const width = skin === "spark" ? 4 : 6;
 
   return (
-    <div className="relative" style={{ height: size, width: size }}>
+    <div className="relative drop-shadow-[0_0_18px_color-mix(in_oklab,var(--halo)_28%,transparent)]" style={{ height: size, width: size }}>
       <svg
         viewBox="0 0 100 100"
         className="absolute inset-0 h-full w-full -rotate-90"
