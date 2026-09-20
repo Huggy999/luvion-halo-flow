@@ -29,7 +29,7 @@ export type Database = {
           streaks_enabled: boolean
           theme: string
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           best_streak?: number
@@ -45,7 +45,7 @@ export type Database = {
           streaks_enabled?: boolean
           theme?: string
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           best_streak?: number
@@ -61,7 +61,7 @@ export type Database = {
           streaks_enabled?: boolean
           theme?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -71,21 +71,21 @@ export type Database = {
           created_at: string
           id: string
           role: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           content: string
           created_at?: string
           id?: string
           role: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           content?: string
           created_at?: string
           id?: string
           role?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -97,7 +97,7 @@ export type Database = {
           id: string
           title: string
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           blocks?: Json
@@ -106,7 +106,7 @@ export type Database = {
           id?: string
           title?: string
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           blocks?: Json
@@ -115,7 +115,7 @@ export type Database = {
           id?: string
           title?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -135,7 +135,7 @@ export type Database = {
           id: string
           name: string
           position: number
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           color?: string
@@ -144,7 +144,7 @@ export type Database = {
           id?: string
           name: string
           position?: number
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           color?: string
@@ -153,7 +153,7 @@ export type Database = {
           id?: string
           name?: string
           position?: number
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -209,7 +209,7 @@ export type Database = {
           position: number
           priority: string
           title: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           board_column?: string
@@ -223,7 +223,7 @@ export type Database = {
           position?: number
           priority?: string
           title: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           board_column?: string
@@ -237,7 +237,7 @@ export type Database = {
           position?: number
           priority?: string
           title?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
