@@ -330,6 +330,8 @@
 .auth-airy {
   position: relative;
   isolation: isolate;
+  width: 100%;
+  overflow-x: clip;
   padding: 0.25rem 0 2rem;
 }
 
