@@ -594,12 +594,14 @@ export function useTaskMutations() {
       is_today?: boolean;
       focus_sessions?: number;
     }) => {
+      const uid = await requireUserId();
       const { error } = await supabase.from("tasks").insert({
         title: input.title,
         hub_id: input.hub_id,
         priority: input.priority,
         is_today: input.is_today ?? false,
         focus_sessions: input.focus_sessions ?? 1,
+        user_id: uid,
       });
       if (error) throw error;
     },
