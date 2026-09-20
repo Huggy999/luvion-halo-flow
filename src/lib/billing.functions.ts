@@ -63,6 +63,7 @@ export const createHubGuarded = createServerFn({ method: "POST" })
       description: data.description,
       color: data.color,
       position: count ?? 0,
+      user_id: context.userId,
     });
     if (error) return { ok: false as const, reason: error.message };
     return { ok: true as const, reason: "" };

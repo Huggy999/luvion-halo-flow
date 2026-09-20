@@ -3,6 +3,34 @@ import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { haptic } from "@/lib/haptics";
 
+/* ---------- ownership ---------- */
+
+/** The signed-in account id, or null for a visitor reading the demo space. */
+export async function currentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser();
+  return data.user?.id ?? null;
+}
+
+/** Every write belongs to an account. Visitors read the demo and cannot change it. */
+async function requireUserId(): Promise<string> {
+  const id = await currentUserId();
+  if (!id) throw new Error("you are signed out. Sign in to keep your own space");
+  return id;
+}
+
+/** Swaps the cached data when somebody signs in or out. */
+export function useAuthCacheSync() {
+  const qc = useQueryClient();
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      void qc.invalidateQueries();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [qc]);
+}
+
+
+
 
 export type Hub = {
   id: string;
