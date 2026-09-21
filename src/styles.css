@@ -11,6 +11,7 @@
 
 @theme inline {
   --font-display: "Outfit", system-ui, sans-serif;
+  --font-editorial: Georgia, "Times New Roman", serif;
   --font-sans: "Manrope", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
@@ -165,44 +166,44 @@
 /* ---------- Luminous application shell ---------- */
 
 .luvion-shell {
-  --bg: #f5f8ff;
-  --paper: #ffffff;
-  --ink: #10172a;
-  --ink-2: #46536b;
-  --ink-3: #6d7890;
-  --line: #e3eaf5;
-  --line-2: #d4deed;
-  --line-ctl: #8294ae;
-  --sunk: #edf3fb;
-  --line-card: #dce5f2;
-  --blue: #0786ff;
-  --blue-btn: #0878ed;
-  --blue-ink: #075fca;
-  --halo: #ffbd38;
-  --halo-tx: #8a5a00;
-  --mint: #19c797;
-  --mint-tx: #087959;
-  --coral: #ff6557;
-  --coral-tx: #bd392f;
-  --lilac: #886ff2;
-  --glow: #30cbe8;
-  --glow-2: #9c82ff;
-  --shell: #eaf2ff;
-  --shell-edge: #cbd9ec;
-  --surface-glass: rgba(255, 255, 255, 0.72);
-  --surface-glass-strong: rgba(255, 255, 255, 0.92);
-  --shadow-soft: 0 18px 48px -30px rgba(35, 72, 128, 0.32);
-  --shadow-float: 0 24px 70px -30px rgba(35, 72, 128, 0.38);
+  --bg: #0c3030;
+  --paper: #123b3b;
+  --ink: #f4f0df;
+  --ink-2: #b9d2ca;
+  --ink-3: #86aaa2;
+  --line: #234c4a;
+  --line-2: #315d58;
+  --line-ctl: #6d9990;
+  --sunk: #082626;
+  --line-card: #2a5551;
+  --blue: #84e8cf;
+  --blue-btn: #6fddc0;
+  --blue-ink: #a9f4dd;
+  --halo: #f7d66c;
+  --halo-tx: #ffe9a4;
+  --mint: #78e6ba;
+  --mint-tx: #b2f4d9;
+  --coral: #f18c79;
+  --coral-tx: #ffc0b3;
+  --lilac: #a8b4dd;
+  --glow: #71dac9;
+  --glow-2: #8fbab2;
+  --shell: #061b1c;
+  --shell-edge: #1d4442;
+  --surface-glass: rgba(16, 55, 54, 0.78);
+  --surface-glass-strong: rgba(20, 67, 64, 0.92);
+  --shadow-soft: 0 20px 50px -30px rgba(0, 8, 8, 0.82);
+  --shadow-float: 0 26px 78px -32px rgba(0, 8, 8, 0.95);
   min-height: 100dvh;
   background:
-    radial-gradient(circle at 15% -8%, color-mix(in oklab, var(--glow) 32%, transparent), transparent 28rem),
-    radial-gradient(circle at 85% 4%, color-mix(in oklab, var(--glow-2) 24%, transparent), transparent 32rem),
+    radial-gradient(circle at 15% -8%, color-mix(in oklab, var(--glow) 17%, transparent), transparent 30rem),
+    radial-gradient(circle at 85% 4%, color-mix(in oklab, var(--halo) 8%, transparent), transparent 34rem),
     var(--shell);
 }
 
 .dark .luvion-shell {
-  --bg: #10131b;
-  --paper: #171c27;
+  --bg: #082525;
+  --paper: #103534;
   --ink: #fbfcff;
   --ink-2: #c8d0df;
   --ink-3: #949fb3;
@@ -237,7 +238,7 @@
   background:
     linear-gradient(180deg, color-mix(in oklab, var(--glow) 8%, var(--bg)), var(--bg) 30%),
     var(--bg);
-  box-shadow: 0 0 0 1px var(--shell-edge), var(--shadow-float);
+  box-shadow: none;
   overflow-x: clip;
 }
 
@@ -246,7 +247,7 @@
   position: fixed;
   z-index: 0;
   inset: 0;
-  max-width: 430px;
+  max-width: 1440px;
   margin-inline: auto;
   background-image: linear-gradient(color-mix(in oklab, var(--ink) 2.5%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in oklab, var(--ink) 2.5%, transparent) 1px, transparent 1px);
   background-size: 32px 32px;
@@ -271,6 +272,8 @@
 .app-main {
   position: relative;
   z-index: 1;
+  width: min(100%, 720px);
+  margin-inline: auto;
 }
 
 .motion-page {
@@ -287,13 +290,67 @@
   background:
     linear-gradient(145deg, color-mix(in oklab, var(--glow) 4%, var(--surface-glass-strong)), var(--surface-glass));
   border-color: var(--line-card);
-  backdrop-filter: blur(20px) saturate(130%);
+  backdrop-filter: none;
 }
 
 .surface-float {
   background: color-mix(in oklab, var(--paper) 88%, transparent);
   border-color: color-mix(in oklab, var(--line-ctl) 50%, transparent);
   backdrop-filter: blur(24px) saturate(140%);
+}
+
+.app-navigation { inset-inline: 0; bottom: 0; justify-content: center; }
+.tab-dock { width: calc(100% - 1.5rem); max-width: 406px; margin-bottom: calc(12px + env(safe-area-inset-bottom)); }
+.desktop-brand, .desktop-nav-create { display: none; }
+
+.moonlit-scene {
+  position: relative;
+  min-height: 16.5rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--mint) 22%, var(--line-card));
+  border-radius: var(--radius-card);
+  background: linear-gradient(180deg, #102f32 0%, #174b49 62%, #0b292b 100%);
+  box-shadow: var(--shadow-soft);
+  isolation: isolate;
+}
+.moonlit-scene-compact { min-height: 10rem; }
+.moonlit-moon { position: absolute; z-index: 0; top: 1.4rem; right: 13%; width: 5rem; height: 5rem; border-radius: 999px; background: var(--halo); box-shadow: 0 0 36px color-mix(in oklab, var(--halo) 45%, transparent); }
+.moonlit-landscape { position: absolute; inset: auto 0 0; width: 100%; height: 88%; }
+.mountain-back { fill: #2d6761; }
+.mountain-front { fill: #164441; }
+.lake { fill: #0c3536; }
+.reflection { fill: color-mix(in oklab, var(--halo) 20%, transparent); }
+.trees { fill: #071f21; }
+.moonlit-lumi { position: absolute; z-index: 3; left: 13%; bottom: 12%; filter: drop-shadow(0 12px 18px rgba(0,0,0,.34)); animation: celestial-float 5s ease-in-out infinite; }
+.moonlit-ripple { position: absolute; left: 17%; bottom: 8%; width: 5rem; height: .7rem; border: 1px solid color-mix(in oklab, var(--mint) 45%, transparent); border-radius: 999px; animation: moon-ripple 3.8s ease-out infinite; }
+.moonlit-ripple-b { animation-delay: -1.9s; }
+.checkin-strip { display: grid; gap: .9rem; padding: 1rem; border-block: 1px solid var(--line); }
+.checkin-options { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .5rem; }
+.t-editorial { font-family: var(--font-editorial); font-weight: 400; }
+
+@keyframes moon-ripple { from { scale: .6; opacity: .8; } to { scale: 1.45; opacity: 0; } }
+
+@media (min-width: 768px) {
+  .app-main { width: min(100% - 3rem, 920px); padding-top: 2.5rem; }
+  .sheet-layer { align-items: center; padding: 2rem; }
+  .sheet-in { border-radius: var(--radius-sheet); max-height: calc(100dvh - 4rem); overflow-y: auto; }
+  .sheet-handle { display: none; }
+  .pulse-landscape { min-height: 21rem; }
+}
+
+@media (min-width: 1100px) {
+  .luvion-shell { padding-left: 15.5rem; }
+  .app-navigation { inset: 1rem auto 1rem 1rem; width: 13.5rem; }
+  .tab-dock { display: flex; width: 100%; max-width: none; height: 100%; margin: 0; padding: 1rem; border-radius: var(--radius-card); flex-direction: column; }
+  .desktop-brand { display: flex; align-items: center; gap: .75rem; padding: .5rem; font: 700 20px/1 var(--font-display); color: var(--ink); }
+  .desktop-brand-mark { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; background: var(--mint); color: var(--sunk); }
+  .navigation-list { display: flex; flex-direction: column; gap: .4rem; margin-top: 2.5rem; }
+  .tab-link { flex-direction: row; justify-content: flex-start; gap: .8rem; padding-inline: .8rem; }
+  .desktop-nav-create { display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: 2.75rem; margin-top: auto; border-radius: var(--radius-btn); background: var(--blue-btn); color: var(--sunk); font-weight: 800; }
+  .create-fab { right: 2rem !important; bottom: 1rem !important; }
+  .app-main { width: min(100% - 5rem, 1120px); padding-top: 3rem; }
+  .cascade { max-width: none; }
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 .premium-card {
@@ -1272,6 +1329,12 @@
   .lumi-star,
   .section-kicker::before,
   .page-header::after { animation: none !important; }
+}
+
+html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
