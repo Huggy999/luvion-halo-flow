@@ -58,13 +58,13 @@ function DayScreen() {
   const tasks = tasksQ.data ?? [];
   const hubs = hubsQ.data ?? [];
   const state = stateQ.data;
+  const planQ = useDailyPlan();
   const loading = tasksQ.isLoading || hubsQ.isLoading || stateQ.isLoading || planQ.isLoading;
   const failed = tasksQ.isError || hubsQ.isError || stateQ.isError || planQ.isError;
   const showSkeleton = useDelayedFlag(loading);
-  const { completeTask, patchTask } = useTaskMutations();
+  const { completeTask } = useTaskMutations();
   const focusSessionQ = useFocusSession();
   const focusMutations = useFocusMutations();
-  const planQ = useDailyPlan();
   const planMutations = useDailyPlanMutations();
 
   const [left, setLeft] = useState(FOCUS_SECONDS);

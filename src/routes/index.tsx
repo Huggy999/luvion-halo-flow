@@ -133,6 +133,7 @@ function PulseScreen() {
   const state = stateQ.data;
   const tasks = tasksQ.data ?? [];
   const hubs = hubsQ.data ?? [];
+  const planQ = useDailyPlan();
   const loading = stateQ.isLoading || tasksQ.isLoading || hubsQ.isLoading || planQ.isLoading;
   const failed = stateQ.isError || tasksQ.isError || hubsQ.isError || planQ.isError;
   const showSkeleton = useDelayedFlag(loading);
@@ -140,7 +141,6 @@ function PulseScreen() {
   const updateState = useUpdateState();
   const checkinQ = useDailyCheckin();
   const saveCheckin = useDailyCheckinMutation();
-  const planQ = useDailyPlan();
   useHaloGuard();
 
   const [softDismissed, setSoftDismissed] = useState(false);

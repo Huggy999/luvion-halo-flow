@@ -1071,6 +1071,9 @@ export function useDocMutations() {
 /** Clears everything that belongs to the signed-in account. Demo content is untouched. */
 export async function resetAllData() {
   const uid = await requireUserId();
+  await supabase.from("operation_receipts").delete().eq("user_id", uid);
+  await supabase.from("daily_plan_slots").delete().eq("user_id", uid);
+  await supabase.from("daily_plans").delete().eq("user_id", uid);
   await supabase.from("chat_messages").delete().eq("user_id", uid);
   await supabase.from("documents").delete().eq("user_id", uid);
   await supabase.from("tasks").delete().eq("user_id", uid);
