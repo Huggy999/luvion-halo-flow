@@ -302,6 +302,7 @@
 .app-navigation { inset-inline: 0; bottom: 0; justify-content: center; }
 .tab-dock { width: calc(100% - 1.5rem); max-width: 406px; margin-bottom: calc(12px + env(safe-area-inset-bottom)); }
 .desktop-brand, .desktop-nav-create { display: none; }
+.create-fab-wrap { max-width: 406px; }
 
 .moonlit-scene {
   position: relative;
@@ -348,6 +349,7 @@
   .tab-link { flex-direction: row; justify-content: flex-start; gap: .8rem; padding-inline: .8rem; }
   .desktop-nav-create { display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: 2.75rem; margin-top: auto; border-radius: var(--radius-btn); background: var(--blue-btn); color: var(--sunk); font-weight: 800; }
   .create-fab { right: 2rem !important; bottom: 1rem !important; }
+  .create-fab-wrap { max-width: none; }
   .app-main { width: min(100% - 5rem, 1120px); padding-top: 3rem; }
   .cascade { max-width: none; }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

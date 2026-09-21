@@ -46,7 +46,7 @@ export function CreateMenu() {
     <>
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center">
         <div
-          className="pointer-events-none relative mx-3 w-full max-w-[406px]"
+          className="create-fab-wrap pointer-events-none relative mx-3 w-full max-w-[406px]"
           style={{ marginBottom: "calc(84px + env(safe-area-inset-bottom))" }}
         >
           <Button

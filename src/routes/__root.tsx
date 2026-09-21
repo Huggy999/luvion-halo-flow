@@ -213,7 +213,7 @@ function ThemeSync() {
   const theme = data?.theme ?? "light";
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
-    document.documentElement.dataset.motion = data?.motion_preference ?? "system";
+    document.documentElement.dataset["motion"] = data?.motion_preference ?? "system";
   }, [theme, data?.motion_preference]);
   return null;
 }
