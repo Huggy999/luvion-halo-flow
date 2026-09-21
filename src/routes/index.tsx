@@ -23,7 +23,7 @@ import { PulseSkeleton } from "@/components/skeletons";
 import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { isBoundaryHidden, useBilling } from "@/lib/billing";
 import { MoonlitScene } from "@/components/MoonlitScene";
-import { useDailyCheckin, useDailyCheckinMutation, type DailyCheckin } from "@/lib/app";
+import { useDailyCheckin, useDailyCheckinMutation, useDailyPlan, type DailyCheckin } from "@/lib/app";
 
 
 export const Route = createFileRoute("/")({
@@ -140,6 +140,7 @@ function PulseScreen() {
   const updateState = useUpdateState();
   const checkinQ = useDailyCheckin();
   const saveCheckin = useDailyCheckinMutation();
+  const planQ = useDailyPlan();
   useHaloGuard();
 
   const [softDismissed, setSoftDismissed] = useState(false);
@@ -171,7 +172,11 @@ function PulseScreen() {
     : 1;
 
   const countedToday = state?.last_streak_date === today;
-  const focus = tasks.filter((t) => t.is_today);
+  const focus = planQ.data?.slots
+    .slice()
+    .sort((a, b) => a.slot - b.slot)
+    .map((slot) => tasks.find((task) => task.id === slot.task_id))
+    .filter((task): task is NonNullable<typeof task> => Boolean(task)) ?? [];
   const focusDone = focus.filter((t) => t.is_done).length;
 
   const dateLabel = new Date().toLocaleDateString(undefined, {
