@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { FilePlus2, FolderPlus, ListPlus, Plus } from "lucide-react";
@@ -34,6 +34,12 @@ export function CreateMenu() {
   const [hubName, setHubName] = useState("");
   const [color, setColor] = useState("blue");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const open = () => setMode("menu");
+    window.addEventListener("luvion:create", open);
+    return () => window.removeEventListener("luvion:create", open);
+  }, []);
 
   const close = () => {
     setMode(null);

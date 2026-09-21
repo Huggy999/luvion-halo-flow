@@ -202,7 +202,13 @@ function TabBar() {
             );
           })}
         </ul>
-        <span className="desktop-nav-create" aria-hidden="true"><Plus size={18} /> Create</span>
+        <button
+          type="button"
+          className="desktop-nav-create"
+          onClick={() => window.dispatchEvent(new Event("luvion:create"))}
+        >
+          <Plus size={18} aria-hidden="true" /> Create
+        </button>
       </div>
     </nav>
   );
