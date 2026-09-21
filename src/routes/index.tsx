@@ -133,8 +133,8 @@ function PulseScreen() {
   const state = stateQ.data;
   const tasks = tasksQ.data ?? [];
   const hubs = hubsQ.data ?? [];
-  const loading = stateQ.isLoading || tasksQ.isLoading || hubsQ.isLoading;
-  const failed = stateQ.isError || tasksQ.isError || hubsQ.isError;
+  const loading = stateQ.isLoading || tasksQ.isLoading || hubsQ.isLoading || planQ.isLoading;
+  const failed = stateQ.isError || tasksQ.isError || hubsQ.isError || planQ.isError;
   const showSkeleton = useDelayedFlag(loading);
   const { billing } = useBilling();
   const updateState = useUpdateState();
@@ -189,11 +189,12 @@ function PulseScreen() {
   if (failed)
     return (
       <DataError
-        error={stateQ.error ?? tasksQ.error ?? hubsQ.error}
+        error={stateQ.error ?? tasksQ.error ?? hubsQ.error ?? planQ.error}
         onRetry={() => {
           stateQ.refetch();
           tasksQ.refetch();
           hubsQ.refetch();
+          planQ.refetch();
         }}
         what="your day"
       />

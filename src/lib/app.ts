@@ -772,17 +772,40 @@ export function useTaskMutations() {
       focus_sessions?: number;
     }) => {
       const uid = await requireUserId();
-      const { error } = await supabase.from("tasks").insert({
+      const { data, error } = await supabase.from("tasks").insert({
         title: input.title,
         hub_id: input.hub_id,
         priority: input.priority,
         is_today: input.is_today ?? false,
         focus_sessions: input.focus_sessions ?? 1,
         user_id: uid,
-      });
+      }).select().single();
       if (error) throw error;
+      const task = data as Task;
+      if (input.is_today) {
+        const localDate = todayISO();
+        const { data: plan } = await supabase.from("daily_plans").select("id,revision").eq("local_date", localDate).maybeSingle();
+        const { data: currentSlots } = plan
+          ? await supabase.from("daily_plan_slots").select("slot").eq("plan_id", plan.id)
+          : { data: [] as { slot: number }[] };
+        const occupied = new Set((currentSlots ?? []).map((entry) => entry.slot));
+        const slot = ([1, 2, 3] as const).find((candidate) => !occupied.has(candidate));
+        if (!slot) throw new Error("today already has three priorities. Open Today and choose one to replace");
+        const { error: planError } = await supabase.rpc("set_daily_plan_slot", {
+          _local_date: localDate,
+          _task_id: task.id,
+          _slot: slot,
+          _expected_revision: plan?.revision ?? 0,
+          _operation_id: crypto.randomUUID(),
+        });
+        if (planError) throw planError;
+      }
+      return task;
     },
-    onSuccess: refresh,
+    onSuccess: () => {
+      refresh();
+      void qc.invalidateQueries({ queryKey: ["daily_plan"] });
+    },
   });
 
 

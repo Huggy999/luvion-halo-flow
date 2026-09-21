@@ -58,8 +58,8 @@ function DayScreen() {
   const tasks = tasksQ.data ?? [];
   const hubs = hubsQ.data ?? [];
   const state = stateQ.data;
-  const loading = tasksQ.isLoading || hubsQ.isLoading || stateQ.isLoading;
-  const failed = tasksQ.isError || hubsQ.isError || stateQ.isError;
+  const loading = tasksQ.isLoading || hubsQ.isLoading || stateQ.isLoading || planQ.isLoading;
+  const failed = tasksQ.isError || hubsQ.isError || stateQ.isError || planQ.isError;
   const showSkeleton = useDelayedFlag(loading);
   const { completeTask, patchTask } = useTaskMutations();
   const focusSessionQ = useFocusSession();
@@ -176,11 +176,12 @@ function DayScreen() {
   if (failed)
     return (
       <DataError
-        error={tasksQ.error ?? hubsQ.error ?? stateQ.error}
+        error={tasksQ.error ?? hubsQ.error ?? stateQ.error ?? planQ.error}
         onRetry={() => {
           tasksQ.refetch();
           hubsQ.refetch();
           stateQ.refetch();
+          planQ.refetch();
         }}
         what="today"
       />
