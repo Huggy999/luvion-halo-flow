@@ -158,8 +158,8 @@ function AuthScreen() {
       </div>
 
       <p className="mt-7 px-2 text-center t-aux text-ink-2">
-        Continue without an account. Your tasks, board, docs, halo and timer still work.
-        <Link to="/" className="ml-1 font-bold text-blue-ink">Back to Pulse</Link>
+        You can preview Luvion without an account. Sign in to create and keep tasks, plans, docs, your halo, and focus sessions.
+        <Link to="/" className="ml-1 font-bold text-blue-ink">Preview Pulse</Link>
       </p>
     </div>
   );

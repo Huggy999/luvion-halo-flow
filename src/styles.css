@@ -10,8 +10,8 @@
  */
 
 @theme inline {
-  --font-display: "Outfit", system-ui, sans-serif;
-  --font-editorial: Georgia, "Times New Roman", serif;
+  --font-display: "Manrope", system-ui, sans-serif;
+  --font-editorial: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Manrope", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
@@ -230,6 +230,14 @@
   --surface-glass-strong: rgba(255, 255, 255, 0.13);
   --shadow-soft: 0 18px 50px -28px rgba(0, 0, 0, 0.95);
   --shadow-float: 0 24px 70px -24px rgba(0, 0, 0, 0.95);
+}
+
+html[data-reading="large"] .luvion-shell { font-size: 112.5%; }
+
+.editorial-moment {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .app-viewport {

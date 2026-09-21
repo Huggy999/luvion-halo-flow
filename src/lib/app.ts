@@ -137,6 +137,21 @@ export type FocusSession = {
   outcome: "completed" | "finished_early" | "reset" | null;
 };
 
+export type DailyPlanSlot = {
+  id: string;
+  slot: 1 | 2 | 3;
+  task_id: string;
+};
+
+export type DailyPlan = {
+  id: string | null;
+  local_date: string;
+  revision: number;
+  closed_at: string | null;
+  reflection: string;
+  slots: DailyPlanSlot[];
+};
+
 
 
 export type ChatMessage = {
@@ -532,6 +547,75 @@ export function useFocusSession() {
   });
 }
 
+export function useDailyPlan(localDate = todayISO()) {
+  return useQuery({
+    queryKey: ["daily_plan", localDate],
+    queryFn: async (): Promise<DailyPlan> => {
+      const uid = await currentUserId();
+      if (!uid) return { id: null, local_date: localDate, revision: 0, closed_at: null, reflection: "", slots: [] };
+      const { data: plan, error } = await supabase
+        .from("daily_plans")
+        .select("id,local_date,revision,closed_at,reflection")
+        .eq("local_date", localDate)
+        .maybeSingle();
+      if (error) throw error;
+      if (!plan) return { id: null, local_date: localDate, revision: 0, closed_at: null, reflection: "", slots: [] };
+      const { data: slots, error: slotError } = await supabase
+        .from("daily_plan_slots")
+        .select("id,slot,task_id")
+        .eq("plan_id", plan.id)
+        .order("slot");
+      if (slotError) throw slotError;
+      return { ...plan, slots: (slots ?? []) as DailyPlanSlot[] };
+    },
+  });
+}
+
+export function useDailyPlanMutations(localDate = todayISO()) {
+  const qc = useQueryClient();
+  const refresh = async () => {
+    await qc.invalidateQueries({ queryKey: ["daily_plan", localDate] });
+    await qc.invalidateQueries({ queryKey: ["tasks"] });
+  };
+  const setSlot = useMutation({
+    mutationFn: async ({ taskId, slot, expectedRevision }: { taskId: string; slot: 1 | 2 | 3; expectedRevision: number }) => {
+      const { error } = await supabase.rpc("set_daily_plan_slot", {
+        _local_date: localDate,
+        _task_id: taskId,
+        _slot: slot,
+        _expected_revision: expectedRevision,
+        _operation_id: crypto.randomUUID(),
+      });
+      if (error) throw error;
+    },
+    onSuccess: async () => {
+      announce("Today’s plan was saved");
+      await refresh();
+    },
+    onError: async (error) => {
+      await refresh();
+      announce(`Today’s plan changed elsewhere — ${reason(error)}. The latest version is now shown.`);
+    },
+  });
+  const removeTask = useMutation({
+    mutationFn: async ({ taskId, expectedRevision }: { taskId: string; expectedRevision: number }) => {
+      const { error } = await supabase.rpc("remove_daily_plan_task", {
+        _local_date: localDate,
+        _task_id: taskId,
+        _expected_revision: expectedRevision,
+        _operation_id: crypto.randomUUID(),
+      });
+      if (error) throw error;
+    },
+    onSuccess: refresh,
+    onError: async (error) => {
+      await refresh();
+      announce(`Today’s plan changed elsewhere — ${reason(error)}. The latest version is now shown.`);
+    },
+  });
+  return { setSlot, removeTask };
+}
+
 /* ---------- mutations ---------- */
 
 function reason(e: unknown) {
@@ -688,17 +772,40 @@ export function useTaskMutations() {
       focus_sessions?: number;
     }) => {
       const uid = await requireUserId();
-      const { error } = await supabase.from("tasks").insert({
+      const { data, error } = await supabase.from("tasks").insert({
         title: input.title,
         hub_id: input.hub_id,
         priority: input.priority,
         is_today: input.is_today ?? false,
         focus_sessions: input.focus_sessions ?? 1,
         user_id: uid,
-      });
+      }).select().single();
       if (error) throw error;
+      const task = data as Task;
+      if (input.is_today) {
+        const localDate = todayISO();
+        const { data: plan } = await supabase.from("daily_plans").select("id,revision").eq("local_date", localDate).maybeSingle();
+        const { data: currentSlots } = plan
+          ? await supabase.from("daily_plan_slots").select("slot").eq("plan_id", plan.id)
+          : { data: [] as { slot: number }[] };
+        const occupied = new Set((currentSlots ?? []).map((entry) => entry.slot));
+        const slot = ([1, 2, 3] as const).find((candidate) => !occupied.has(candidate));
+        if (!slot) throw new Error("today already has three priorities. Open Today and choose one to replace");
+        const { error: planError } = await supabase.rpc("set_daily_plan_slot", {
+          _local_date: localDate,
+          _task_id: task.id,
+          _slot: slot,
+          _expected_revision: plan?.revision ?? 0,
+          _operation_id: crypto.randomUUID(),
+        });
+        if (planError) throw planError;
+      }
+      return task;
     },
-    onSuccess: refresh,
+    onSuccess: () => {
+      refresh();
+      void qc.invalidateQueries({ queryKey: ["daily_plan"] });
+    },
   });
 
 
@@ -964,6 +1071,9 @@ export function useDocMutations() {
 /** Clears everything that belongs to the signed-in account. Demo content is untouched. */
 export async function resetAllData() {
   const uid = await requireUserId();
+  await supabase.from("operation_receipts").delete().eq("user_id", uid);
+  await supabase.from("daily_plan_slots").delete().eq("user_id", uid);
+  await supabase.from("daily_plans").delete().eq("user_id", uid);
   await supabase.from("chat_messages").delete().eq("user_id", uid);
   await supabase.from("documents").delete().eq("user_id", uid);
   await supabase.from("tasks").delete().eq("user_id", uid);

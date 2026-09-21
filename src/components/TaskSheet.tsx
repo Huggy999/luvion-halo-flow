@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/Button";
 import { Field, TextareaField } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
-import { Switch } from "@/components/Switch";
 import {
   PRIORITY_LABEL,
   announce,
   offerUndo,
   hubColor,
   useHubs,
+  useDailyPlan,
+  useDailyPlanMutations,
   useTaskMutations,
   type Priority,
   type Task,
@@ -21,6 +22,8 @@ import {
 export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () => void }) {
   const { data: hubs = [] } = useHubs();
   const { patchTask, removeTask, restoreTask } = useTaskMutations();
+  const planQ = useDailyPlan();
+  const planMutations = useDailyPlanMutations();
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -117,16 +120,24 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
           </div>
         </fieldset>
 
-        <div className="flex items-center justify-between gap-3">
-          <span className="t-body text-ink">Add to today</span>
-          <Switch
-            aria-label="Add to today"
-            checked={task.is_today}
-            onCheckedChange={(next) => {
-              patch({ is_today: next });
-              announce(next ? "Added to today" : "Removed from today");
-            }}
-          />
+        <div className="surface-sunk p-3">
+          <p className="t-body font-bold text-ink">Today’s plan</p>
+          <p className="mt-1 t-aux text-ink-2">
+            {planQ.data?.slots.some((slot) => slot.task_id === task.id)
+              ? "This task has one of today’s three priority slots."
+              : "Choose its exact slot on the Today screen so another priority is never replaced silently."}
+          </p>
+          {planQ.data?.slots.some((slot) => slot.task_id === task.id) ? (
+            <Button
+              variant="secondary"
+              block
+              className="mt-3"
+              loading={planMutations.removeTask.isPending}
+              onClick={() => planMutations.removeTask.mutate({ taskId: task.id, expectedRevision: planQ.data?.revision ?? 0 })}
+            >
+              Remove from today
+            </Button>
+          ) : null}
         </div>
 
         <fieldset>

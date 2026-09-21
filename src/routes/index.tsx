@@ -23,7 +23,7 @@ import { PulseSkeleton } from "@/components/skeletons";
 import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { isBoundaryHidden, useBilling } from "@/lib/billing";
 import { MoonlitScene } from "@/components/MoonlitScene";
-import { useDailyCheckin, useDailyCheckinMutation, type DailyCheckin } from "@/lib/app";
+import { useDailyCheckin, useDailyCheckinMutation, useDailyPlan, type DailyCheckin } from "@/lib/app";
 
 
 export const Route = createFileRoute("/")({
@@ -133,8 +133,9 @@ function PulseScreen() {
   const state = stateQ.data;
   const tasks = tasksQ.data ?? [];
   const hubs = hubsQ.data ?? [];
-  const loading = stateQ.isLoading || tasksQ.isLoading || hubsQ.isLoading;
-  const failed = stateQ.isError || tasksQ.isError || hubsQ.isError;
+  const planQ = useDailyPlan();
+  const loading = stateQ.isLoading || tasksQ.isLoading || hubsQ.isLoading || planQ.isLoading;
+  const failed = stateQ.isError || tasksQ.isError || hubsQ.isError || planQ.isError;
   const showSkeleton = useDelayedFlag(loading);
   const { billing } = useBilling();
   const updateState = useUpdateState();
@@ -171,7 +172,11 @@ function PulseScreen() {
     : 1;
 
   const countedToday = state?.last_streak_date === today;
-  const focus = tasks.filter((t) => t.is_today);
+  const focus = planQ.data?.slots
+    .slice()
+    .sort((a, b) => a.slot - b.slot)
+    .map((slot) => tasks.find((task) => task.id === slot.task_id))
+    .filter((task): task is NonNullable<typeof task> => Boolean(task)) ?? [];
   const focusDone = focus.filter((t) => t.is_done).length;
 
   const dateLabel = new Date().toLocaleDateString(undefined, {
@@ -184,11 +189,12 @@ function PulseScreen() {
   if (failed)
     return (
       <DataError
-        error={stateQ.error ?? tasksQ.error ?? hubsQ.error}
+        error={stateQ.error ?? tasksQ.error ?? hubsQ.error ?? planQ.error}
         onRetry={() => {
           stateQ.refetch();
           tasksQ.refetch();
           hubsQ.refetch();
+          planQ.refetch();
         }}
         what="your day"
       />
