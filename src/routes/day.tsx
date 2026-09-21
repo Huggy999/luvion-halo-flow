@@ -20,6 +20,8 @@ import {
   useAppState,
   useFocusMutations,
   useFocusSession,
+  useDailyPlan,
+  useDailyPlanMutations,
   useHubs,
   useTaskMutations,
   useTasks,
@@ -62,6 +64,8 @@ function DayScreen() {
   const { completeTask, patchTask } = useTaskMutations();
   const focusSessionQ = useFocusSession();
   const focusMutations = useFocusMutations();
+  const planQ = useDailyPlan();
+  const planMutations = useDailyPlanMutations();
 
   const [left, setLeft] = useState(FOCUS_SECONDS);
   const [running, setRunning] = useState(false);
@@ -78,11 +82,18 @@ function DayScreen() {
   const [swapCandidate, setSwapCandidate] = useState<Task | null>(null);
 
   const today = todayISO();
-  const focusOpen = tasks.filter((t) => t.is_today && !t.is_done);
+  const plan = planQ.data;
+  const plannedTasks = (plan?.slots ?? [])
+    .slice()
+    .sort((a, b) => a.slot - b.slot)
+    .map((slot) => ({ slot: slot.slot, task: tasks.find((task) => task.id === slot.task_id) }))
+    .filter((entry): entry is { slot: 1 | 2 | 3; task: Task } => Boolean(entry.task));
+  const focusOpen = plannedTasks.map((entry) => entry.task).filter((task) => !task.is_done);
   const closedToday = tasks.filter((t) => t.is_done && t.done_at?.slice(0, 10) === today);
-  const pool = tasks.filter((t) => !t.is_today && !t.is_done);
-  const slots: (Task | null)[] = [0, 1, 2].map((i) => focusOpen[i] ?? null);
-  const full = focusOpen.length >= 3;
+  const plannedIds = new Set(plannedTasks.map((entry) => entry.task.id));
+  const pool = tasks.filter((t) => !plannedIds.has(t.id) && !t.is_done);
+  const slots: (Task | null)[] = ([1, 2, 3] as const).map((slot) => plannedTasks.find((entry) => entry.slot === slot)?.task ?? null);
+  const full = plannedTasks.length >= 3;
   const activeTask = focusOpen.find((t) => t.id === activeId) ?? null;
   const durableSession = focusSessionQ.data;
 
@@ -137,7 +148,10 @@ function DayScreen() {
       setSwapCandidate(task);
       return;
     }
-    patchTask.mutate({ id: task.id, patch: { is_today: true } });
+    const emptySlot = slots.findIndex((slot) => slot === null) + 1;
+    if (emptySlot >= 1 && emptySlot <= 3) {
+      planMutations.setSlot.mutate({ taskId: task.id, slot: emptySlot as 1 | 2 | 3, expectedRevision: plan?.revision ?? 0 });
+    }
     setPoolOpen(false);
   };
 
@@ -481,10 +495,13 @@ function DayScreen() {
           onClick={() => {
             if (menuTask) {
               const t = menuTask;
-              patchTask.mutate({ id: t.id, patch: { is_today: false } });
+              planMutations.removeTask.mutate({ taskId: t.id, expectedRevision: plan?.revision ?? 0 });
               offerUndo({
                 message: `${t.title} removed from today`,
-                onUndo: () => patchTask.mutate({ id: t.id, patch: { is_today: true } }),
+                onUndo: () => {
+                  const priorSlot = plannedTasks.find((entry) => entry.task.id === t.id)?.slot ?? 1;
+                  planMutations.setSlot.mutate({ taskId: t.id, slot: priorSlot, expectedRevision: (plan?.revision ?? 0) + 1 });
+                },
               });
             }
             setMenuTask(null);
@@ -514,9 +531,9 @@ function DayScreen() {
               <button
                 type="button"
                 onClick={() => {
-                  patchTask.mutate({ id: t.id, patch: { is_today: false } });
-                  if (swapCandidate)
-                    patchTask.mutate({ id: swapCandidate.id, patch: { is_today: true } });
+                  const targetSlot = plannedTasks.find((entry) => entry.task.id === t.id)?.slot;
+                  if (swapCandidate && targetSlot)
+                    planMutations.setSlot.mutate({ taskId: swapCandidate.id, slot: targetSlot, expectedRevision: plan?.revision ?? 0 });
                   setSwapCandidate(null);
                 }}
                 className="min-h-11 w-full rounded-btn border border-[var(--line-ctl)] px-3 text-left t-body text-ink"
