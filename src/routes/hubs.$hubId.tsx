@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Plus, FileText, Settings2, Archive, ArrowRightLeft } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Switch } from "@/components/Switch";
 import { Field } from "@/components/Field";
@@ -30,6 +30,7 @@ import {
   useTaskMutations,
   useTasks,
 } from "@/lib/app";
+import { HUB_COLORS, useHubMutations } from "@/lib/app";
 
 
 export const Route = createFileRoute("/hubs/$hubId")({
@@ -65,6 +66,8 @@ function HubScreen() {
   const failed = hubsQ.isError || tasksQ.isError || docsQ.isError;
   const showSkeleton = useDelayedFlag(loading);
   const { createTask, completeTask, moveTask } = useTaskMutations();
+  const { patchTask } = useTaskMutations();
+  const { patchHub } = useHubMutations();
   const { createDoc, removeDoc } = useDocMutations();
 
   const [segment, setSegment] = useState<Segment>("tasks");
@@ -78,6 +81,10 @@ function HubScreen() {
   const [boardBoundary, setBoardBoundary] = useState(false);
   const [wipCandidate, setWipCandidate] = useState<Task | null>(null);
   const [openDocPicker, setOpenDocPicker] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [transferTask, setTransferTask] = useState<Task | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editColor, setEditColor] = useState("blue");
   const { billing } = useBilling();
 
   const hub = hubs.find((h) => h.id === hubId);
@@ -151,11 +158,7 @@ function HubScreen() {
           <p className="section-kicker label-xs text-ink-3">Hub</p>
           <h1 className="t-screen truncate text-ink">{hub.name}</h1>
         </div>
-        <span
-          className="h-9 w-9 shrink-0 rounded-tile"
-          style={{ background: hubColor(hub.color) }}
-          aria-hidden="true"
-        />
+        <Button variant="secondary" aria-label="Edit hub" className="h-11 w-11 px-0" onClick={() => { setEditName(hub.name); setEditColor(hub.color); setSettingsOpen(true); }}><Settings2 size={18} aria-hidden="true" /></Button>
       </header>
 
       <div
@@ -440,6 +443,19 @@ function HubScreen() {
       </Sheet>
 
       <TaskSheet task={detailTask} onClose={() => setDetailTask(null)} />
+
+      <Sheet open={settingsOpen} onClose={() => setSettingsOpen(false)} title="Hub settings">
+        <div className="space-y-4">
+          <Field id="edit-hub-name" label="Name" value={editName} onChange={(e) => setEditName(e.target.value)} />
+          <fieldset><legend className="label-xs text-ink-3">Color</legend><div className="mt-2 flex gap-2">{HUB_COLORS.map((c) => <Button key={c.key} variant={editColor === c.key ? "primary" : "secondary"} aria-label={c.label} onClick={() => setEditColor(c.key)} className="h-11 w-11 px-0"><span className="h-4 w-4 rounded-full" style={{ background: c.value }} /></Button>)}</div></fieldset>
+          <Button variant="primary" block onClick={async () => { if (!editName.trim()) return; await patchHub.mutateAsync({ id: hub.id, patch: { name: editName.trim(), color: editColor } }); setSettingsOpen(false); announce("Hub settings saved"); }}>Save hub</Button>
+          <Button variant="danger" block onClick={async () => { await patchHub.mutateAsync({ id: hub.id, patch: { archived_at: new Date().toISOString() } }); setSettingsOpen(false); announce("Hub archived. Its tasks and docs remain saved."); }}><Archive size={18} aria-hidden="true" />Archive hub</Button>
+        </div>
+      </Sheet>
+
+      <Sheet open={transferTask !== null} onClose={() => setTransferTask(null)} title="Move task to another hub">
+        <ul className="space-y-2">{hubs.filter((h) => h.id !== hub.id && !h.archived_at).map((destination) => <li key={destination.id}><Button variant="secondary" block className="justify-start" onClick={async () => { if (!transferTask) return; await patchTask.mutateAsync({ id: transferTask.id, patch: { hub_id: destination.id } }); announce(`${transferTask.title} moved to ${destination.name}`); setTransferTask(null); }}><ArrowRightLeft size={17} aria-hidden="true" />{destination.name}</Button></li>)}</ul>
+      </Sheet>
 
       <Sheet open={openTask} onClose={() => setOpenTask(false)} title="New task">
         <div className="space-y-3">
