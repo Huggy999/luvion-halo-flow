@@ -166,34 +166,42 @@
 /* ---------- Luminous application shell ---------- */
 
 .luvion-shell {
-  --bg: #0c3030;
-  --paper: #123b3b;
-  --ink: #f4f0df;
-  --ink-2: #b9d2ca;
-  --ink-3: #86aaa2;
-  --line: #234c4a;
-  --line-2: #315d58;
-  --line-ctl: #6d9990;
-  --sunk: #082626;
-  --line-card: #2a5551;
-  --blue: #84e8cf;
-  --blue-btn: #6fddc0;
-  --blue-ink: #a9f4dd;
-  --halo: #f7d66c;
-  --halo-tx: #ffe9a4;
-  --mint: #78e6ba;
-  --mint-tx: #b2f4d9;
-  --coral: #f18c79;
-  --coral-tx: #ffc0b3;
-  --lilac: #a8b4dd;
-  --glow: #71dac9;
-  --glow-2: #8fbab2;
-  --shell: #061b1c;
-  --shell-edge: #1d4442;
-  --surface-glass: rgba(16, 55, 54, 0.78);
-  --surface-glass-strong: rgba(20, 67, 64, 0.92);
-  --shadow-soft: 0 20px 50px -30px rgba(0, 8, 8, 0.82);
-  --shadow-float: 0 26px 78px -32px rgba(0, 8, 8, 0.95);
+  color-scheme: light;
+  --bg: #f3fbf7;
+  --paper: #ffffff;
+  --ink: #102d2a;
+  --ink-2: #496761;
+  --ink-3: #6c817d;
+  --line: #d9ebe4;
+  --line-2: #c7ded5;
+  --line-ctl: #6f9389;
+  --sunk: #eaf6f0;
+  --line-card: #d2e8df;
+  --blue: #20b99b;
+  --blue-btn: #147d68;
+  --blue-ink: #0c6b59;
+  --halo: #ffd86b;
+  --halo-tx: #725200;
+  --mint: #47d8a9;
+  --mint-tx: #0d7054;
+  --coral: #ff806f;
+  --coral-tx: #a83d30;
+  --lilac: #8b8ff1;
+  --glow: #55dfc3;
+  --glow-2: #86a8ff;
+  --shell: #e7f5ee;
+  --shell-edge: #cce7dc;
+  --surface-glass: rgba(255, 255, 255, 0.82);
+  --surface-glass-strong: rgba(255, 255, 255, 0.96);
+  --shadow-soft: 0 20px 50px -32px rgba(25, 94, 78, 0.3);
+  --shadow-float: 0 26px 70px -32px rgba(25, 94, 78, 0.38);
+  --scene-sky: #c7f2e4;
+  --scene-horizon: #8dddc6;
+  --scene-water: #dff7ee;
+  --scene-mountain-back: #8ccbb9;
+  --scene-mountain-front: #5cae98;
+  --scene-lake: #bde9db;
+  --scene-trees: #276b5c;
   min-height: 100dvh;
   background:
     radial-gradient(circle at 15% -8%, color-mix(in oklab, var(--glow) 17%, transparent), transparent 30rem),
@@ -202,6 +210,7 @@
 }
 
 .dark .luvion-shell {
+  color-scheme: dark;
   --bg: #082525;
   --paper: #103534;
   --ink: #fbfcff;
@@ -230,6 +239,13 @@
   --surface-glass-strong: rgba(255, 255, 255, 0.13);
   --shadow-soft: 0 18px 50px -28px rgba(0, 0, 0, 0.95);
   --shadow-float: 0 24px 70px -24px rgba(0, 0, 0, 0.95);
+  --scene-sky: #102f32;
+  --scene-horizon: #174b49;
+  --scene-water: #0b292b;
+  --scene-mountain-back: #2d6761;
+  --scene-mountain-front: #164441;
+  --scene-lake: #0c3536;
+  --scene-trees: #071f21;
 }
 
 html[data-reading="large"] .luvion-shell { font-size: 112.5%; }
@@ -318,18 +334,18 @@ html[data-reading="large"] .luvion-shell { font-size: 112.5%; }
   overflow: hidden;
   border: 1px solid color-mix(in oklab, var(--mint) 22%, var(--line-card));
   border-radius: var(--radius-card);
-  background: linear-gradient(180deg, #102f32 0%, #174b49 62%, #0b292b 100%);
+  background: linear-gradient(180deg, var(--scene-sky) 0%, var(--scene-horizon) 62%, var(--scene-water) 100%);
   box-shadow: var(--shadow-soft);
   isolation: isolate;
 }
 .moonlit-scene-compact { min-height: 10rem; }
 .moonlit-moon { position: absolute; z-index: 0; top: 1.4rem; right: 13%; width: 5rem; height: 5rem; border-radius: 999px; background: var(--halo); box-shadow: 0 0 36px color-mix(in oklab, var(--halo) 45%, transparent); }
 .moonlit-landscape { position: absolute; inset: auto 0 0; width: 100%; height: 88%; }
-.mountain-back { fill: #2d6761; }
-.mountain-front { fill: #164441; }
-.lake { fill: #0c3536; }
+.mountain-back { fill: var(--scene-mountain-back); }
+.mountain-front { fill: var(--scene-mountain-front); }
+.lake { fill: var(--scene-lake); }
 .reflection { fill: color-mix(in oklab, var(--halo) 20%, transparent); }
-.trees { fill: #071f21; }
+.trees { fill: var(--scene-trees); }
 .moonlit-lumi { position: absolute; z-index: 3; left: 13%; bottom: 12%; filter: drop-shadow(0 12px 18px rgba(0,0,0,.34)); animation: celestial-float 5s ease-in-out infinite; }
 .moonlit-ripple { position: absolute; left: 17%; bottom: 8%; width: 5rem; height: .7rem; border: 1px solid color-mix(in oklab, var(--mint) 45%, transparent); border-radius: 999px; animation: moon-ripple 3.8s ease-out infinite; }
 .moonlit-ripple-b { animation-delay: -1.9s; }
