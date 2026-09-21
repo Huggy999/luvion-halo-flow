@@ -14,17 +14,73 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          achievement_key: string
+          earned_at: string
+          evidence: Json
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_key: string
+          earned_at?: string
+          evidence?: Json
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_key?: string
+          earned_at?: string
+          evidence?: Json
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      activity_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          local_date: string
+          source_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          local_date: string
+          source_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          local_date?: string
+          source_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       app_state: {
         Row: {
+          avatar: string
           best_streak: number
           display_name: string
           freeze_month: string
           freeze_notice: boolean
           halo_log: Json
           id: string
+          intention: string
           last_streak_date: string | null
           lumi_enabled: boolean
+          motion_preference: string
           onboarded: boolean
+          onboarding_step: number
+          sound_enabled: boolean
           streak: number
           streaks_enabled: boolean
           theme: string
@@ -32,15 +88,20 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          avatar?: string
           best_streak?: number
           display_name?: string
           freeze_month?: string
           freeze_notice?: boolean
           halo_log?: Json
           id: string
+          intention?: string
           last_streak_date?: string | null
           lumi_enabled?: boolean
+          motion_preference?: string
           onboarded?: boolean
+          onboarding_step?: number
+          sound_enabled?: boolean
           streak?: number
           streaks_enabled?: boolean
           theme?: string
@@ -48,15 +109,20 @@ export type Database = {
           user_id: string
         }
         Update: {
+          avatar?: string
           best_streak?: number
           display_name?: string
           freeze_month?: string
           freeze_notice?: boolean
           halo_log?: Json
           id?: string
+          intention?: string
           last_streak_date?: string | null
           lumi_enabled?: boolean
+          motion_preference?: string
           onboarded?: boolean
+          onboarding_step?: number
+          sound_enabled?: boolean
           streak?: number
           streaks_enabled?: boolean
           theme?: string
@@ -85,6 +151,36 @@ export type Database = {
           created_at?: string
           id?: string
           role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_checkins: {
+        Row: {
+          created_at: string
+          id: string
+          local_date: string
+          mood: string
+          reflection: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          local_date: string
+          mood: string
+          reflection?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          local_date?: string
+          mood?: string
+          reflection?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -127,29 +223,82 @@ export type Database = {
           },
         ]
       }
+      focus_sessions: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          outcome: string | null
+          paused_at: string | null
+          paused_seconds: number
+          planned_minutes: number
+          started_at: string
+          task_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          outcome?: string | null
+          paused_at?: string | null
+          paused_seconds?: number
+          planned_minutes: number
+          started_at: string
+          task_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          outcome?: string | null
+          paused_at?: string | null
+          paused_seconds?: number
+          planned_minutes?: number
+          started_at?: string
+          task_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "focus_sessions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hubs: {
         Row: {
+          archived_at: string | null
           color: string
           created_at: string
           description: string
+          icon: string
           id: string
           name: string
           position: number
           user_id: string
         }
         Insert: {
+          archived_at?: string | null
           color?: string
           created_at?: string
           description?: string
+          icon?: string
           id?: string
           name: string
           position?: number
           user_id: string
         }
         Update: {
+          archived_at?: string | null
           color?: string
           created_at?: string
           description?: string
+          icon?: string
           id?: string
           name?: string
           position?: number
@@ -201,11 +350,13 @@ export type Database = {
           board_column: string
           created_at: string
           done_at: string | null
+          duration_minutes: number
           focus_sessions: number
           hub_id: string | null
           id: string
           is_done: boolean
           is_today: boolean
+          notes: string
           position: number
           priority: string
           title: string
@@ -215,11 +366,13 @@ export type Database = {
           board_column?: string
           created_at?: string
           done_at?: string | null
+          duration_minutes?: number
           focus_sessions?: number
           hub_id?: string | null
           id?: string
           is_done?: boolean
           is_today?: boolean
+          notes?: string
           position?: number
           priority?: string
           title: string
@@ -229,11 +382,13 @@ export type Database = {
           board_column?: string
           created_at?: string
           done_at?: string | null
+          duration_minutes?: number
           focus_sessions?: number
           hub_id?: string | null
           id?: string
           is_done?: boolean
           is_today?: boolean
+          notes?: string
           position?: number
           priority?: string
           title?: string
