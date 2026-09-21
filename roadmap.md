@@ -15,3 +15,4 @@
 13. Complete the Organic Obsidian Flow redesign with adaptive navigation, moonlit artwork, durable focus and check-ins, richer task and hub management, honest Lumi context, profile preferences, accessibility, and final verification.
 14. Execute the approved 100-item premium evolution in evidence-backed release slices. Foundation daily plans are in progress; later feature groups remain tracked in `docs/implementation-register.md`.
 15. Make Daylight the bright default across the full app while retaining Moonlight as an optional appearance.
+- Switch accent color from coral to blue across all theme scopes (done this turn)
