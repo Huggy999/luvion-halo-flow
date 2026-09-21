@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Lumi } from "@/components/Lumi";
 import { Button } from "@/components/Button";
@@ -14,6 +14,7 @@ import { exportCsv, exportJson, exportMarkdown } from "@/lib/export";
 import { useDocs, useHubs } from "@/lib/app";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteAccount } from "@/lib/account.functions";
+import { Field } from "@/components/Field";
 import {
   announce,
   haloLevel,
@@ -87,6 +88,13 @@ function ProfileScreen() {
   const removeAccount = useServerFn(deleteAccount);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [intention, setIntention] = useState("");
+
+  useEffect(() => {
+    setDisplayName(state?.display_name ?? "");
+    setIntention(state?.intention ?? "");
+  }, [state?.display_name, state?.intention]);
 
   const streak = state?.streak ?? 0;
   const level = haloLevel(Math.max(streak, 1));
@@ -129,6 +137,15 @@ function ProfileScreen() {
               Best {state?.best_streak ?? 0} · {closed} tasks closed
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="card p-4" aria-label="Personal details">
+        <h2 className="t-title text-ink">Personal details</h2>
+        <div className="mt-3 space-y-3">
+          <Field id="profile-name" label="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+          <Field id="profile-intention" label="Current intention" value={intention} onChange={(e) => setIntention(e.target.value)} hint="This shapes the guidance shown on Pulse." />
+          <Button variant="primary" block loading={update.isPending} onClick={() => update.mutate({ display_name: displayName.trim(), intention: intention.trim() })}>Save details</Button>
         </div>
       </section>
 
@@ -248,6 +265,23 @@ function ProfileScreen() {
           label="Streaks"
           hint="The days in a row counter and the halo celebration"
         />
+        <div className="h-px bg-line" />
+        <Toggle checked={state?.sound_enabled ?? false} onChange={(v) => update.mutate({ sound_enabled: v })} label="Completion sound" hint="Off by default. Plays only after a finished focus session." />
+      </section>
+
+      <section className="card p-4" aria-label="Motion preference">
+        <h2 className="t-title text-ink">Motion</h2>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          {(["system", "full", "reduced"] as const).map((choice) => (
+            <Button key={choice} variant={state?.motion_preference === choice ? "primary" : "secondary"} onClick={() => update.mutate({ motion_preference: choice })}>{choice[0]?.toUpperCase()}{choice.slice(1)}</Button>
+          ))}
+        </div>
+      </section>
+
+      <section className="card p-4" aria-label="Onboarding">
+        <h2 className="t-title text-ink">Luvion guide</h2>
+        <p className="mt-1 t-aux text-ink-2">Revisit the calm setup without changing your existing work.</p>
+        <Button variant="secondary" block className="mt-3" onClick={() => navigate({ to: "/onboarding" })}>Open guide</Button>
       </section>
 
       <section className="card p-4" aria-label="Data">

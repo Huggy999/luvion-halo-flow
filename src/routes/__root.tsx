@@ -9,7 +9,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-import { Activity, Boxes, CalendarCheck, Sparkles, User } from "lucide-react";
+import { Activity, Boxes, CalendarCheck, Sparkles, User, Plus } from "lucide-react";
 import { Button } from "../components/Button";
 
 import appCss from "../styles.css?url";
@@ -76,12 +76,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         name: "theme-color",
-        content: "#f5f8ff",
+        content: "#0a2829",
         media: "(prefers-color-scheme: light)",
       },
       {
         name: "theme-color",
-        content: "#10131b",
+        content: "#061b1c",
         media: "(prefers-color-scheme: dark)",
       },
       { name: "apple-mobile-web-app-capable", content: "yes" },
@@ -155,16 +155,17 @@ function TabBar() {
   return (
     <nav
       aria-label="Main navigation"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center"
+      className="app-navigation pointer-events-none fixed z-40"
     >
       <div
-        className="tab-dock shadow-float pointer-events-auto mx-3 mb-3 w-full max-w-[406px] rounded-[22px] border px-1.5 py-1.5"
+        className="tab-dock shadow-float pointer-events-auto rounded-[22px] border px-1.5 py-1.5"
         style={{
           boxShadow: "var(--shadow-float)",
           marginBottom: "calc(12px + env(safe-area-inset-bottom))",
         }}
       >
-        <ul className="grid grid-cols-5">
+        <div className="desktop-brand" aria-hidden="true"><span className="desktop-brand-mark">L</span><span>Luvion</span></div>
+        <ul className="navigation-list grid grid-cols-5">
           {TABS.map((tab) => {
             const active =
               tab.to === "/" ? pathname === "/" : pathname.startsWith(tab.to);
@@ -201,6 +202,7 @@ function TabBar() {
             );
           })}
         </ul>
+        <span className="desktop-nav-create" aria-hidden="true"><Plus size={18} /> Create</span>
       </div>
     </nav>
   );
@@ -211,7 +213,8 @@ function ThemeSync() {
   const theme = data?.theme ?? "light";
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
+    document.documentElement.dataset.motion = data?.motion_preference ?? "system";
+  }, [theme, data?.motion_preference]);
   return null;
 }
 
@@ -252,7 +255,7 @@ function AppFrame() {
 
   return (
     <div id="app-shell" className="luvion-shell min-h-dvh">
-      <div className="app-viewport mx-auto w-full max-w-[430px]">
+      <div className="app-viewport mx-auto w-full">
         <main
           key={screenKey}
           className="app-main motion-page px-4 pt-6"
