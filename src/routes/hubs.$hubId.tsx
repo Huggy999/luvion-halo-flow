@@ -233,12 +233,10 @@ function HubScreen() {
               </div>
             ) : (
               hubTasks.map((t) => (
-                <TaskRow
-                  key={t.id}
-                  task={t}
-                  onToggle={() => completeTask.mutate(t)}
-                  onOpen={() => setDetailTask(t)}
-                />
+                <div key={t.id} className="grid grid-cols-[minmax(0,1fr)_44px] items-center gap-1">
+                  <TaskRow task={t} onToggle={() => completeTask.mutate(t)} onOpen={() => setDetailTask(t)} />
+                  <Button variant="ghost" aria-label={`Move ${t.title} to another hub`} className="h-11 w-11 px-0" onClick={() => setTransferTask(t)}><ArrowRightLeft size={17} aria-hidden="true" /></Button>
+                </div>
               ))
             )}
           </div>

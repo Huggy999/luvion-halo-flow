@@ -12,3 +12,4 @@
 10. Extend the selected airy premium direction across the complete app: motion, typography, iconography, Lumi, onboarding, gamification, and illustrations.
 11. Shift the complete product to a bright luminous theme while preserving premium depth, motion, contrast, and the optional dark setting.
 12. Apply the selected Celestial Glass & Lumi direction across the full app with a coherent library of 100 purposeful animation and interaction details, elevated typography, iconography, onboarding, gamification, and illustration.
+13. Complete the Organic Obsidian Flow redesign with adaptive navigation, moonlit artwork, durable focus and check-ins, richer task and hub management, honest Lumi context, profile preferences, accessibility, and final verification.

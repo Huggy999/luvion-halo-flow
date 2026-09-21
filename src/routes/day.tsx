@@ -109,6 +109,7 @@ function DayScreen() {
         if (prev <= 1) {
           setRunning(false);
           setDoneOpen(true);
+          if (durableSession) void focusMutations.patch.mutateAsync({ id: durableSession.id, values: { ended_at: new Date().toISOString(), outcome: "completed" } });
           markFirstSessionDone();
           announce("Focus session finished");
           return 0;
@@ -119,7 +120,7 @@ function DayScreen() {
     return () => {
       if (tick.current) window.clearInterval(tick.current);
     };
-  }, [running]);
+  }, [running, durableSession?.id]);
 
   const pick = (task: Task) => {
     if (pickForFocus) {
