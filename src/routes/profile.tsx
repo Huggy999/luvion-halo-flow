@@ -227,8 +227,8 @@ function ProfileScreen() {
         <h2 className="t-title text-ink">Theme</h2>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {[
-            { key: "light", label: "Light" },
-            { key: "dark", label: "Black and gold" },
+            { key: "light", label: "Daylight" },
+            { key: "dark", label: "Moonlight" },
           ].map((t) => {
             const active = (state?.theme ?? "light") === t.key;
             return (
