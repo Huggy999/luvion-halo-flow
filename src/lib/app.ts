@@ -38,6 +38,8 @@ export type Hub = {
   description: string;
   color: string;
   position: number;
+  icon: string;
+  archived_at: string | null;
 };
 
 export type Priority = "p1" | "p2" | "p3";
@@ -54,6 +56,8 @@ export type Task = {
   done_at: string | null;
   position: number;
   focus_sessions: number;
+  notes: string;
+  duration_minutes: 15 | 25 | 45 | 60;
   created_at: string;
 };
 
@@ -87,6 +91,11 @@ export type AppState = {
   halo_log: HaloLogEntry[];
   freeze_month: string;
   freeze_notice: boolean;
+  intention: string;
+  avatar: string;
+  motion_preference: "system" | "full" | "reduced";
+  sound_enabled: boolean;
+  onboarding_step: number;
 };
 
 /** Fallback settings for a visitor reading the demo space. Never written to. */
@@ -103,6 +112,29 @@ export const DEMO_STATE: AppState = {
   halo_log: [],
   freeze_month: "",
   freeze_notice: false,
+  intention: "Make steady progress",
+  avatar: "lumi",
+  motion_preference: "system",
+  sound_enabled: false,
+  onboarding_step: 1,
+};
+
+export type DailyCheckin = {
+  id: string;
+  local_date: string;
+  mood: "clear" | "steady" | "stretched";
+  reflection: string;
+};
+
+export type FocusSession = {
+  id: string;
+  task_id: string | null;
+  planned_minutes: number;
+  started_at: string;
+  paused_at: string | null;
+  paused_seconds: number;
+  ended_at: string | null;
+  outcome: "completed" | "finished_early" | "reset" | null;
 };
 
 
@@ -474,6 +506,32 @@ export function useChat() {
   });
 }
 
+export function useDailyCheckin() {
+  return useQuery({
+    queryKey: ["daily_checkin", todayISO()],
+    queryFn: async (): Promise<DailyCheckin | null> => {
+      const uid = await currentUserId();
+      if (!uid) return null;
+      const { data, error } = await supabase.from("daily_checkins").select("*").eq("local_date", todayISO()).maybeSingle();
+      if (error) throw error;
+      return data as DailyCheckin | null;
+    },
+  });
+}
+
+export function useFocusSession() {
+  return useQuery({
+    queryKey: ["focus_session"],
+    queryFn: async (): Promise<FocusSession | null> => {
+      const uid = await currentUserId();
+      if (!uid) return null;
+      const { data, error } = await supabase.from("focus_sessions").select("*").is("ended_at", null).order("started_at", { ascending: false }).limit(1).maybeSingle();
+      if (error) throw error;
+      return data as FocusSession | null;
+    },
+  });
+}
+
 /* ---------- mutations ---------- */
 
 function reason(e: unknown) {
@@ -504,6 +562,43 @@ export function useUpdateState() {
     },
     onSettled: () => qc.invalidateQueries({ queryKey: ["app_state"] }),
   });
+}
+
+export function useDailyCheckinMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { mood: DailyCheckin["mood"]; reflection?: string }) => {
+      const uid = await requireUserId();
+      const { error } = await supabase.from("daily_checkins").upsert({ user_id: uid, local_date: todayISO(), mood: input.mood, reflection: input.reflection ?? "", updated_at: new Date().toISOString() }, { onConflict: "user_id,local_date" });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      announce("Today’s check-in was saved");
+      void qc.invalidateQueries({ queryKey: ["daily_checkin"] });
+    },
+    onError: (error) => announce(`The check-in was not saved — ${reason(error)}. Try again.`),
+  });
+}
+
+export function useFocusMutations() {
+  const qc = useQueryClient();
+  const refresh = () => qc.invalidateQueries({ queryKey: ["focus_session"] });
+  const start = useMutation({
+    mutationFn: async ({ taskId, minutes }: { taskId: string; minutes: number }) => {
+      const uid = await requireUserId();
+      const { error } = await supabase.from("focus_sessions").insert({ user_id: uid, task_id: taskId, planned_minutes: minutes, started_at: new Date().toISOString() });
+      if (error) throw error;
+    },
+    onSuccess: refresh,
+  });
+  const patch = useMutation({
+    mutationFn: async ({ id, values }: { id: string; values: Partial<FocusSession> }) => {
+      const { error } = await supabase.from("focus_sessions").update(values).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: refresh,
+  });
+  return { start, patch };
 }
 
 
@@ -789,7 +884,15 @@ export function useHubMutations() {
     onSuccess: refresh,
   });
 
-  return { createHub, removeHub };
+  const patchHub = useMutation({
+    mutationFn: async ({ id, patch }: { id: string; patch: Partial<Hub> }) => {
+      const { error } = await supabase.from("hubs").update(patch).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: refresh,
+  });
+
+  return { createHub, removeHub, patchHub };
 }
 
 export function useDocMutations() {

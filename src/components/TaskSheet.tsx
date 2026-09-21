@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Button";
-import { Field } from "@/components/Field";
+import { Field, TextareaField } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
 import { Switch } from "@/components/Switch";
 import {
@@ -22,9 +22,11 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
   const { data: hubs = [] } = useHubs();
   const { patchTask, removeTask, restoreTask } = useTaskMutations();
   const [title, setTitle] = useState("");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     setTitle(task?.title ?? "");
+    setNotes(task?.notes ?? "");
   }, [task]);
 
   if (!task) return null;
@@ -42,6 +44,18 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
           onBlur={() => {
             const next = title.trim();
             if (next && next !== task.title) patch({ title: next });
+          }}
+        />
+
+        <TextareaField
+          id="task-notes"
+          label="Notes"
+          value={notes}
+          rows={4}
+          placeholder="Context, links, or the next small step"
+          onChange={(e) => setNotes(e.target.value)}
+          onBlur={() => {
+            if (notes !== task.notes) patch({ notes });
           }}
         />
 
@@ -67,6 +81,17 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
                 />
                 {h.name}
               </button>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend className="label-xs text-ink-3">Focus duration</legend>
+          <div className="mt-2 grid grid-cols-4 gap-2">
+            {([15, 25, 45, 60] as const).map((minutes) => (
+              <Button key={minutes} variant={task.duration_minutes === minutes ? "primary" : "secondary"} onClick={() => patch({ duration_minutes: minutes })}>
+                {minutes} min
+              </Button>
             ))}
           </div>
         </fieldset>
