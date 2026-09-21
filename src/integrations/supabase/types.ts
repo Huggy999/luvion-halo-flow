@@ -185,6 +185,81 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_plan_slots: {
+        Row: {
+          created_at: string
+          id: string
+          plan_id: string
+          slot: number
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          plan_id: string
+          slot: number
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          plan_id?: string
+          slot?: number
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_plan_slots_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "daily_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_plan_slots_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_plans: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          id: string
+          local_date: string
+          reflection: string
+          revision: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          local_date: string
+          reflection?: string
+          revision?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          local_date?: string
+          reflection?: string
+          revision?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           blocks: Json
@@ -306,6 +381,36 @@ export type Database = {
         }
         Relationships: []
       }
+      operation_receipts: {
+        Row: {
+          created_at: string
+          id: string
+          operation_id: string
+          operation_kind: string
+          payload_key: string
+          result: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          operation_id: string
+          operation_kind: string
+          payload_key: string
+          result?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          operation_id?: string
+          operation_kind?: string
+          payload_key?: string
+          result?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           ai_calls_reset_at: string
@@ -409,7 +514,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      remove_daily_plan_task: {
+        Args: {
+          _expected_revision: number
+          _local_date: string
+          _operation_id: string
+          _task_id: string
+        }
+        Returns: Json
+      }
+      set_daily_plan_slot: {
+        Args: {
+          _expected_revision: number
+          _local_date: string
+          _operation_id: string
+          _slot: number
+          _task_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
