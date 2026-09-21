@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { ArrowUpRight, Plus, Search, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Field } from "@/components/Field";
 import { Sheet } from "@/components/Sheet";
@@ -24,6 +24,8 @@ export const Route = createFileRoute("/hubs/")({
           "Luvion hubs keep the tasks, the board and the docs of one area together: Product, Company, Personal.",
       },
       { property: "og:title", content: "Hubs — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Tasks, the board and docs grouped by area.",
@@ -55,12 +57,17 @@ function HubsScreen() {
   const [error, setError] = useState("");
   const [showBoundary, setShowBoundary] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<"position" | "name" | "activity">("position");
 
   const limit = LIMITS[billing.tier].hubs;
   const atLimit = limit !== null && hubs.length >= limit;
   const nearLimit = limit !== null && hubs.length === limit - 1;
   const boundaryVisible =
     showBoundary && !dismissed && !isBoundaryHidden("hubs-limit");
+  const visibleHubs = hubs
+    .filter((hub) => !hub.archived_at && hub.name.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
+    .sort((a, b) => sort === "name" ? a.name.localeCompare(b.name) : sort === "activity" ? tasks.filter((t) => t.hub_id === b.id).length - tasks.filter((t) => t.hub_id === a.id).length : a.position - b.position);
 
   if (loading) return showSkeleton ? <HubsSkeleton /> : null;
   if (failed)
@@ -108,6 +115,23 @@ function HubsScreen() {
         )}
       </header>
 
+      <div className="hub-tools">
+        <label className="hub-search">
+          <Search size={18} aria-hidden="true" />
+          <span className="sr-only">Search hubs</span>
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search hubs" />
+        </label>
+        <label className="hub-sort">
+          <SlidersHorizontal size={17} aria-hidden="true" />
+          <span className="sr-only">Sort hubs</span>
+          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
+            <option value="position">Custom order</option>
+            <option value="name">Name</option>
+            <option value="activity">Most tasks</option>
+          </select>
+        </label>
+      </div>
+
       {nearLimit ? (
         <p className="px-1 t-aux text-ink-2">
           One hub left of {limit} on {TIER_LABEL[billing.tier]}. Tasks, docs and the board of
@@ -137,7 +161,7 @@ function HubsScreen() {
           </div>
         ) : null}
 
-        {hubs.map((hub) => {
+        {visibleHubs.map((hub) => {
           const list = tasks.filter((t) => t.hub_id === hub.id);
           const done = list.filter((t) => t.is_done).length;
           const ratio = list.length ? done / list.length : 0;
@@ -183,6 +207,12 @@ function HubsScreen() {
             </Link>
           );
         })}
+        {hubs.length > 0 && visibleHubs.length === 0 ? (
+          <div className="surface-sunk p-5 text-center">
+            <p className="t-body text-ink">No hubs match “{query}”.</p>
+            <Button variant="secondary" className="mt-3" onClick={() => setQuery("")}>Clear search</Button>
+          </div>
+        ) : null}
       </div>
 
       <Sheet open={open} onClose={() => setOpen(false)} title="New hub">

@@ -10,6 +10,8 @@ export const Route = createFileRoute("/privacy")({
           "What data Luvion collects, why it is collected, how long it is kept, how to export it and how to delete the account.",
       },
       { property: "og:title", content: "Privacy — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Data collected, purposes, retention, export and account deletion in Luvion.",

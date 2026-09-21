@@ -23,6 +23,8 @@ export const Route = createFileRoute("/onboarding")({
           "Four short steps: your name, the areas you work in, three tasks for today and the first focus session.",
       },
       { property: "og:title", content: "Set up Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Name, areas, three tasks, first session. About a minute.",

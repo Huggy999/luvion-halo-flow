@@ -18,6 +18,8 @@ import {
   offerUndo,
   todayISO,
   useAppState,
+  useFocusMutations,
+  useFocusSession,
   useHubs,
   useTaskMutations,
   useTasks,
@@ -34,6 +36,8 @@ export const Route = createFileRoute("/day")({
           "A real 25 minute focus timer tied to one of the three tasks of today, with Lumi inside the ring.",
       },
       { property: "og:title", content: "Today — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Focus sessions of 25 minutes and three slots for today.",
@@ -56,6 +60,8 @@ function DayScreen() {
   const failed = tasksQ.isError || hubsQ.isError || stateQ.isError;
   const showSkeleton = useDelayedFlag(loading);
   const { completeTask, patchTask } = useTaskMutations();
+  const focusSessionQ = useFocusSession();
+  const focusMutations = useFocusMutations();
 
   const [left, setLeft] = useState(FOCUS_SECONDS);
   const [running, setRunning] = useState(false);
@@ -78,6 +84,17 @@ function DayScreen() {
   const slots: (Task | null)[] = [0, 1, 2].map((i) => focusOpen[i] ?? null);
   const full = focusOpen.length >= 3;
   const activeTask = focusOpen.find((t) => t.id === activeId) ?? null;
+  const durableSession = focusSessionQ.data;
+
+  useEffect(() => {
+    if (!durableSession) return;
+    setActiveId(durableSession.task_id);
+    const planned = durableSession.planned_minutes * 60;
+    const stopAt = durableSession.paused_at ? new Date(durableSession.paused_at).getTime() : Date.now();
+    const elapsed = Math.max(0, Math.floor((stopAt - new Date(durableSession.started_at).getTime()) / 1000) - durableSession.paused_seconds);
+    setLeft(Math.max(0, planned - elapsed));
+    setRunning(!durableSession.paused_at);
+  }, [durableSession?.id]);
 
   useEffect(() => {
     if (activeId && !focusOpen.some((t) => t.id === activeId)) {
@@ -94,6 +111,7 @@ function DayScreen() {
         if (prev <= 1) {
           setRunning(false);
           setDoneOpen(true);
+          if (durableSession) void focusMutations.patch.mutateAsync({ id: durableSession.id, values: { ended_at: new Date().toISOString(), outcome: "completed" } });
           markFirstSessionDone();
           announce("Focus session finished");
           return 0;
@@ -104,7 +122,7 @@ function DayScreen() {
     return () => {
       if (tick.current) window.clearInterval(tick.current);
     };
-  }, [running]);
+  }, [running, durableSession?.id]);
 
   const pick = (task: Task) => {
     if (pickForFocus) {
@@ -179,13 +197,32 @@ function DayScreen() {
 
         {activeTask ? (
           <div className="mt-5 flex items-center justify-center gap-2">
-            <Button variant="primary" onClick={() => setRunning((r) => !r)}>
+            <Button variant="primary" onClick={async () => {
+              if (!durableSession) {
+                await focusMutations.start.mutateAsync({ taskId: activeTask.id, minutes: activeTask.duration_minutes ?? 25 });
+                setLeft((activeTask.duration_minutes ?? 25) * 60);
+                setRunning(true);
+                announce(`Focus started for ${activeTask.title}`);
+                return;
+              }
+              if (running) {
+                await focusMutations.patch.mutateAsync({ id: durableSession.id, values: { paused_at: new Date().toISOString() } });
+                setRunning(false);
+                announce("Focus paused");
+              } else {
+                const extra = durableSession.paused_at ? Math.floor((Date.now() - new Date(durableSession.paused_at).getTime()) / 1000) : 0;
+                await focusMutations.patch.mutateAsync({ id: durableSession.id, values: { paused_at: null, paused_seconds: durableSession.paused_seconds + extra } });
+                setRunning(true);
+                announce("Focus resumed");
+              }
+            }}>
               {running ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
               {running ? "Pause" : left === FOCUS_SECONDS ? "Start focus" : "Resume"}
             </Button>
             <Button
               variant="secondary"
-              onClick={() => {
+              onClick={async () => {
+                if (durableSession) await focusMutations.patch.mutateAsync({ id: durableSession.id, values: { ended_at: new Date().toISOString(), outcome: "reset" } });
                 setRunning(false);
                 setLeft(FOCUS_SECONDS);
                 setActiveId(null);
@@ -197,8 +234,9 @@ function DayScreen() {
             </Button>
             <Button
               variant="secondary"
-              onClick={() => {
+              onClick={async () => {
                 setRunning(false);
+                if (durableSession) await focusMutations.patch.mutateAsync({ id: durableSession.id, values: { ended_at: new Date().toISOString(), outcome: "finished_early" } });
                 completeTask.mutate(activeTask);
                 markFirstSessionDone();
                 setActiveId(null);

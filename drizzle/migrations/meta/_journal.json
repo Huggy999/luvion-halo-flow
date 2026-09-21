@@ -22,6 +22,13 @@
       "when": 1789947304021,
       "tag": "0002_drop_legacy_anon_select_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789981072774,
+      "tag": "0003_add_moonlit_product_features",
+      "breakpoints": true
     }
   ]
 }

@@ -65,7 +65,7 @@ export function Sheet({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="sheet-layer fixed inset-0 z-50 flex items-end justify-center">
       <button
         type="button"
         aria-label="Close sheet"

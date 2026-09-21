@@ -33,6 +33,8 @@ export const Route = createFileRoute("/lumi")({
           "Lumi answers from your real hubs and tasks: summaries, priorities and hints for the day.",
       },
       { property: "og:title", content: "Lumi — the Luvion assistant" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "An assistant that reads your tasks and answers to the point.",

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { FilePlus2, FolderPlus, ListPlus, Plus } from "lucide-react";
@@ -35,6 +35,12 @@ export function CreateMenu() {
   const [color, setColor] = useState("blue");
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const open = () => setMode("menu");
+    window.addEventListener("luvion:create", open);
+    return () => window.removeEventListener("luvion:create", open);
+  }, []);
+
   const close = () => {
     setMode(null);
     setError("");
@@ -46,7 +52,7 @@ export function CreateMenu() {
     <>
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center">
         <div
-          className="pointer-events-none relative mx-3 w-full max-w-[406px]"
+          className="create-fab-wrap pointer-events-none relative mx-3 w-full max-w-[406px]"
           style={{ marginBottom: "calc(84px + env(safe-area-inset-bottom))" }}
         >
           <Button

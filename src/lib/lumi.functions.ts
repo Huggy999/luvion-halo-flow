@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const inputSchema = z.object({ question: z.string().min(1).max(600) });
@@ -23,25 +22,13 @@ export const askLumi = createServerFn({ method: "POST" })
       };
     }
 
-    const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"];
-    const key =
-      process.env["SUPABASE_PUBLISHABLE_KEY"] ??
-      process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
     const apiKey = process.env["LOVABLE_API_KEY"];
 
     const fail = (text: string) => ({ text, used: quota.used, limit: quota.limit, limited: false });
 
-    if (!url || !key) {
-      return fail("The database is unreachable. Reload the page and ask again.");
-    }
-
-    const supabase = createClient(url, key, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-
     const [{ data: hubs }, { data: tasks }] = await Promise.all([
-      supabase.from("hubs").select("id,name,description").order("position"),
-      supabase
+      context.supabase.from("hubs").select("id,name,description").order("position"),
+      context.supabase
         .from("tasks")
         .select("title,hub_id,priority,board_column,is_today,is_done")
         .order("created_at"),

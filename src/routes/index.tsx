@@ -22,6 +22,8 @@ import { DataError } from "@/components/DataError";
 import { PulseSkeleton } from "@/components/skeletons";
 import { useDelayedFlag } from "@/hooks/useDelayedFlag";
 import { isBoundaryHidden, useBilling } from "@/lib/billing";
+import { MoonlitScene } from "@/components/MoonlitScene";
+import { useDailyCheckin, useDailyCheckinMutation, type DailyCheckin } from "@/lib/app";
 
 
 export const Route = createFileRoute("/")({
@@ -34,6 +36,8 @@ export const Route = createFileRoute("/")({
           "The daily pulse in Luvion: the halo streak and the three tasks in focus today.",
       },
       { property: "og:title", content: "Pulse — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "The halo streak and today's focus on one screen.",
@@ -134,6 +138,8 @@ function PulseScreen() {
   const showSkeleton = useDelayedFlag(loading);
   const { billing } = useBilling();
   const updateState = useUpdateState();
+  const checkinQ = useDailyCheckin();
+  const saveCheckin = useDailyCheckinMutation();
   useHaloGuard();
 
   const [softDismissed, setSoftDismissed] = useState(false);
@@ -197,6 +203,8 @@ function PulseScreen() {
           {state?.display_name ? `Pulse · ${state.display_name}` : "Pulse"}
         </h1>
       </header>
+
+      <MoonlitScene className="pulse-landscape" lumi={streak > 0 ? "glow" : "idle"} interactive />
 
       {state?.freeze_notice ? (
         <section className="card p-4" aria-live="polite">
@@ -298,6 +306,20 @@ function PulseScreen() {
           <div className="streak-pips mt-3 flex gap-1.5" aria-hidden="true">
             {Array.from({ length: 5 }).map((_, i) => <span key={i} className={i < Math.min(streak, 5) ? "is-lit" : ""} />)}
           </div>
+        </div>
+      </section>
+
+      <section className="checkin-strip" aria-label="Daily check-in">
+        <div>
+          <p className="t-title text-ink">How is your pace</p>
+          <p className="t-aux text-ink-2">A private note for today</p>
+        </div>
+        <div className="checkin-options" role="group" aria-label="Choose today’s pace">
+          {(["clear", "steady", "stretched"] as DailyCheckin["mood"][]).map((mood) => (
+            <Button key={mood} variant={checkinQ.data?.mood === mood ? "primary" : "secondary"} onClick={() => saveCheckin.mutate({ mood })}>
+              {mood[0]?.toUpperCase()}{mood.slice(1)}
+            </Button>
+          ))}
         </div>
       </section>
 

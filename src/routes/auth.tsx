@@ -17,6 +17,8 @@ export const Route = createFileRoute("/auth")({
           "Sign in or create a Luvion account with email and password. Your plan and Lumi requests belong to the account.",
       },
       { property: "og:title", content: "Sign in — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "A Luvion account keeps your plan and your Lumi request count.",
