@@ -36,6 +36,8 @@ export const Route = createFileRoute("/day")({
           "A real 25 minute focus timer tied to one of the three tasks of today, with Lumi inside the ring.",
       },
       { property: "og:title", content: "Today — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Focus sessions of 25 minutes and three slots for today.",

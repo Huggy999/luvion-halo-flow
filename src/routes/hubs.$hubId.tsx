@@ -43,6 +43,8 @@ export const Route = createFileRoute("/hubs/$hubId")({
           "Inside a Luvion hub: the task list, the column board and the block docs of that area.",
       },
       { property: "og:title", content: "Hub — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Tasks, the board and docs of the selected area.",

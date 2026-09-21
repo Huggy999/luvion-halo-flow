@@ -25,6 +25,8 @@ export const Route = createFileRoute("/pricing")({
           "Luvion plans: Free and Pro. The halo, the streak and the focus timer are always free, and export works on every plan.",
       },
       { property: "og:title", content: "Plans — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "What Free and Pro include, and what happens when you cancel.",

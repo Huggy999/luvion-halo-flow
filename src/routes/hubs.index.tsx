@@ -24,6 +24,8 @@ export const Route = createFileRoute("/hubs/")({
           "Luvion hubs keep the tasks, the board and the docs of one area together: Product, Company, Personal.",
       },
       { property: "og:title", content: "Hubs — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Tasks, the board and docs grouped by area.",

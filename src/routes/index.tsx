@@ -36,6 +36,8 @@ export const Route = createFileRoute("/")({
           "The daily pulse in Luvion: the halo streak and the three tasks in focus today.",
       },
       { property: "og:title", content: "Pulse — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "The halo streak and today's focus on one screen.",

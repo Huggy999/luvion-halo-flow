@@ -10,6 +10,8 @@ export const Route = createFileRoute("/terms")({
           "The terms of using Luvion: the service, plans and payment, cancellation, your data and account deletion.",
       },
       { property: "og:title", content: "Terms — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Service, plans, cancellation, data ownership and account deletion in Luvion.",

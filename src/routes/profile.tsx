@@ -36,6 +36,8 @@ export const Route = createFileRoute("/profile")({
           "Halo level, best streak, plan and account, data export, privacy and terms, and account deletion in Luvion.",
       },
       { property: "og:title", content: "Profile — Luvion" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Luvion settings: theme, Lumi, streaks, export and account.",
